@@ -1001,7 +1001,12 @@ function setupModal() {
       closeModal();
       renderAdmin();
       if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
-    } catch (e) { alert('Save failed: ' + e.message); }
+    } catch (e) {
+      alert('Save failed: ' + e.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Project';
+    }
   });
 }
 
