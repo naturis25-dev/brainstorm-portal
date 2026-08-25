@@ -546,19 +546,22 @@ window.openDetail = function(id) {
 
   const eyebrow = document.getElementById('detailEyebrow');
   if (eyebrow) {
-    const rawTypes = p.type || p.category || 'PROJECT';
-    const typeArray = rawTypes.split(',').map(s => s.trim()).filter(Boolean);
-    let badgesHtml = '';
-    if (typeArray.length > 3) {
-      const shown = typeArray.slice(0, 3);
-      const hiddenCount = typeArray.length - 3;
-      badgesHtml = shown.map(s => `<span class="hero-badge">${s}</span>`).join('') + 
-                   `<span class="hero-badge" style="background:var(--accent); border-color:var(--accent);">+${hiddenCount} MORE</span>`;
-    } else {
-      badgesHtml = typeArray.map(s => `<span class="hero-badge">${s}</span>`).join('');
-    }
-    eyebrow.innerHTML = `<div class="hero-badges" style="max-width: 600px; margin: 0 auto 24px;">${badgesHtml}</div>`;
+    eyebrow.innerHTML = '';
+    eyebrow.style.display = 'none';
   }
+  
+  const rawTypes = p.type || p.category || 'PROJECT';
+  const typeArray = rawTypes.split(',').map(s => s.trim()).filter(Boolean);
+  let badgesHtml = '';
+  if (typeArray.length > 3) {
+    const shown = typeArray.slice(0, 3);
+    const hiddenCount = typeArray.length - 3;
+    badgesHtml = shown.map(s => `<span class="hero-badge" style="color:#4b5563; border-color:#e5e7eb; background:#f9fafb; font-size:12px;">${s}</span>`).join('') + 
+                 `<span class="hero-badge" style="background:var(--accent); border-color:var(--accent); font-size:12px; color:white;">+${hiddenCount} MORE</span>`;
+  } else {
+    badgesHtml = typeArray.map(s => `<span class="hero-badge" style="color:#4b5563; border-color:#e5e7eb; background:#f9fafb; font-size:12px;">${s}</span>`).join('');
+  }
+  const inlineBadges = `<div class="hero-badges" style="max-width: 100%; margin: 32px 0 0 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px;">${badgesHtml}</div>`;
 
   const titleHero = document.getElementById('detailTitleHero');
   if (titleHero) titleHero.textContent = p.title;
@@ -632,8 +635,9 @@ window.openDetail = function(id) {
           </div>
         ` : ''}
           ${p.images && p.images.length > 1 ? `<div class="detail-gallery">${p.images.slice(1).map(img => `<img loading="lazy" decoding="async" src="${img}" onclick="this.requestFullscreen&&this.requestFullscreen()">`).join('')}</div>` : ''}
-        ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
-        <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
+          ${inlineBadges}
+          <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
+          ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
       `;
     }
     
