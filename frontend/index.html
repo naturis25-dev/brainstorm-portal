@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainstorm Atlas</title>
+  <meta name="description" content="Explore Brainstorm Infotech's structural and architectural steel detailing portfolio across North America.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- D3.js & TopoJSON — served locally, no CDN needed -->
+  <script src="assets/vendor/d3.min.js"></script>
+  <script src="assets/vendor/topojson.min.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css?v=58">
+
+  <style>
+  /* ================= LOADER ================= */
+
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  #loaderLogo {
+    width: 150px;
+    height: auto;
+    opacity: 0;
+    margin-bottom: 28px;
+  }
+
+  #loader svg {
+    width: 280px;
+    height: 80px;
+  }
+
+  .ldr-line {
+    stroke: #6D5DF6;
+    stroke-width: 1.4;
+    fill: none;
+
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+  }
+
+  .ldr-caption {
+    margin-top: 18px;
+
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+
+    color: #A8A4B8;
+    text-transform: uppercase;
+
+    opacity: 0;
+  }
+
+  /* Exit animation */
+  #loader.loaded {
+    animation: loaderExit 0.7s ease forwards;
+  }
+
+  @keyframes loaderExit {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+  </style>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Offline 404 Overlay -->
+  <div id="offlineOverlay" style="display: none; position: fixed; inset: 0; background: #fff; z-index: 9999; flex-direction: column; align-items: center; justify-content: center;">
+    <div style="font-size: 32px; font-weight: 800; color: #1a1a1a; margin-bottom: 20px;">404 - No Internet Connection</div>
+    <div class="my-custom-face-container">
+      <svg class="face" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#1a1a1a" stroke-width="4"/>
+        <g class="face__eyes">
+          <circle cx="60" cy="80" r="20" fill="white" stroke="#1a1a1a" stroke-width="4"/>
+          <circle cx="140" cy="80" r="20" fill="white" stroke="#1a1a1a" stroke-width="4"/>
+          <circle class="face__pupil" cx="60" cy="80" r="8" fill="#1a1a1a" />
+          <circle class="face__pupil" cx="140" cy="80" r="8" fill="#1a1a1a" />
+          <path class="face__eye-lid" d="M 40 60 Q 60 50 80 60" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"/>
+          <path class="face__eye-lid" d="M 120 60 Q 140 50 160 60" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"/>
+        </g>
+        <path class="face__nose" d="M 100 100 L 90 120 L 100 120" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="face__mouth-left" d="M 100 150 Q 70 150 60 140" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="102" stroke-linecap="round"/>
+        <path class="face__mouth-right" d="M 100 150 Q 130 150 140 140" fill="none" stroke="#1a1a1a" stroke-width="4" stroke-dasharray="102" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="font-size: 16px; color: var(--sub); margin-top: 20px;">Please check your network and try again.</div>
+  </div>
+
+  <!-- ================= LOADER ================= -->
+  <div id="loader" role="status" aria-label="Loading">
+    <img
+      id="loaderLogo"
+      src="assets/logo.png"
+      alt="Brainstorm Infotech"
+    />
+
+    <svg viewBox="0 0 280 80" aria-hidden="true">
+      <path
+        class="ldr-line"
+        d="M10 40
+           C35 15, 60 65, 85 40
+           S135 15, 160 40
+           S210 65, 235 40
+           S260 15, 275 40"
+      />
+    </svg>
+
+    <div class="ldr-caption" id="ldrCaption">
+      LOADING... <span id="ldrPct">0%</span>
+    </div>
+  </div>
+
+  <script>
+    /* ================= LOADER ANIMATION ================= */
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader");
+      const logo = document.getElementById("loaderLogo");
+      const line = document.querySelector(".ldr-line");
+      const caption = document.querySelector(".ldr-caption");
+      const pct = document.getElementById("ldrPct");
+
+      /* Percentage Counter */
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 5) + 2;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+        }
+        if(pct) pct.textContent = progress + '%';
+      }, 1400 / 30);
+
+      /* Logo fade + scale */
+      logo.animate(
+        [
+          { opacity: 0, transform: "scale(0.85) translateY(5px)" },
+          { opacity: 1, transform: "scale(1) translateY(0)" }
+        ],
+        { duration: 800, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards" }
+      ).onfinish = () => {
+        /* Continuous subtle float and pulse */
+        logo.animate(
+          [
+            { transform: "scale(1) translateY(0)" },
+            { transform: "scale(1.02) translateY(-4px)" },
+            { transform: "scale(1) translateY(0)" }
+          ],
+          { duration: 2500, iterations: Infinity, easing: "ease-in-out" }
+        );
+      };
+
+      /* Drawing line */
+      line.animate(
+        [
+          { strokeDashoffset: 600 },
+          { strokeDashoffset: 0 }
+        ],
+        { duration: 1400, easing: "ease-in-out", fill: "forwards" }
+      );
+
+      /* Caption */
+      setTimeout(() => {
+        caption.animate(
+          [
+            { opacity: 0, transform: "translateY(6px)" },
+            { opacity: 1, transform: "translateY(0)" }
+          ],
+          { duration: 500, easing: "ease-out", fill: "forwards" }
+        );
+      }, 900);
+
+      /* Remove loader */
+      setTimeout(() => {
+        loader.classList.add("loaded");
+        setTimeout(() => {
+          loader.remove();
+        }, 700);
+      }, 2200);
+    });
+  </script>
+
+  <!-- Glassmorphism Top Bar Navigation -->
+  <div class="topbar" id="topbar">
+    <a href="#" class="brand" id="navHome">
+      <div class="logo-box" id="brandLogo">
+        <img src="assets/logo.png" alt="Brainstorm Atlas Logo">
+      </div>
+      <div class="brand-text">
+        <span class="b-name">Brainstorm Atlas</span>
+        <span class="b-tag">PROJECT PORTAL</span>
+      </div>
+    </a>
+    <div class="top-actions">
+      <button class="icon-btn" id="navMapBtn" title="Back to Map">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+        <span class="icon-btn-label">Map</span>
+      </button>
+
+      <button class="icon-btn" id="navAdminBtn" style="display:none;" title="Admin Dashboard">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        <span class="icon-btn-label">Dashboard</span>
+      </button>
+
+      <button class="icon-btn" id="navDrawingsBtn" title="Sample Drawings">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        <span class="icon-btn-label">Drawings</span>
+      </button>
+
+      <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="icon-btn" id="navWebsiteBtn" title="Visit Website">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        <span class="icon-btn-label">Website</span>
+      </a>
+
+      <label class="icon-btn label-dl" id="navBrochureLabel" title="Download Brochure">
+        <input class="input" type="checkbox" id="navBrochureDlInput">
+        <div class="circle">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <div class="square"></div>
+        </div>
+        <span class="title">Brochure</span>
+        <span class="title">Downloaded</span>
+      </label>
+
+
+
+      <button class="Btn" id="navLogoutBtn" style="display:none;" title="Logout">
+        <div class="sign">
+          <svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
+        </div>
+        <div class="text">Logout</div>
+      </button>
+
+      <div class="nav-divider"></div>
+
+      <!-- Minimal Theme Toggle -->
+      <button class="minimal-theme-toggle" id="dntToggle" aria-label="Toggle Theme" title="Toggle Theme">
+        <svg class="theme-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="theme-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Map Main View -->
+  <div class="view active" id="view-map">
+    <div class="wrap">
+      
+      <!-- Dynamic Public Hero -->
+      <div class="map-hero left-align">
+        <div class="hero-pill usa" id="heroPill">
+          <span class="hp-dot"></span> LIVE PROJECT MAP · 2026
+        </div>
+        <h1 class="page-title">
+          Project Experience<br>Across <span id="heroCountryHighlight" class="highlight-usa">the USA</span>
+        </h1>
+        <p class="hero-desc">
+          Explore our structural steel detailing experience through an immersive, interactive project map — built the way we build everything, region by region.
+        </p>
+      </div>
+
+      <!-- Minimal Country Filter Toggle (US / CA) -->
+      <div style="display: flex; justify-content: center;">
+          <div class="minimal-toggle" id="countryToggle">
+            <div class="min-slider" id="minSlider"></div>
+            <button class="min-btn active" data-country="us">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 8 L 11 8 L 14 9 L 18 7 L 20 6 C 21 9, 19 11, 18 12 L 18 16 C 17 17, 16 17, 15 13 C 14 15, 12 15, 11 18 L 8 15 C 6 16, 4 15, 4 14 C 2 12, 3 9, 4 8 Z"></path></svg>
+              United States
+            </button>
+            <button class="min-btn" data-country="ca">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M 4 8 L 4 3 L 8 2 L 10 4 C 11 5, 12 5, 13 3 L 15 2 L 18 3 C 20 4, 22 5, 21 7 L 18 7 L 14 9 L 11 8 Z"></path></svg>
+              Canada
+            </button>
+          </div>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="chip-row" id="categoryChipRow"></div>
+
+      <!-- Interactive Map Card -->
+      <div class="map-card">
+        <svg id="map" viewBox="0 0 960 600"></svg>
+        <div class="tooltip" id="tooltip"></div>
+        
+        <!-- Map Note replacing Legend -->
+        <div class="map-note" style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--sub); font-weight: 500;">
+          <strong>Note:</strong> We have successfully delivered 4,000+ projects over the years. This interactive map highlights a curated selection of our key portfolio projects.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Region Side Drawer Panel -->
+  <div class="overlay" id="overlay"></div>
+  <div class="panel" id="panel">
+    <div class="panel-close" id="panelClose">✕</div>
+    <div class="panel-body" id="panelBody"></div>
+  </div>
+
+  <!-- Project Detail Fullscreen Overlay -->
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-close" id="detailClose">×</div>
+    
+    <div class="detail-hero-section">
+      <div class="detail-hero-img-wrap">
+        <img src="" class="detail-hero" id="detailHero" alt="Project Banner">
+      </div>
+      <div class="detail-hero-gradient"></div>
+      
+      <div class="detail-hero-content">
+        <div class="detail-nav-row" id="detailNavRow"></div>
+        <div class="detail-eyebrow" id="detailEyebrow"></div>
+        <h1 class="detail-title-hero" id="detailTitleHero"></h1>
+        <div class="detail-loc-hero" id="detailLocHero"></div>
+      </div>
+    </div>
+
+    <div class="detail-wrap" id="detailWrap"></div>
+  </div>
+
+  <!-- Admin Login View -->
+  <div class="view" id="view-login">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-logo" id="loginLogo">
+          <img src="assets/logo.png" alt="Brainstorm Infotech Logo">
+        </div>
+        <h2>Admin Authentication</h2>
+        <div class="sub">Sign in to manage projects &amp; intelligence data</div>
+        
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="loginUser" placeholder="Enter username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="Enter password">
+        </div>
+        <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
+        <button class="login-btn" id="loginSubmit">Sign In to Dashboard</button>
+        <span class="back-home" id="backHome">← Back to Map View</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard View -->
+  <div class="view" id="view-admin">
+    <div class="wrap">
+      <div class="admin-header">
+        <div>
+          <h1 class="page-title" id="adminPageTitle">Atlas Admin Dashboard</h1>
+          <div class="page-sub">Manage project records across US &amp; Canada</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn" id="navManageAdminsBtn" style="display:none;">Manage Admins</button>
+          <button class="btn" id="openManageDrawingsBtn" style="background:var(--gray-200);color:var(--ink);">Manage Drawings</button>
+          <button class="btn primary" id="openAddModal">+ Add New Project</button>
+        </div>
+      </div>
+
+      <div class="stats-row" id="adminStatsRow"></div>
+
+      <div class="field admin-search">
+        <input type="text" id="adminSearch" placeholder="Search by title, state, or category...">
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="title" style="cursor:pointer; user-select:none;">TITLE <span class="sort-icon"></span></th>
+              <th class="sortable" data-sort="state" style="cursor:pointer; user-select:none;">STATE <span class="sort-icon"></span></th>
+              <th class="sortable" data-sort="country" style="cursor:pointer; user-select:none;">COUNTRY <span class="sort-icon"></span></th>
+              <th class="sortable" data-sort="type" style="cursor:pointer; user-select:none;">STEEL TYPE <span class="sort-icon"></span></th>
+              <th class="sortable" data-sort="tons" style="cursor:pointer; user-select:none;">TONS <span class="sort-icon"></span></th>
+              <th class="sortable" data-sort="year" style="cursor:pointer; user-select:none;">YEAR <span class="sort-icon"></span></th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Admins View -->
+  <div class="view" id="view-manage-admins">
+    <div class="wrap">
+      <div class="admin-header">
+        <div>
+          <h1 class="page-title">Manage Administrators</h1>
+          <div class="page-sub">Add or remove secondary admin accounts</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn" id="backToAdminBtn">← Back to Dashboard</button>
+          <button class="btn primary" id="openAddAdminModal">+ Add New Admin</button>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto; margin-top: 24px;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>USERNAME</th>
+              <th>CREATED AT</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="manageAdminsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Admin Modal Sheet -->
+  <div class="modal-overlay" id="addAdminModal">
+    <div class="modal-sheet" style="max-width: 400px;">
+      <div class="modal-close" id="adminModalClose">✕</div>
+      <h3>Add New Admin</h3>
+      
+      <div class="field" style="margin-top: 16px;">
+        <label>New Admin Username</label>
+        <input type="text" id="f-new-admin-user" placeholder="Enter username">
+      </div>
+      <div class="field">
+        <label>New Admin Password</label>
+        <input type="password" id="f-new-admin-pass" placeholder="Enter password">
+      </div>
+      <div id="addAdminError" style="display:none; color: #e23c33; margin-bottom: 12px; font-size: 13px;"></div>
+      <div id="addAdminSuccess" style="display:none; color: #2e7d32; margin-bottom: 12px; font-size: 13px;"></div>
+      
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
+        <button class="btn" id="adminModalCancel">Cancel</button>
+        <button class="btn primary" id="adminModalSave">Save Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Project Modal Sheet -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal-sheet">
+      <div class="modal-close" id="modalClose">✕</div>
+      <h3 id="modalTitle">Add New Project</h3>
+      
+      <div class="modal-section-title">Basic Information</div>
+      <div class="field">
+        <label>Project Title *</label>
+        <input type="text" id="f-title" placeholder="e.g. Industrial Plant Structural Steel">
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Country *</label>
+          <select id="f-country">
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>State / Province *</label>
+          <select id="f-state"></select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Year</label>
+          <input type="number" id="f-year" value="2025">
+        </div>
+        <div class="field">
+          <label>Steel Tonnage (Tons)</label>
+          <input type="number" id="f-tons" value="250">
+        </div>
+      </div>
+
+      <div class="modal-section-title">Categorization & Services</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Category</label>
+          <select id="f-category"></select>
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>Steel Service Type</label>
+        <div id="f-type-checkboxes" class="checkbox-group"></div>
+      </div>
+
+      <div class="field">
+        <label>Project Description</label>
+        <textarea id="f-description" rows="3" placeholder="Provide details regarding steel detailing scope..."></textarea>
+      </div>
+
+      <div class="modal-section-title">Media Uploads</div>
+      <div class="field">
+        <label>Images (Drag to rearrange, click X to delete)</label>
+        <input type="file" id="f-images" multiple accept="image/*" style="display:none;">
+        <div class="drop-zone" id="dz-images" onclick="document.getElementById('f-images').click()">
+          <div class="drop-text">📁 Drag & Drop Images here or click to browse</div>
+        </div>
+        <div class="media-preview-list" id="imgPreviews"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Video</label>
+          <input type="file" id="f-video" accept="video/*" style="display:none;">
+          <div class="drop-zone" id="dz-video" onclick="document.getElementById('f-video').click()">
+            <div class="drop-text">🎬 Drag & Drop Video or click</div>
+          </div>
+          <div class="media-preview-list" id="vidPreview"></div>
+        </div>
+        <div class="field">
+          <label>3D Model (.glb)</label>
+          <input type="file" id="f-model" accept="*/*" style="display:none;">
+          <div class="drop-zone" id="dz-model" onclick="document.getElementById('f-model').click()">
+            <div class="drop-text">📐 Drag & Drop .glb or click</div>
+          </div>
+          <div class="media-preview-list" id="modelPreview"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
+        <button class="btn" id="modalCancel">Cancel</button>
+        <button class="btn primary" id="modalSave">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!--  BROCHURE VIEW                                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="view" id="view-brochure">
+    <div class="wrap">
+      <div class="admin-header">
+        <div>
+          <h1 class="page-title">Company Brochure</h1>
+          <div class="page-sub">Brainstorm Infotech — Structural &amp; Architectural Steel Detailing</div>
+        </div>
+        <a href="/assets/brainstorm-brochure.pdf" download class="btn primary" id="brochureDownloadBtn">⬇ Download PDF</a>
+      </div>
+
+      <!-- Service Cards -->
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:32px;">
+        <div class="stat">
+          <div class="n" style="font-size:32px;">15+</div>
+          <div class="l">YEARS OF EXPERIENCE</div>
+        </div>
+        <div class="stat">
+          <div class="n" style="font-size:32px;">200+</div>
+          <div class="l">PROJECTS COMPLETED</div>
+        </div>
+        <div class="stat">
+          <div class="n" style="font-size:32px;">2</div>
+          <div class="l">COUNTRIES SERVED</div>
+        </div>
+      </div>
+
+      <!-- About Section -->
+      <div class="map-hero" style="max-width:100%;text-align:left;margin-bottom:28px;">
+        <h2 style="font-weight:800;font-size:20px;margin:0 0 12px;">About Brainstorm Infotech</h2>
+        <p style="color:var(--sub);font-size:14.5px;line-height:1.8;margin:0;">
+          Brainstorm Infotech is a leading provider of Structural and Architectural Steel Detailing services across the United States and Canada. 
+          We specialize in producing accurate, construction-ready shop drawings, erection drawings, and 3D BIM models using industry-standard software 
+          including Tekla Structures and Advance Steel. Our team of experienced detailers ensures every project meets the highest standards of quality 
+          and is delivered on time.
+        </p>
+      </div>
+
+      <!-- Services Grid -->
+      <h2 style="font-weight:800;font-size:18px;margin:0 0 18px;">Our Services</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px;">
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">STRUCTURAL</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">Structural Steel Detailing</div>
+          <div class="pc-meta">Shop drawings, erection drawings, anchor bolt plans, and connection details for all types of structural steel buildings.</div>
+        </div>
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">ARCHITECTURAL</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">Miscellaneous Steel Detailing</div>
+          <div class="pc-meta">Stairs, railings, handrails, ladders, platforms, catwalks, and all architectural miscellaneous steel components.</div>
+        </div>
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">BIM</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">3D BIM Modeling (Tekla)</div>
+          <div class="pc-meta">Full 3D Tekla Structures models with clash detection, material lists, and IFC export for seamless coordination.</div>
+        </div>
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">CONNECTIONS</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">Connection Design</div>
+          <div class="pc-meta">Engineering-level connection design including moment frames, shear tabs, end plates, and base plates.</div>
+        </div>
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">REBAR</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">Rebar Detailing</div>
+          <div class="pc-meta">Reinforcement bar detailing and bar bending schedules for concrete structures, slabs, and foundations.</div>
+        </div>
+        <div class="proj-card" style="cursor:default;">
+          <div class="p-eyebrow">SOFTWARE</div>
+          <div class="pc-title" style="font-size:15px;margin-bottom:6px;">Advance Steel &amp; AutoCAD</div>
+          <div class="pc-meta">Proficient in Advance Steel, AutoCAD, SDS/2, Revit Structure, and ProSteel for multi-software project delivery.</div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="map-hero" style="max-width:100%;text-align:center;background:var(--accent);border:none;color:#fff;">
+        <h2 style="font-weight:800;font-size:20px;margin:0 0 10px;color:#fff;">Get In Touch</h2>
+        <p style="margin:0 0 18px;opacity:.9;font-size:14px;">Ready to start your next steel detailing project? Contact us today.</p>
+        <a href="https://www.brainstorminfotech.com/contact" target="_blank" rel="noopener noreferrer" class="btn" style="background:#fff;color:var(--accent);border-color:#fff;font-weight:800;">Contact Us →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!--  SAMPLE DRAWINGS VIEW                           -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="view" id="view-drawings">
+    <div class="wrap">
+      <div class="admin-header">
+        <div>
+          <h1 class="page-title">Sample Drawings</h1>
+          <div class="page-sub">Representative examples of our steel detailing work</div>
+        </div>
+      </div>
+
+      <!-- Breadcrumbs / Navigation -->
+      <div class="toggle-row" style="justify-content:flex-start;margin-bottom:24px;display:none;" id="drawingsBreadcrumbRow">
+        <button class="btn nav-pill" id="btnBackToFolders" style="margin-right:8px;">← Back to Folders</button>
+        <div id="currentFolderName" style="font-weight:800;font-size:18px;align-self:center;">Folder Name</div>
+      </div>
+
+      <!-- Drawings Gallery -->
+      <div id="drawingsGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
+        <!-- Dynamically populated by app.js -->
+      </div>
+
+      <!-- Request CTA -->
+      <div class="cta-banner">
+        <div class="cta-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="cta-content">
+          <h2>Need Sample Drawings for Your Project Type?</h2>
+          <p>We can share specific samples matching your project requirements on request.</p>
+        </div>
+        <a href="https://www.brainstorminfotech.com/contact-us" target="_blank" rel="noopener noreferrer" class="btn primary cta-btn">
+          Request Samples
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button id="backToTopBtn" class="icon-btn primary" title="Back to Top" style="position:fixed; bottom:20px; right:20px; z-index:900; opacity:0; pointer-events:none; transition:opacity 0.3s ease; box-shadow:0 8px 20px rgba(91,91,240,0.4);">
+    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  </button>
+
+  <!-- Application Script Modules -->
+  <script src="js/config.js?v=23" defer></script>
+  <div class="secret-admin-trigger">
+    <button class="secret-admin-btn" id="navLoginBtn" title="Admin Login">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Manage Drawings Modal -->
+  <div class="modal-overlay" id="manageDrawingsModal">
+    <div class="modal-sheet" style="max-width: 800px; max-height: 85vh;">
+      <div class="modal-close" id="manageDrawingsClose">×</div>
+      <h3>Manage Sample Drawings</h3>
+      
+      <div class="field" style="display:flex; justify-content:space-between; align-items:center;">
+         <label style="margin:0;">Current Sample Drawings</label>
+         <button class="btn primary" id="openAddDrawingBtn" style="font-size:13px; padding: 6px 14px;">+ Add Drawing</button>
+      </div>
+
+      <div id="drawingsListContainer" style="max-height: calc(85vh - 160px); overflow-y: auto; background: var(--gray-100); border-radius: 8px; padding: 12px; margin-top: 12px; display:flex; flex-direction:column; gap:10px;">
+         <!-- Populated via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Drawing Modal -->
+  <div class="modal-overlay" id="addDrawingModal">
+    <div class="modal-sheet">
+      <div class="modal-close" id="addDrawingClose">×</div>
+      <h3>Add Sample Drawing</h3>
+      
+      <div class="field">
+        <label>Category *</label>
+        <select id="d-category">
+          <option value="misc">Miscellaneous</option>
+          <option value="usa">USA</option>
+          <option value="canada">Canada</option>
+          <option value="quebec">Quebec</option>
+          <option value="uae">UAE</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Drawing Name *</label>
+        <input type="text" id="d-name" placeholder="e.g. Curved Stairs">
+      </div>
+      <div class="field">
+        <label>Tag / Sub-category *</label>
+        <input type="text" id="d-tag" placeholder="e.g. Erection Sheets">
+      </div>
+      <div class="field">
+        <label>Upload PDF *</label>
+        <input type="file" id="d-file" accept="application/pdf">
+      </div>
+      <div id="d-upload-status" style="color:var(--sub); font-size:13.5px; margin-top: 8px;"></div>
+
+      <button class="btn primary" id="saveDrawingBtn" style="width:100%; margin-top:20px;">Save Drawing</button>
+    </div>
+  </div>
+
+  <script src="js/map.js?v=36" defer></script>
+  <script src="js/app.js?v=36" defer></script>

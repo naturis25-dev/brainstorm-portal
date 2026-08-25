@@ -1,0 +1,222 @@
+{
+  "misc": {
+    "title": "Miscellaneous Framing Sheets",
+    "files": [
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Curved Stairs and Rails sheets.pdf",
+        "name": "Curved Stairs and Rails sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Deck Drawings.pdf",
+        "name": "Deck Drawings",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Dumpster Gate.pdf",
+        "name": "Dumpster Gate",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Elevator steel.pdf",
+        "name": "Elevator steel",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Ladders.pdf",
+        "name": "Ladders",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Monumental Stairs and Rails.pdf",
+        "name": "Monumental Stairs and Rails",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Ramp Rails.pdf",
+        "name": "Ramp Rails",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Ship Ladder.pdf",
+        "name": "Ship Ladder",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Spiral Stair and Rail sheets.pdf",
+        "name": "Spiral Stair and Rail sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Erection Sheets/Stair Tower sheets.pdf",
+        "name": "Stair Tower sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Miscellaneous Framing Sheets/Shop Sheets.pdf",
+        "name": "Shop Sheets",
+        "tag": "Miscellaneous Framing Sheets"
+      }
+    ]
+  },
+  "canada": {
+    "title": "Projects Canada",
+    "files": [
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Erection Sheets/Anchor Bolt Plans and Details.pdf",
+        "name": "Anchor Bolt Plans and Details",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Erection Sheets/Elevation view Sheets.pdf",
+        "name": "Elevation view Sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Erection Sheets/Framing plan sheets.pdf",
+        "name": "Framing plan sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Erection Sheets/Section sheets.pdf",
+        "name": "Section sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Joist Fab & Erection Sheets/Joist Erection Sheets.pdf",
+        "name": "Joist Erection Sheets",
+        "tag": "Joist Fab & Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Joist Fab & Erection Sheets/Joist Fabrication Drawings.pdf",
+        "name": "Joist Fabrication Drawings",
+        "tag": "Joist Fab & Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Sample 3D snaps.pdf",
+        "name": "Sample 3D snaps",
+        "tag": "Projects_Canada"
+      },
+      {
+        "path": "assets/pdfs/Projects_Canada/Projects_Canada/Shop Sheets.pdf",
+        "name": "Shop Sheets",
+        "tag": "Projects_Canada"
+      }
+    ]
+  },
+  "quebec": {
+    "title": "Projects Quebec Canada",
+    "files": [
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Erection Sheets/Anchor Bolt Plans and Details.pdf",
+        "name": "Anchor Bolt Plans and Details",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Erection Sheets/Elevation view Sheets.pdf",
+        "name": "Elevation view Sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Erection Sheets/Framing plan sheets.pdf",
+        "name": "Framing plan sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Erection Sheets/Section sheets.pdf",
+        "name": "Section sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Sample Model 3D snaps.pdf",
+        "name": "Sample Model 3D snaps",
+        "tag": "Projects_Quebec, Canada"
+      },
+      {
+        "path": "assets/pdfs/Projects_Quebec_Canada/Projects_Quebec, Canada/Shop Sheets.pdf",
+        "name": "Shop Sheets",
+        "tag": "Projects_Quebec, Canada"
+      }
+    ]
+  },
+  "usa": {
+    "title": "Projects USA",
+    "files": [
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Erection Sheets/Anchor Bolt Plans and Details.pdf",
+        "name": "Anchor Bolt Plans and Details",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Erection Sheets/Elevation view Sheets.pdf",
+        "name": "Elevation view Sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Erection Sheets/Framing plan sheets.pdf",
+        "name": "Framing plan sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Erection Sheets/Section sheets.pdf",
+        "name": "Section sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Frame Shop sheets/Frame-1.pdf",
+        "name": "Frame-1",
+        "tag": "Frame Shop sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Frame Shop sheets/Frame-2.pdf",
+        "name": "Frame-2",
+        "tag": "Frame Shop sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Sample Model 3D snaps.pdf",
+        "name": "Sample Model 3D snaps",
+        "tag": "Projects_USA"
+      },
+      {
+        "path": "assets/pdfs/Projects_USA/Projects_USA/Shop Sheets.pdf",
+        "name": "Shop Sheets",
+        "tag": "Projects_USA"
+      }
+    ]
+  },
+  "uae": {
+    "title": "Projects United Arab Emirates",
+    "files": [
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Erection Sheets/Circular Platforms.pdf",
+        "name": "Circular Platforms",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Erection Sheets/Elevations View Sheets.pdf",
+        "name": "Elevations View Sheets",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Erection Sheets/Ladders.pdf",
+        "name": "Ladders",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Erection Sheets/Stair & Rails.pdf",
+        "name": "Stair & Rails",
+        "tag": "Erection Sheets"
+      },
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Sample 3D models.pdf",
+        "name": "Sample 3D models",
+        "tag": "Projects_United Arab Emirates"
+      },
+      {
+        "path": "assets/pdfs/Projects_United_Arab_Emirates/Projects_United Arab Emirates/Shop Drawings.pdf",
+        "name": "Shop Drawings",
+        "tag": "Projects_United Arab Emirates"
+      }
+    ]
+  }
+}
