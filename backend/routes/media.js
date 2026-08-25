@@ -40,30 +40,38 @@ router.post('/', requireAdmin, upload.fields([
     };
 
     // If a model was uploaded, optimize it!
-    if (req.files['model']) {
-      const modelFile = req.files['model'][0];
-      const inputPath = modelFile.path;
-      const outputPath = inputPath.replace(path.extname(inputPath), '_opt' + path.extname(inputPath));
-      
-      const nodeExe = process.execPath;
-      const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
-      
-      await new Promise((resolve, reject) => {
-        // Run with 6GB heap limit to comfortably parse 300MB+ models
-        exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${inputPath}" "${outputPath}"`, (error, stdout, stderr) => {
-          if (error) {
-            console.error('Optimizer Error:', error);
-            console.error(stderr);
-            // On failure, we just fall back to the original unoptimized model so the upload doesn't completely break
-            resolve();
-          } else {
-            // Replace original with optimized
-            fs.renameSync(outputPath, inputPath);
-            resolve();
-          }
-        });
-      });
-    }
+      if (req.files['model'] && req.files['model'][0]) {
+        const modelFile = req.files['model'][0];
+        
+        // Render Free Tier has 0.1 CPU and 512MB RAM. 
+        // Parsing large 3D models here will cause 502 Gateway Timeouts or OOM crashes.
+        // Skip optimization for anything over 25MB.
+        if (modelFile.size > 25 * 1024 * 1024) {
+          console.log('Skipping optimizer for large file:', modelFile.size);
+        } else {
+          const inputPath = modelFile.path;
+          const outputPath = inputPath.replace(path.extname(inputPath), '_opt' + path.extname(inputPath));
+          
+          const nodeExe = process.execPath;
+          const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
+          
+          await new Promise((resolve, reject) => {
+            // Run with 6GB heap limit to comfortably parse 300MB+ models
+            exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${inputPath}" "${outputPath}"`, (error, stdout, stderr) => {
+              if (error) {
+                console.error('Optimizer Error:', error);
+                console.error(stderr);
+                // On failure, we just fall back to the original unoptimized model so the upload doesn't completely break
+                resolve();
+              } else {
+                // Replace original with optimized
+                fs.renameSync(outputPath, inputPath);
+                resolve();
+              }
+            });
+          });
+        }
+      }
 
     res.status(201).json(response);
   } catch (error) {
