@@ -606,7 +606,6 @@ window.openDetail = function(id) {
           <div class="detail-model-section">
             <div class="model-header">
               <h3>Interactive 3D Structural View</h3>
-              <div class="model-badge">BIM/Tekla</div>
             </div>
             <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background: #0f0f11;">
               
