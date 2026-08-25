@@ -436,11 +436,11 @@ function setupNavigation() {
       if (currentCountry === 'ca' || currentCountry === 'Canada') {
         if (minSlider) minSlider.classList.add('ca');
         if (heroPill) { heroPill.classList.remove('usa'); heroPill.classList.add('ca'); }
-        if (heroHighlight) { heroHighlight.className = 'highlight-ca'; heroHighlight.textContent = 'Canada'; }
+        if (heroHighlight) heroHighlight.className = 'highlight-ca';
       } else {
         if (minSlider) minSlider.classList.remove('ca');
         if (heroPill) { heroPill.classList.remove('ca'); heroPill.classList.add('usa'); }
-        if (heroHighlight) { heroHighlight.className = 'highlight-usa'; heroHighlight.textContent = 'the USA'; }
+        if (heroHighlight) heroHighlight.className = 'highlight-usa';
       }
 
       if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
@@ -552,16 +552,17 @@ window.openDetail = function(id) {
   
   const rawTypes = p.type || p.category || 'PROJECT';
   const typeArray = rawTypes.split(',').map(s => s.trim()).filter(Boolean);
-  let badgesHtml = '';
-  if (typeArray.length > 3) {
-    const shown = typeArray.slice(0, 3);
-    const hiddenCount = typeArray.length - 3;
-    badgesHtml = shown.map(s => `<span class="hero-badge" style="color:#4b5563; border-color:#e5e7eb; background:#f9fafb; font-size:12px;">${s}</span>`).join('') + 
-                 `<span class="hero-badge" style="background:var(--accent); border-color:var(--accent); font-size:12px; color:white;">+${hiddenCount} MORE</span>`;
-  } else {
-    badgesHtml = typeArray.map(s => `<span class="hero-badge" style="color:#4b5563; border-color:#e5e7eb; background:#f9fafb; font-size:12px;">${s}</span>`).join('');
-  }
-  const inlineBadges = `<div class="hero-badges" style="max-width: 100%; margin: 32px 0 0 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px;">${badgesHtml}</div>`;
+  const badgesHtml = typeArray.map(s => `<span class="hero-badge" style="color:#4b5563; border-color:#e5e7eb; background:#f9fafb; font-size:12px;">${s}</span>`).join('');
+  
+  // We will position this in a grid layout next to the 3D viewer if present, or as a standalone block.
+  const inlineBadges = `
+    <div class="project-scope-block">
+      <h3 style="font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">Project Scope</h3>
+      <div class="hero-badges" style="max-width: 100%; margin: 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px;">
+        ${badgesHtml}
+      </div>
+    </div>
+  `;
 
   const titleHero = document.getElementById('detailTitleHero');
   if (titleHero) titleHero.textContent = p.title;
@@ -601,13 +602,17 @@ window.openDetail = function(id) {
           </div>
         </div>
       </div>
-      
+
+      <div style="margin-top: 32px; margin-bottom: 32px;">
+        ${inlineBadges}
+      </div>
+
       ${p.modelUrl ? `
-          <div class="detail-model-section">
+          <div class="detail-model-section" style="margin-top: 0;">
             <div class="model-header">
               <h3>Interactive 3D Structural View</h3>
             </div>
-            <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background: #0f0f11;">
+            <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background: #0f0f11; border-radius: 12px; overflow: hidden;">
               
               <!-- Manual Trigger Overlay -->
               <div id="mv-trigger-${p.id}" style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a20 0%, #000 100%); cursor: pointer; transition: opacity 0.3s;">
@@ -634,7 +639,6 @@ window.openDetail = function(id) {
           </div>
         ` : ''}
           ${p.images && p.images.length > 1 ? `<div class="detail-gallery">${p.images.slice(1).map(img => `<img loading="lazy" decoding="async" src="${img}" onclick="this.requestFullscreen&&this.requestFullscreen()">`).join('')}</div>` : ''}
-          ${inlineBadges}
           <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
           ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
       `;
@@ -755,20 +759,34 @@ function renderAdmin() {
 function renderAdminTable(list) {
   const tbody = document.getElementById('adminTableBody');
   if (!tbody) return;
-  tbody.innerHTML = list.map(p => `
-    <tr>
-      <td>${p.title}</td>
-      <td>${p.state}</td>
-      <td>${p.country}</td>
-      <td>${p.type}</td>
-      <td>${(p.tons || 0).toLocaleString()}</td>
-      <td>${p.year}</td>
-      <td style="white-space: nowrap;">
-        <button class="btn nav-pill" style="padding:4px 10px;font-size:12px;margin-right:4px;" onclick="openEditModal('${p.id}')">Edit</button>
-        <button class="btn nav-pill danger" style="padding:4px 10px;font-size:12px;" onclick="deleteProject('${p.id}')">Del</button>
-      </td>
-    </tr>
-  `).join('');
+  
+  tbody.innerHTML = list.map(p => {
+    const isCanada = p.country && (p.country.toLowerCase() === 'ca' || p.country.toLowerCase() === 'canada');
+    const countryStyle = isCanada 
+      ? "color: #ef4444; background: #fef2f2; border: 1px solid #fecaca;" 
+      : "color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd;";
+      
+    const iconFill = isCanada ? "#fef2f2" : "#e0f2fe";
+    const iconStroke = isCanada ? "#ef4444" : "#0284c7";
+
+    return `
+      <tr class="admin-interactive-tr" style="transition: all 0.3s ease;">
+        <td style="font-weight: 700; color: var(--ink); font-size: 14px;">${p.title}</td>
+        <td><div style="display:flex; align-items:center; gap:8px; font-weight:600;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${iconFill}" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${p.state}</div></td>
+        <td><span style="font-weight:700; padding: 4px 8px; border-radius: 6px; ${countryStyle}">${p.country}</span></td>
+        <td style="font-variant-numeric: tabular-nums; font-weight:800; color: #475569;">${(p.tons || 0).toLocaleString()} <span style="font-size:10px; color:#94a3b8">T</span></td>
+        <td style="font-weight:600; color: #64748b;">${p.year || 'N/A'}</td>
+        <td style="white-space: nowrap;">
+          <button class="btn-icon color-edit" title="Edit" onclick="openEditModal('${p.id}')" style="background:#f0f9ff; color:#0284c7; border:1px solid #bae6fd; padding:8px; border-radius:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button class="btn-icon color-delete" title="Delete" onclick="deleteProject('${p.id}')" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; padding:8px; border-radius:8px; margin-left:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 async function deleteProject(id) {

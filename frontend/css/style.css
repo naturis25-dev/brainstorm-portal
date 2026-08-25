@@ -3293,3 +3293,129 @@ body.dark-mode .premium-card {
     gap: 8px;
   }
 }
+
+@media (max-width: 768px) {
+  .model-scope-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Admin Dashboard Overhaul */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  border: 1px solid var(--line);
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 14px 16px;
+  background: var(--gray-50);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--sub);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  color: var(--ink);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:hover {
+  background: var(--gray-50);
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  color: var(--sub);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-right: 4px;
+}
+
+.btn-icon:hover {
+  background: var(--gray-100);
+  color: var(--accent);
+  border-color: var(--line);
+}
+
+.danger-icon:hover {
+  color: #ef4444;
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+#adminStatsRow {
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-search {
+  margin-bottom: 24px;
+}
+
+.admin-search input {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  width: 100%;
+  max-width: 400px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+}
+
+.admin-search input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(10, 107, 204, 0.15);
+  outline: none;
+}
+
+
+.stat {
+  background: var(--card-bg) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.admin-interactive-tr:hover {
+  background: #f8fafc !important;
+  transform: translateX(4px);
+  box-shadow: -4px 0 0 var(--accent);
+}
+
+.color-edit:hover {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #7dd3fc !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.color-delete:hover {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
+  border-color: #fca5a5 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
