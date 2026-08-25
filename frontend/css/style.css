@@ -3215,3 +3215,81 @@ body.dark-mode .premium-card {
   border-color: var(--line) !important;
 }
 
+
+/* Comprehensive Mobile Optimization */
+@media (max-width: 768px) {
+  /* Panel and Modals Full Screen */
+  .panel {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+  }
+  .panel-content, .panel-hero {
+    padding: 20px 16px !important;
+  }
+  
+  .modal-content {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 16px !important;
+    overflow-y: auto;
+  }
+
+  /* Grid Layouts Stack */
+  .premium-kpi-grid,
+  .form-grid,
+  .media-grid,
+  .detail-gallery {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Map Hero Adjustments */
+  .map-hero {
+    margin: 20px 16px !important;
+  }
+  .map-hero .page-title {
+    font-size: 36px !important;
+  }
+  .hero-desc {
+    font-size: 14px !important;
+  }
+  
+  /* Detail Page Adjustments */
+  .detail-hero-img-wrap {
+    height: 280px !important;
+  }
+  .detail-hero-content {
+    padding: 24px 16px !important;
+  }
+  .detail-title-hero {
+    font-size: 28px !important;
+  }
+  
+  /* Top Navigation */
+  .topbar {
+    padding: 12px 16px !important;
+  }
+  .nav-pills {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  /* Form Elements */
+  .drop-zone {
+    padding: 20px 10px !important;
+  }
+  
+  /* 3D Viewer Container */
+  .model-container {
+    min-height: 350px !important;
+  }
+  .model-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
