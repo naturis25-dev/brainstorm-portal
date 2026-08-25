@@ -6,7 +6,7 @@ const multer = require('multer');
 const { requireAdmin } = require('./auth');
 
 const router = express.Router();
-const uploadDir = path.join(__dirname, '..', 'uploads');
+const uploadDir = process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'uploads') : path.join(__dirname, '..', 'uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
