@@ -1,166 +1,93 @@
 const express = require('express');
 const crypto = require('crypto');
+const db = require('../db.js');
+
 const router = express.Router();
-const db = require('../database');
 
-const ADMIN_USER = process.env.ADMIN_USERNAME;
-const ADMIN_PASS = process.env.ADMIN_PASSWORD;
-const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
 const sessions = new Map();
+const generateToken = () => crypto.randomBytes(32).toString('hex');
 
-if (!ADMIN_USER || !ADMIN_PASS) {
-  throw new Error('ADMIN_USERNAME and ADMIN_PASSWORD must be set before starting the portal.');
-}
-
-function credentialsMatch(username, password) {
-  const suppliedUsername = Buffer.from(String(username));
-  const suppliedPassword = Buffer.from(String(password));
-  const expectedUsername = Buffer.from(ADMIN_USER);
-  const expectedPassword = Buffer.from(ADMIN_PASS);
-  if (suppliedUsername.length !== expectedUsername.length || suppliedPassword.length !== expectedPassword.length) {
-    return false;
+const requireAuth = (req, res, next) => {
+  const token = getToken(req);
+  if (!token || !sessions.has(token)) return res.status(401).json({ message: 'Unauthorized' });
+  const session = sessions.get(token);
+  if (session.expiresAt < Date.now()) {
+    sessions.delete(token);
+    return res.status(401).json({ message: 'Session expired' });
   }
-  const usernameMatches = crypto.timingSafeEqual(
-    suppliedUsername,
-    expectedUsername
-  );
-  const passwordMatches = crypto.timingSafeEqual(
-    suppliedPassword,
-    expectedPassword
-  );
-  return usernameMatches && passwordMatches;
-}
-
-function getToken(req) {
-  const header = req.get('authorization') || '';
-  return header.startsWith('Bearer ') ? header.slice(7) : '';
-}
-
-function requireAdmin(req, res, next) {
-  const session = sessions.get(getToken(req));
-  if (!session || session.expiresAt < Date.now()) {
-    if (getToken(req)) sessions.delete(getToken(req));
-    return res.status(401).json({ message: 'Administrator authentication is required.' });
-  }
-  req.admin = session;
+  session.expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  req.admin = session.admin;
   next();
-}
+};
 
-function hashPassword(password, salt) {
-  return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
-}
+const requireSuperAdmin = (req, res, next) => {
+  requireAuth(req, res, () => {
+    if (req.admin.role !== 'SUPER_ADMIN') return res.status(403).json({ message: 'Forbidden' });
+    next();
+  });
+};
 
-// POST /api/auth/login
-router.post('/login', (req, res) => {
+const getToken = (req) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) return authHeader.split(' ')[1];
+  return null;
+};
+
+router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: "Username and password required." });
+  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    const token = generateToken();
+    sessions.set(token, { admin: { username, role: 'SUPER_ADMIN' }, expiresAt: Date.now() + 86400000 });
+    return res.json({ success: true, token, user: { username, isSuperAdmin: true, role: 'admin' } });
   }
-
-  let valid = false;
-  let isSuperAdmin = false;
-
-  if (credentialsMatch(username, password)) {
-    valid = true;
-    isSuperAdmin = true;
-  } else {
-    const admin = db.getSecondaryAdmin(username);
+  try {
+    const admin = await db.getSecondaryAdmin(username);
     if (admin) {
-      const hash = hashPassword(password, admin.salt);
-      const expectedHash = Buffer.from(admin.passwordHash);
-      const suppliedHash = Buffer.from(hash);
-      if (expectedHash.length === suppliedHash.length && crypto.timingSafeEqual(suppliedHash, expectedHash)) {
-        valid = true;
+      const hash = crypto.pbkdf2Sync(password, admin.salt, 1000, 64, 'sha512').toString('hex');
+      if (hash === admin.passwordHash) {
+        const token = generateToken();
+        sessions.set(token, { admin: { username, role: admin.role || 'MANAGER' }, expiresAt: Date.now() + 86400000 });
+        return res.json({ success: true, token, user: { username, isSuperAdmin: false, role: 'admin' } });
       }
     }
-  }
-
-  if (valid) {
-    const token = crypto.randomBytes(32).toString('hex');
-    sessions.set(token, { username, isSuperAdmin, expiresAt: Date.now() + SESSION_TTL_MS });
-    return res.json({
-      success: true,
-      token,
-      user: {
-        username,
-        role: "admin",
-        isSuperAdmin
-      }
-    });
-  } else {
-    return res.status(401).json({ success: false, message: "Invalid username or password." });
-  }
+  } catch(e) { console.error(e); }
+  res.status(401).json({ message: 'Invalid credentials' });
 });
 
-// GET /api/auth/verify
+router.post('/logout', (req, res) => {
+  const token = getToken(req);
+  if (token) sessions.delete(token);
+  res.json({ success: true });
+});
+
 router.get('/verify', (req, res) => {
   const session = sessions.get(getToken(req));
-  if (session && session.expiresAt >= Date.now()) {
-    return res.json({ authenticated: true, user: session.username, isSuperAdmin: session.isSuperAdmin });
-  }
-  return res.status(401).json({ authenticated: false });
+  if (session && session.expiresAt >= Date.now()) res.json({ valid: true, admin: session.admin });
+  else res.status(401).json({ valid: false });
 });
 
-// POST /api/auth/admins
-router.post('/admins', requireAdmin, (req, res) => {
-  if (!req.admin.isSuperAdmin) {
-    return res.status(403).json({ success: false, message: 'Only the super admin can create new admins.' });
-  }
-  
+router.post('/admins', requireSuperAdmin, async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ success: false, message: 'Username and password required.' });
-  }
-  
+  if (!username || !password) return res.status(400).json({ message: 'Required fields missing' });
   try {
-    const existing = db.getSecondaryAdmin(username);
-    if (existing || username === ADMIN_USER) {
-      return res.status(400).json({ success: false, message: 'Username already exists.' });
-    }
-    
     const salt = crypto.randomBytes(16).toString('hex');
-    const hash = hashPassword(password, salt);
-    db.insertSecondaryAdmin(username, hash, salt);
-    
-    res.json({ success: true, message: 'Admin created successfully.' });
-  } catch (error) {
-    console.error('Error creating admin:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
+    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    await db.insertSecondaryAdmin(username, hash, salt, 'MANAGER');
+    res.status(201).json({ success: true });
+  } catch (e) { res.status(500).json({ message: 'Error' }); }
 });
 
-// GET /api/auth/admins
-router.get('/admins', requireAdmin, (req, res) => {
-  if (!req.admin.isSuperAdmin) {
-    return res.status(403).json({ success: false, message: 'Only the super admin can list admins.' });
-  }
+router.get('/admins', requireSuperAdmin, async (req, res) => {
+  try { res.json(await db.getAllSecondaryAdmins()); }
+  catch (e) { res.status(500).json({ message: 'Error' }); }
+});
+
+router.delete('/admins/:username', requireSuperAdmin, async (req, res) => {
   try {
-    const admins = db.getAllSecondaryAdmins();
-    res.json({ success: true, admins });
-  } catch (error) {
-    console.error('Error fetching admins:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
+    const success = await db.deleteSecondaryAdmin(req.params.username);
+    if (success) res.json({ success: true });
+    else res.status(404).json({ message: 'Not found' });
+  } catch (e) { res.status(500).json({ message: 'Error' }); }
 });
 
-// DELETE /api/auth/admins/:username
-router.delete('/admins/:username', requireAdmin, (req, res) => {
-  if (!req.admin.isSuperAdmin) {
-    return res.status(403).json({ success: false, message: 'Only the super admin can delete admins.' });
-  }
-  const username = req.params.username;
-  try {
-    const success = db.deleteSecondaryAdmin(username);
-    if (success) {
-      res.json({ success: true, message: 'Admin deleted successfully.' });
-    } else {
-      res.status(404).json({ success: false, message: 'Admin not found.' });
-    }
-  } catch (error) {
-    console.error('Error deleting admin:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
-});
-
-module.exports = { router, requireAdmin };
+module.exports = { router, requireAuth, requireSuperAdmin };

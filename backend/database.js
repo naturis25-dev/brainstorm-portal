@@ -44,18 +44,32 @@ db.exec(`
 try { db.exec("ALTER TABLE projects ADD COLUMN year INTEGER"); } catch (e) {}
 try { db.exec("ALTER TABLE projects ADD COLUMN description TEXT"); } catch (e) {}
 try { db.exec("ALTER TABLE projects ADD COLUMN modelUrl TEXT"); } catch (e) {}
+try { db.exec("ALTER TABLE projects ADD COLUMN isKeyProject INTEGER DEFAULT 0"); } catch (e) {}
+
+// Enterprise Architecture Upgrades (Phase 2 Prep)
+try { db.exec("ALTER TABLE projects ADD COLUMN is_deleted INTEGER DEFAULT 0"); } catch (e) {}
+try { db.exec("ALTER TABLE projects ADD COLUMN created_by TEXT DEFAULT 'System'"); } catch (e) {}
+try { db.exec("ALTER TABLE projects ADD COLUMN updated_by TEXT"); } catch (e) {}
+try { db.exec("ALTER TABLE projects ADD COLUMN deleted_by TEXT"); } catch (e) {}
+try { db.exec("ALTER TABLE projects ADD COLUMN deleted_at TEXT"); } catch (e) {}
+try { db.exec("ALTER TABLE admins ADD COLUMN role TEXT DEFAULT 'MANAGER'"); } catch (e) {} // SUPER_ADMIN or MANAGER
+try { db.exec("ALTER TABLE projects ADD COLUMN version INTEGER DEFAULT 1"); } catch (e) {}
 
 // ----------------------------------------------------
 // Database Operations
 // ----------------------------------------------------
 
 const getProjects = (filters = {}) => {
-  let query = 'SELECT * FROM projects WHERE 1=1';
+  let query = 'SELECT * FROM projects WHERE is_deleted = 0';
   const params = [];
 
   if (filters.country) {
     query += ' AND country = ?';
     params.push(filters.country.toUpperCase());
+  }
+  if (filters.state) {
+    query += ' AND state = ?';
+    params.push(filters.state);
   }
   if (filters.category && filters.category !== 'All') {
     query += ' AND category = ?';
@@ -67,7 +81,18 @@ const getProjects = (filters = {}) => {
     params.push(search, search, search);
   }
 
-  query += ' ORDER BY createdAt DESC';
+  // Handle sorting
+  if (filters.sort === 'tonnage') {
+    query += ' ORDER BY tons DESC';
+  } else if (filters.sort === 'year') {
+    query += ' ORDER BY CAST(year AS INTEGER) DESC';
+  } else if (filters.sort === 'title') {
+    query += ' ORDER BY title ASC';
+  } else if (filters.sort === 'key') {
+    query += ' ORDER BY isKeyProject DESC, tons DESC';
+  } else {
+    query += ' ORDER BY createdAt DESC';
+  }
   
   // Always bound reads so a large portfolio cannot create an unbounded response.
   const limit = Math.min(Math.max(parseInt(filters.limit, 10) || 500, 1), 1000);
@@ -89,7 +114,7 @@ const parseImages = (value) => {
 };
 
 const countProjects = (filters = {}) => {
-  let query = 'SELECT COUNT(*) AS count FROM projects WHERE 1=1';
+  let query = 'SELECT COUNT(*) AS count FROM projects WHERE is_deleted = 0';
   const params = [];
   if (filters.country) { query += ' AND country = ?'; params.push(filters.country.toUpperCase()); }
   if (filters.category && filters.category !== 'All') { query += ' AND category = ?'; params.push(filters.category); }
@@ -97,8 +122,35 @@ const countProjects = (filters = {}) => {
   return db.prepare(query).get(params).count;
 };
 
+const getProjectStats = (filters = {}) => {
+  let query = 'SELECT state, COUNT(*) as count, SUM(tons) as tons FROM projects WHERE is_deleted = 0';
+  const params = [];
+  if (filters.country) { query += ' AND country = ?'; params.push(filters.country.toUpperCase()); }
+  if (filters.category && filters.category !== 'All') { query += ' AND category = ?'; params.push(filters.category); }
+  query += ' GROUP BY state';
+  
+  const rows = db.prepare(query).all(params);
+  
+  let totalProjects = 0;
+  let totalTons = 0;
+  const regions = {};
+  
+  rows.forEach(r => {
+    totalProjects += r.count;
+    totalTons += r.tons;
+    regions[r.state] = { count: r.count, tons: r.tons };
+  });
+  
+  return {
+    totalProjects,
+    totalTons,
+    statesCovered: rows.length,
+    regions
+  };
+};
+
 const getProjectById = (id) => {
-  const row = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+  const row = db.prepare('SELECT * FROM projects WHERE id = ? AND is_deleted = 0').get(id);
   if (row) {
     row.images = parseImages(row.images);
   }
@@ -106,31 +158,34 @@ const getProjectById = (id) => {
 };
 
 const insertProject = (project) => {
+  project.id = project.id || Date.now().toString();
   const stmt = db.prepare(`
-    INSERT INTO projects (id, title, country, state, category, type, tons, status, images, video, year, description, modelUrl)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO projects (id, title, country, state, category, type, tons, status, images, video, year, description, modelUrl, isKeyProject, created_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   
   stmt.run(
-    project.id || Date.now().toString(),
+    project.id,
     project.title,
     project.country.toUpperCase(),
     project.state,
     project.category,
     project.type || '',
     project.tons || 0,
-    project.status || 'Active',
+    project.status || 'Draft',
     JSON.stringify(project.images || []),
     project.video || '',
     project.year || null,
     project.description || '',
-    project.modelUrl || null
+    project.modelUrl || null,
+    project.isKeyProject ? 1 : 0,
+    project.created_by || 'System'
   );
   return project;
 };
 
 const updateProject = (id, updates) => {
-  const allowedFields = ['title', 'country', 'state', 'category', 'type', 'tons', 'status', 'video', 'year', 'description', 'modelUrl'];
+  const allowedFields = ['title', 'country', 'state', 'category', 'type', 'tons', 'status', 'video', 'year', 'description', 'modelUrl', 'isKeyProject', 'updated_by'];
   let query = 'UPDATE projects SET ';
   const params = [];
   
@@ -140,6 +195,8 @@ const updateProject = (id, updates) => {
       sets.push(`${field} = ?`);
       if (field === 'country') {
         params.push(updates[field].toUpperCase());
+      } else if (field === 'isKeyProject') {
+        params.push(updates[field] ? 1 : 0);
       } else {
         params.push(updates[field]);
       }
@@ -153,15 +210,34 @@ const updateProject = (id, updates) => {
 
   if (sets.length === 0) return false;
 
-  query += sets.join(', ') + ' WHERE id = ?';
+  // Increment version safely
+  sets.push('version = version + 1');
+
+  // Must match both ID and current version
+  query += sets.join(', ') + ' WHERE id = ? AND version = ? AND is_deleted = 0';
   params.push(id);
   
+  // Default to version 1 if frontend doesn't supply it (for backwards compatibility/seeds)
+  const currentVersion = updates.version !== undefined ? parseInt(updates.version, 10) : 1;
+  params.push(currentVersion);
+  
   const info = db.prepare(query).run(params);
-  return info.changes > 0;
+  
+  if (info.changes === 0) {
+    // Check if the project exists at all
+    const exists = db.prepare('SELECT id FROM projects WHERE id = ? AND is_deleted = 0').get(id);
+    if (exists) {
+      throw new Error('CONCURRENCY_CONFLICT');
+    }
+    return false; // Project not found
+  }
+  return true;
 };
 
-const deleteProject = (id) => {
-  const info = db.prepare('DELETE FROM projects WHERE id = ?').run(id);
+const deleteProject = (id, username) => {
+  // Soft Delete implementation
+  const now = new Date().toISOString();
+  const info = db.prepare('UPDATE projects SET is_deleted = 1, deleted_by = ?, deleted_at = ? WHERE id = ?').run(username || 'System', now, id);
   return info.changes > 0;
 };
 
@@ -223,6 +299,8 @@ module.exports = {
   insertProject,
   updateProject,
   deleteProject,
+  parseImages,
+  getProjectStats,
   bulkInsertProjects,
   getSecondaryAdmin,
   insertSecondaryAdmin,

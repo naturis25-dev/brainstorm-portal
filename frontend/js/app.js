@@ -80,7 +80,7 @@ async function fetchAppInitialData() {
       apiFetch('/projects')
     ]);
     METADATA = meta;
-    PROJECTS = proj.projects || [];
+    PROJECTS = proj.data || proj.projects || proj || [];
 
     // Populate dropdowns and checkboxes
     const catSel = document.getElementById('f-category');
@@ -99,6 +99,7 @@ async function fetchAppInitialData() {
 
     renderCategoryChips();
     renderMap();
+    if (typeof window.hideLoader === 'function') window.hideLoader();
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects
@@ -110,7 +111,7 @@ async function fetchAppInitialData() {
 function renderMap() {
   if (window.MapModule) {
     window.MapModule.loadMapData(() => {
-      window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
+      window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
     });
   }
 }
@@ -129,7 +130,7 @@ function renderCategoryChips() {
     chip.addEventListener('click', () => {
       currentCategory = chip.dataset.cat;
       renderCategoryChips();
-      if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
+      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
       closePanel();
     });
   });
@@ -443,7 +444,7 @@ function setupNavigation() {
         if (heroHighlight) heroHighlight.className = 'highlight-usa';
       }
 
-      if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
+      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
     });
   });
 
@@ -585,7 +586,7 @@ window.openDetail = function(id) {
         </div>
         <div class="pkpi-card">
           <div class="pkpi-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           </div>
           <div class="pkpi-info">
             <div class="pkpi-lbl">STEEL TONNAGE</div>
@@ -612,10 +613,10 @@ window.openDetail = function(id) {
             <div class="model-header">
               <h3>Interactive 3D Structural View</h3>
             </div>
-            <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background: #0f0f11; border-radius: 12px; overflow: hidden;">
+            <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; border-radius: 12px; overflow: hidden;">
               
               <!-- Manual Trigger Overlay -->
-              <div id="mv-trigger-${p.id}" style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a20 0%, #000 100%); cursor: pointer; transition: opacity 0.3s;">
+              <div id="mv-trigger-${p.id}" style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%); cursor: pointer; transition: opacity 0.3s;">
                 <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(10, 107, 204, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid rgba(10, 107, 204, 0.3); box-shadow: 0 0 30px rgba(10, 107, 204, 0.2);">
                   <svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--accent)" stroke-width="2" fill="none" style="margin-left: 4px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 </div>
@@ -624,7 +625,7 @@ window.openDetail = function(id) {
               </div>
 
               <!-- Loading State -->
-              <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background: #0f0f11; z-index: 9;">
+              <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; z-index: 9;">
                 <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 15px; color: white;">Initializing 3D Engine...</div>
                 <div style="width: 250px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative;">
                   <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease;"></div>
@@ -670,20 +671,101 @@ window.openDetail = function(id) {
           mv.setAttribute('exposure', '1.2');
           mv.setAttribute('shadow-intensity', '1');
           mv.setAttribute('alt', 'Interactive 3D Structural Model');
-          mv.style.position = 'absolute';
-          mv.style.inset = '0';
-          mv.style.width = '100%';
-          mv.style.height = '100%';
-          mv.style.zIndex = '1';
+            mv.setAttribute('min-camera-orbit', 'auto auto 0m');
+            mv.setAttribute('min-field-of-view', '1deg');
+            mv.setAttribute('max-field-of-view', '100deg');
+          
+            
+              mv.style.position = 'absolute';
+              mv.style.inset = '0';
+              mv.style.width = '100%';
+              mv.style.height = '100%';
+              mv.style.zIndex = '1';
 
-          mv.addEventListener('progress', (e) => {
+              const controls = document.createElement('div');
+              controls.style.position = 'absolute';
+              controls.style.right = '16px';
+              controls.style.bottom = '16px';
+              controls.style.zIndex = '15';
+              controls.style.display = 'flex';
+              controls.style.gap = '8px';
+              controls.style.alignItems = 'flex-end';
+              controls.innerHTML = `
+                <div style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 12px; font-size:11px; line-height:1.4; backdrop-filter:blur(4px); pointer-events:none; text-align:left; white-space:nowrap;">
+                  <b>Controls:</b><br/>
+                  � Left Click + Drag: Orbit<br/>
+                  � Right Click + Drag: Pan<br/>
+                  � Scroll Wheel: Zoom
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <button id="mv-rotate-${p.id}" title="Pause Auto Rotate" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause
+                  </button>
+                  <div style="display:flex; gap:8px;">
+                    <button id="mv-zoom-in-${p.id}" title="Zoom In" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">+</button>
+                    <button id="mv-zoom-out-${p.id}" title="Zoom Out" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">-</button>
+                    <button id="mv-fullscreen-${p.id}" title="Full Screen" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg> Fullscreen
+                    </button>
+                  </div>
+                </div>
+              `;
+              container.appendChild(controls);
+
+              setTimeout(() => {
+                
+                const rotateBtn = document.getElementById(`mv-rotate-${p.id}`);
+                if (rotateBtn) {
+                  rotateBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (mv.hasAttribute('auto-rotate')) {
+                      mv.removeAttribute('auto-rotate');
+                      rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Auto Rotate`;
+                    } else {
+                      mv.setAttribute('auto-rotate', '');
+                      rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause`;
+                    }
+                  });
+                }
+                const fsBtn = document.getElementById(`mv-fullscreen-${p.id}`);
+                if (fsBtn) {
+                  fsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!document.fullscreenElement) {
+                      container.requestFullscreen().catch(err => {
+                        console.error('Fullscreen err:', err);
+                      });
+                    } else {
+                      document.exitFullscreen();
+                    }
+                  });
+                }
+                const zoomInBtn = document.getElementById(`mv-zoom-in-${p.id}`);
+                if (zoomInBtn) {
+                  zoomInBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const orbit = mv.getCameraOrbit();
+                    orbit.radius *= 0.8;
+                    mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
+                  });
+                }
+                const zoomOutBtn = document.getElementById(`mv-zoom-out-${p.id}`);
+                if (zoomOutBtn) {
+                  zoomOutBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const orbit = mv.getCameraOrbit();
+                    orbit.radius *= 1.25;
+                    mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
+                  });
+                }
+              }, 100);mv.addEventListener('progress', (e) => {
             const percent = Math.round(e.detail.totalProgress * 100);
             if (fill) fill.style.width = percent + '%';
             if (text) {
               if (percent < 100) {
                 text.textContent = `Downloading 3D Data... ${percent}%`;
               } else {
-                text.textContent = `Parsing 3D geometry... (Browser will pause for a moment)`;
+                text.textContent = `Finalizing 3D Model...`;
               }
             }
           });
@@ -795,7 +877,7 @@ async function deleteProject(id) {
       await apiFetch('/projects/' + id, { method: 'DELETE' });
       PROJECTS = PROJECTS.filter(p => p.id !== id);
       renderAdmin();
-      if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
+      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
     } catch (e) { alert('Failed: ' + e.message); }
   }
 }
@@ -1021,7 +1103,7 @@ function setupModal() {
       }
       closeModal();
       renderAdmin();
-      if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
+      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
     } catch (e) {
       alert('Save failed: ' + e.message);
     } finally {

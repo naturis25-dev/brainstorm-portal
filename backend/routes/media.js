@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
-const { requireAdmin } = require('./auth');
+const { requireAuth } = require('./auth');
 
 const router = express.Router();
 const uploadDir = process.env.DATA_DIR ? path.join(process.env.DATA_DIR, 'uploads') : path.join(__dirname, '..', 'uploads');
@@ -27,7 +27,61 @@ const upload = multer({
 
 const { exec } = require('child_process');
 
-router.post('/', requireAdmin, upload.fields([
+function startOptimization(targetPath) {
+  const processingPath = targetPath + '.processing';
+  const failedPath = targetPath + '.failed';
+
+  // Ensure states are clean
+  if (!fs.existsSync(processingPath)) return;
+  if (fs.existsSync(failedPath)) fs.unlinkSync(failedPath);
+  if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
+
+  const nodeExe = process.execPath;
+  const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
+
+  exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${processingPath}" "${targetPath}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Optimizer failed for ${targetPath}: code ${error.code}`);
+      
+      if (!fs.existsSync(processingPath)) return; // Should not happen
+
+      if (error.code === 2) {
+        // Corrupted / Cannot Read
+        fs.renameSync(processingPath, failedPath);
+      } else if (error.code === 3) {
+        // Valid, but optimization failed (e.g. OOM)
+        fs.renameSync(processingPath, targetPath); // Fallback to original
+      } else {
+        // Unknown crash
+        fs.renameSync(processingPath, failedPath);
+      }
+    } else {
+      // Success! The output was written to targetPath.
+      if (fs.existsSync(processingPath)) {
+        fs.unlinkSync(processingPath);
+      }
+    }
+  });
+}
+
+// ----------------------------------------------------
+// Start-up recovery logic: Resume orphaned tasks
+// ----------------------------------------------------
+function resumeFailedOptimizations() {
+  const files = fs.readdirSync(uploadDir);
+  files.forEach(f => {
+    if (f.endsWith('.processing')) {
+      console.log(`[Media] Resuming orphaned optimization for ${f}`);
+      const targetName = f.replace('.processing', '');
+      startOptimization(path.join(uploadDir, targetName));
+    }
+  });
+}
+// Run once on load
+resumeFailedOptimizations();
+
+
+router.post('/', requireAuth, upload.fields([
   { name: 'images', maxCount: 20 },
   { name: 'video', maxCount: 1 },
   { name: 'model', maxCount: 1 }
@@ -39,44 +93,40 @@ router.post('/', requireAdmin, upload.fields([
       model: req.files['model'] ? `/uploads/${req.files['model'][0].filename}` : ''
     };
 
-    // If a model was uploaded, optimize it!
-      if (req.files['model'] && req.files['model'][0]) {
-        const modelFile = req.files['model'][0];
-        
-        // Render Free Tier has 0.1 CPU and 512MB RAM. 
-        // Parsing large 3D models here will cause 502 Gateway Timeouts or OOM crashes.
-        // Skip optimization for anything over 25MB.
-        if (modelFile.size > 25 * 1024 * 1024) {
-          console.log('Skipping optimizer for large file:', modelFile.size);
-        } else {
-          const inputPath = modelFile.path;
-          const outputPath = inputPath.replace(path.extname(inputPath), '_opt' + path.extname(inputPath));
-          
-          const nodeExe = process.execPath;
-          const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
-          
-          await new Promise((resolve, reject) => {
-            // Run with 6GB heap limit to comfortably parse 300MB+ models
-            exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${inputPath}" "${outputPath}"`, (error, stdout, stderr) => {
-              if (error) {
-                console.error('Optimizer Error:', error);
-                console.error(stderr);
-                // On failure, we just fall back to the original unoptimized model so the upload doesn't completely break
-                resolve();
-              } else {
-                // Replace original with optimized
-                fs.renameSync(outputPath, inputPath);
-                resolve();
-              }
-            });
-          });
-        }
-      }
+    if (req.files['model'] && req.files['model'][0]) {
+      const targetPath = req.files['model'][0].path;
+      const processingPath = targetPath + '.processing';
+      
+      // Move original aside
+      fs.renameSync(targetPath, processingPath);
+      
+      // Launch background worker
+      startOptimization(targetPath);
+    }
 
-    res.status(201).json(response);
+    res.status(202).json(response);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Media could not be saved.' });
+  }
+});
+
+// STATUS endpoint for frontend polling
+router.get('/status', (req, res) => {
+  try {
+    const fileUrl = req.query.file;
+    if (!fileUrl || !fileUrl.startsWith('/uploads/')) return res.json({ status: 'NOT_FOUND' });
+    
+    const baseName = path.basename(fileUrl);
+    const targetPath = path.join(uploadDir, baseName);
+
+    if (fs.existsSync(targetPath)) return res.json({ status: 'READY' });
+    if (fs.existsSync(targetPath + '.processing')) return res.json({ status: 'PROCESSING' });
+    if (fs.existsSync(targetPath + '.failed')) return res.json({ status: 'FAILED' });
+    
+    return res.json({ status: 'NOT_FOUND' });
+  } catch (e) {
+    return res.json({ status: 'NOT_FOUND' });
   }
 });
 

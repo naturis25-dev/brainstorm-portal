@@ -143,7 +143,7 @@ function handleClick(event, d, projectsList, category) {
   
   // Arrange around center
   var angles = [-Math.PI/2, Math.PI/6, 5*Math.PI/6];
-  var radius = 90;
+  var radius = window.innerWidth <= 768 ? 60 : 90;
 
   topProjects.forEach(function(p, i) {
     var px = x + Math.cos(angles[i]) * radius;
@@ -249,7 +249,10 @@ function openPanel(name, list) {
             '<div class="pc-content">' +
               '<div class="pc-eyebrow">' + catLabel + '</div>' +
               '<div class="pc-title">' + p.title + '</div>' +
-              '<div class="pc-meta">' + p.type + '</div>' +
+              '<div class="pc-meta" style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">' + 
+                  '<span>' + (p.type || catLabel) + '</span>' +
+                  (p.tons ? '<span style="font-weight:800; color:var(--accent); background:#f0f9ff; padding:2px 6px; border-radius:4px; font-size:10px; border: 1px solid #bae6fd; letter-spacing:0.5px;">' + Math.round(p.tons).toLocaleString() + ' TONS</span>' : '') +
+                '</div>' +
             '</div>' +
             '<div class="pc-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
           '</div>';
