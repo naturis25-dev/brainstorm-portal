@@ -4002,3 +4002,28 @@ body.dark-mode .map-controls-bar {
 #map.fade-out {
   opacity: 0 !important;
 }
+
+
+/* Hide model-viewer default prompts */
+model-viewer::part(interaction-prompt) {
+  display: none !important;
+}
+model-viewer {
+  --interaction-prompt-display: none !important;
+}
+
+
+model-viewer::part(interaction-prompt),
+.nav-prompt,
+.prompt,
+[slot="interaction-prompt"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+
+@keyframes popupFadeScale {
+  0% { opacity: 0; transform: translate(-50%, -45%) scale(0.95); filter: blur(10px); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0px); }
+}

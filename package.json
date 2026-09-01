@@ -1,0 +1,9 @@
+{
+  "name": "brainstorm-portal",
+  "version": "1.0.0",
+  "description": "Brainstorm Infotech 3D Portal",
+  "scripts": {
+    "install": "cd backend && npm install",
+    "start": "cd backend && npm start"
+  }
+}

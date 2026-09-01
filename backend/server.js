@@ -37,8 +37,8 @@ app.use('/api/auth/login', authLimiter);
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use('/uploads', express.static(uploadDir, { maxAge: '365d', immutable: true }));
 app.use('/api/media', bodyParser.json({ limit: '1000mb' }), mediaRouter);
-app.use(bodyParser.json({ limit: '1000mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '1000mb' }));
+app.use(bodyParser.json({ limit: '10mb' })); // Reduced from 1000mb for DOS protection
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // API Routes
 app.use('/api/projects', projectsRouter);
@@ -75,3 +75,28 @@ const server = app.listen(PORT, () => {
 
 // Disable timeout for massive 5GB+ file uploads
 server.setTimeout(0);
+
+
+// Graceful Shutdown for Deployment (Docker/Heroku/Render)
+const shutdown = () => {
+  console.log('\n[Server] Received kill signal, shutting down gracefully...');
+  server.close(async () => {
+    console.log('[Server] Closed out remaining connections.');
+    try {
+      const { pool } = require('./database.pg.js');
+      if (pool) await pool.end();
+      console.log('[DB] PostgreSQL pool closed.');
+    } catch (err) {
+      console.error('[DB] Error during pool closure:', err);
+    }
+    process.exit(0);
+  });
+  
+  setTimeout(() => {
+    console.error('[Server] Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);

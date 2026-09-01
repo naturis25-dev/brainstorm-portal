@@ -99,12 +99,13 @@ async function fetchAppInitialData() {
 
     renderCategoryChips();
     renderMap();
-    if (typeof window.hideLoader === 'function') window.hideLoader();
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects
     renderCategoryChips();
     renderMap();
+  } finally {
+    if (typeof window.hideLoader === 'function') window.hideLoader();
   }
 }
 
@@ -123,18 +124,151 @@ function renderCategoryChips() {
   const row = document.getElementById('categoryChipRow');
   if (!row) return;
   const cats = window.CONFIG?.CATEGORIES || ['All'];
+  const oldSearch = document.getElementById('globalProjectSearch');
+  const oldVal = oldSearch ? oldSearch.value : '';
+
   row.innerHTML = cats.map(c =>
     `<button class="cat-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
-  ).join('');
+  ).join('') + 
+  `<div class="inline-search-wrap" style="position: relative; flex: 1; min-width: 180px; height: 34px; margin-left: auto;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none; opacity:0.45;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="globalProjectSearch" placeholder="Search projects..." value="${oldVal.replace(/"/g, '&quot;')}" style="padding: 0 36px 0 32px; width: 100%; height: 100%; background: var(--gray-50, #f8fafc); border: 1.5px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
+    <button id="globalSearchBtn" title="Search" style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background: var(--accent); color:#fff; border:none; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background 0.2s;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+  </div>`;
   row.querySelectorAll('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       currentCategory = chip.dataset.cat;
       renderCategoryChips();
       if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
       closePanel();
+      });
     });
-  });
-}
+
+    const searchInput = document.getElementById('globalProjectSearch');
+    const searchBtn = document.getElementById('globalSearchBtn');
+    
+    function executeSearch() {
+        const q = searchInput.value.trim();
+        if (!q) {
+          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+          const existingPopup = document.getElementById('searchResultsPopup');
+          if (existingPopup) existingPopup.remove();
+          return;
+        }
+        
+        const lowerQ = q.toLowerCase();
+        const filtered = (window.PROJECT_STATS || PROJECTS).filter(p => {
+          return (p.title || '').toLowerCase().includes(lowerQ) ||
+                 (p.state || '').toLowerCase().includes(lowerQ) ||
+                 (p.category || '').toLowerCase().includes(lowerQ) ||
+                 (p.type || '').toLowerCase().includes(lowerQ);
+        });
+        
+        if (window.MapModule) {
+          window.MapModule.drawMap(filtered, currentCategory, currentCountry);
+        }
+
+        // --- NEW: Search Results Popup ---
+        let popup = document.getElementById('searchResultsPopup');
+        if (!popup) {
+          popup = document.createElement('div');
+          popup.id = 'searchResultsPopup';
+          popup.style.position = 'fixed';
+          popup.style.top = '50%';
+          popup.style.left = '50%';
+          popup.style.transform = 'translate(-50%, -50%)';
+          popup.style.width = '85%';
+          popup.style.maxWidth = '800px';
+          popup.style.maxHeight = '70vh';
+          // Glassmorphism styling
+          popup.style.background = 'rgba(255, 255, 255, 0.7)';
+          popup.style.backdropFilter = 'blur(24px)';
+          popup.style.WebkitBackdropFilter = 'blur(24px)';
+          popup.style.border = '1px solid rgba(255, 255, 255, 0.4)';
+          popup.style.borderRadius = '24px';
+          popup.style.boxShadow = '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)';
+          if (document.body.classList.contains('dark-mode')) {
+            popup.style.background = 'rgba(15, 15, 17, 0.75)';
+            popup.style.border = '1px solid rgba(255,255,255,0.1)';
+            popup.style.boxShadow = '0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)';
+          }
+          popup.style.zIndex = '9999';
+          popup.style.display = 'flex';
+          popup.style.flexDirection = 'column';
+          popup.style.overflow = 'hidden';
+          popup.style.animation = 'popupFadeScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+          document.body.appendChild(popup);
+        }
+
+        let isDark = document.body.classList.contains('dark-mode');
+        let headerBg = isDark ? 'linear-gradient(135deg, rgba(37,99,235,0.2), rgba(0,0,0,0))' : 'linear-gradient(135deg, rgba(37,99,235,0.1), rgba(255,255,255,0))';
+        let rowBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.6)';
+        let rowHoverBg = isDark ? 'rgba(37,99,235,0.15)' : 'rgba(255,255,255,1)';
+        let borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+        let resultsHtml = `<div style="padding: 20px 24px; border-bottom: 1px solid ${borderColor}; display: flex; justify-content: space-between; align-items: center; background: ${headerBg};">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="background:var(--accent); color:#fff; width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,0.4);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </div>
+              <div>
+                <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--ink); letter-spacing:-0.3px;">Search Results</h3>
+                <div style="font-size:12px; color:var(--sub); font-weight:500; margin-top:2px;">Found ${filtered.length} matches for "${q}"</div>
+              </div>
+            </div>
+            <button onclick="document.getElementById('searchResultsPopup').remove()" style="background:var(--bg-alt); border:1px solid var(--line); border-radius:50%; cursor:pointer; color:var(--sub); width:32px; height:32px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.05);" onmouseover="this.style.background='var(--accent)'; this.style.color='#fff'; this.style.transform='rotate(90deg)'" onmouseout="this.style.background='var(--bg-alt)'; this.style.color='var(--sub)'; this.style.transform='none'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div style="overflow-y:auto; padding: 16px; display:flex; flex-direction:column; gap:12px;">`;
+
+        if (filtered.length === 0) {
+            resultsHtml += `<div style="padding: 40px; text-align: center; color: var(--sub);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.3; margin-bottom:16px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <div style="font-size:16px; font-weight:600;">No projects found</div>
+              <div style="font-size:13px; margin-top:4px;">Try adjusting your search terms</div>
+            </div>`;
+        } else {
+            filtered.forEach((p, idx) => {
+                let imgUrl = (p.images && p.images.length > 0) ? (p.images[0].startsWith('http') ? p.images[0] : `/uploads/${p.images[0]}`) : 'assets/logo.png';
+                let animDelay = idx * 0.05;
+                resultsHtml += `<div onclick="document.getElementById('searchResultsPopup').remove(); openDetail('${p.id}')" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:${rowBg}; border:1px solid ${borderColor}; border-radius:16px; cursor:pointer; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: viewFadeIn 0.4s ease backwards ${animDelay}s;" onmouseover="this.style.background='${rowHoverBg}'; this.style.transform='translateY(-2px) scale(1.01)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.background='${rowBg}'; this.style.transform='none'; this.style.boxShadow='none'">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div style="width:72px; height:72px; border-radius:14px; overflow:hidden; background:var(--bg-alt); flex-shrink:0; border:1px solid ${borderColor};">
+                          <img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'; this.style.objectFit='contain'; this.style.padding='8px';">
+                        </div>
+                        <div>
+                            <div style="font-weight:800; color:var(--ink); font-size:18px; margin-bottom:8px; letter-spacing:-0.2px;">${p.title}</div>
+                            <div style="font-size:14px; color:var(--sub); display:flex; align-items:center; gap:16px; font-weight:500;">
+                                <span style="display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${p.state}</span>
+                                <span style="background:var(--bg-alt); padding:4px 10px; border-radius:100px; border:1px solid var(--line); font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">${p.category}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align:right; padding-right:8px;">
+                      <div style="font-weight:800; color:var(--accent); font-size:22px; letter-spacing:-0.5px;">${(p.tons || 0).toLocaleString()} <span style="font-size:11px; opacity:0.7;">TONS</span></div>
+                    </div>
+                </div>`;
+            });
+        }
+        resultsHtml += `</div>`;
+        popup.innerHTML = resultsHtml;
+    
+    }
+
+    if (searchBtn) searchBtn.addEventListener('click', executeSearch);
+    if (searchInput) {
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') executeSearch();
+      });
+      // also allow instant filtering
+      searchInput.addEventListener('input', () => {
+         if (searchInput.value.trim() === '') executeSearch();
+      });
+    }
+  }
 
 // ============================================================
 // NAVIGATION & AUTH
@@ -442,9 +576,18 @@ function setupNavigation() {
         if (minSlider) minSlider.classList.remove('ca');
         if (heroPill) { heroPill.classList.remove('ca'); heroPill.classList.add('usa'); }
         if (heroHighlight) heroHighlight.className = 'highlight-usa';
-      }
-
-      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+        }
+  
+        const mapEl = document.getElementById('map');
+        if (mapEl) {
+          mapEl.classList.add('fade-out');
+          setTimeout(() => {
+            if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+            setTimeout(() => mapEl.classList.remove('fade-out'), 50);
+          }, 250);
+        } else {
+          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+        }
     });
   });
 
@@ -674,6 +817,8 @@ window.openDetail = function(id) {
             mv.setAttribute('min-camera-orbit', 'auto auto 0m');
             mv.setAttribute('min-field-of-view', '1deg');
             mv.setAttribute('max-field-of-view', '100deg');
+            mv.setAttribute('interaction-prompt', 'none');
+            mv.innerHTML = '<div slot="interaction-prompt" style="display:none;"></div>';
           
             
               mv.style.position = 'absolute';
@@ -830,10 +975,24 @@ function renderAdmin() {
     const activeCount = PROJECTS.filter(p => p.status === 'Active').length;
     const totalTons = PROJECTS.reduce((a, p) => a + (p.tons || 0), 0);
     statsRow.innerHTML = `
-      <div class="stat"><div class="n">${PROJECTS.length}</div><div class="l">TOTAL PROJECTS</div></div>
-      <div class="stat"><div class="n">${stateCount}</div><div class="l">REGIONS COVERED</div></div>
-      <div class="stat"><div class="n">${totalTons.toLocaleString()}</div><div class="l">TOTAL TONS</div></div>
-    `;
+        <div class="stat"><div class="n" id="stat-proj">0</div><div class="l">TOTAL PROJECTS</div></div>
+        <div class="stat"><div class="n" id="stat-state">0</div><div class="l">REGIONS COVERED</div></div>
+        <div class="stat"><div class="n" id="stat-tons">0</div><div class="l">TOTAL TONS</div></div>
+      `;
+      const animVal = (el, end) => {
+        let startTS = null;
+        const step = (ts) => {
+          if (!startTS) startTS = ts;
+          const p = Math.min((ts - startTS) / 1200, 1);
+          const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+          if (el) el.innerHTML = Math.floor(ease * end).toLocaleString();
+          if (p < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
+      };
+      animVal(document.getElementById('stat-proj'), PROJECTS.length);
+      animVal(document.getElementById('stat-state'), stateCount);
+      animVal(document.getElementById('stat-tons'), totalTons);
   }
   renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : PROJECTS);
 }
