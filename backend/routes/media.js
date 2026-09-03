@@ -5,8 +5,10 @@ const crypto = require('crypto');
 const multer = require('multer');
 const { requireAuth } = require('./auth');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const mime = require('mime-types');
 
 let s3Client = null;
+let s3PublicUrl = process.env.S3_PUBLIC_URL || '';
 if (process.env.S3_ENDPOINT && process.env.S3_ACCESS_KEY && process.env.S3_SECRET_KEY && process.env.S3_BUCKET) {
   s3Client = new S3Client({
     region: 'auto',
@@ -16,7 +18,10 @@ if (process.env.S3_ENDPOINT && process.env.S3_ACCESS_KEY && process.env.S3_SECRE
       secretAccessKey: process.env.S3_SECRET_KEY
     }
   });
-  console.log('[Cloud Storage] S3/R2 Client Initialized.');
+  if (!s3PublicUrl) {
+    s3PublicUrl = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET}`;
+  }
+  console.log('[Cloud Storage] S3/R2 Client Initialized. Public URL:', s3PublicUrl);
 }
 
 const router = express.Router();
@@ -39,13 +44,42 @@ const upload = multer({
   limits: { fileSize: 6000 * 1024 * 1024 } // 6GB limit
 });
 
+async function uploadToR2AndDelete(localPath, filename) {
+  if (!s3Client) return `/uploads/${filename}`;
+  try {
+    const fileStream = fs.createReadStream(localPath);
+    const contentType = mime.lookup(localPath) || 'application/octet-stream';
+    const key = `uploads/${filename}`;
+    
+    await s3Client.send(new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+      Body: fileStream,
+      ContentType: contentType,
+    }));
+    
+    if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+    
+    const base = s3PublicUrl.replace(/\/$/, '');
+    return `${base}/${key}`;
+  } catch (err) {
+    console.error(`[Cloud Storage] Failed to upload ${filename} to R2:`, err);
+    return `/uploads/${filename}`;
+  }
+}
+
+function getFinalUrl(filename) {
+  if (!s3Client) return `/uploads/${filename}`;
+  const base = s3PublicUrl.replace(/\/$/, '');
+  return `${base}/uploads/${filename}`;
+}
+
 const { exec } = require('child_process');
 
-function startOptimization(targetPath) {
+function startOptimization(targetPath, filename) {
   const processingPath = targetPath + '.processing';
   const failedPath = targetPath + '.failed';
 
-  // Ensure states are clean
   if (!fs.existsSync(processingPath)) return;
   if (fs.existsSync(failedPath)) fs.unlinkSync(failedPath);
   if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
@@ -53,47 +87,46 @@ function startOptimization(targetPath) {
   const nodeExe = process.execPath;
   const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
 
-  exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${processingPath}" "${targetPath}"`, (error, stdout, stderr) => {
+  exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${processingPath}" "${targetPath}"`, async (error, stdout, stderr) => {
+    let finalLocalPath = targetPath;
+    let optimizationFailed = false;
+    
     if (error) {
       console.error(`Optimizer failed for ${targetPath}: code ${error.code}`);
-      
-      if (!fs.existsSync(processingPath)) return; // Should not happen
-
+      if (!fs.existsSync(processingPath)) return;
       if (error.code === 2) {
-        // Corrupted / Cannot Read
         fs.renameSync(processingPath, failedPath);
+        optimizationFailed = true;
       } else if (error.code === 3) {
-        // Valid, but optimization failed (e.g. OOM)
-        fs.renameSync(processingPath, targetPath); // Fallback to original
+        fs.renameSync(processingPath, targetPath);
       } else {
-        // Unknown crash
         fs.renameSync(processingPath, failedPath);
+        optimizationFailed = true;
       }
     } else {
-      // Success! The output was written to targetPath.
-      if (fs.existsSync(processingPath)) {
-        fs.unlinkSync(processingPath);
-      }
+      if (fs.existsSync(processingPath)) fs.unlinkSync(processingPath);
+    }
+
+    if (s3Client && !optimizationFailed && fs.existsSync(finalLocalPath)) {
+       try {
+         await uploadToR2AndDelete(finalLocalPath, filename);
+       } catch(e) {
+         console.error('Failed post-optimization R2 upload:', e);
+       }
     }
   });
 }
 
-// ----------------------------------------------------
-// Start-up recovery logic: Resume orphaned tasks
-// ----------------------------------------------------
 function resumeFailedOptimizations() {
   const files = fs.readdirSync(uploadDir);
   files.forEach(f => {
     if (f.endsWith('.processing')) {
-      console.log(`[Media] Resuming orphaned optimization for ${f}`);
       const targetName = f.replace('.processing', '');
-      startOptimization(path.join(uploadDir, targetName));
+      startOptimization(path.join(uploadDir, targetName), targetName);
     }
   });
 }
-// Run once on load
 resumeFailedOptimizations();
-
 
 router.post('/', requireAuth, upload.fields([
   { name: 'images', maxCount: 20 },
@@ -101,21 +134,36 @@ router.post('/', requireAuth, upload.fields([
   { name: 'model', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const response = {
-      images: req.files['images'] ? req.files['images'].map(f => `/uploads/${f.filename}`) : [],
-      video: req.files['video'] ? `/uploads/${req.files['video'][0].filename}` : '',
-      model: req.files['model'] ? `/uploads/${req.files['model'][0].filename}` : ''
-    };
+    const response = { images: [], video: '', model: '' };
+
+    if (req.files['images']) {
+      for (const f of req.files['images']) {
+         if (s3Client) {
+           const r2Url = await uploadToR2AndDelete(f.path, f.filename);
+           response.images.push(r2Url);
+         } else {
+           response.images.push(`/uploads/${f.filename}`);
+         }
+      }
+    }
+
+    if (req.files['video'] && req.files['video'][0]) {
+      const f = req.files['video'][0];
+      if (s3Client) {
+         response.video = await uploadToR2AndDelete(f.path, f.filename);
+      } else {
+         response.video = `/uploads/${f.filename}`;
+      }
+    }
 
     if (req.files['model'] && req.files['model'][0]) {
-      const targetPath = req.files['model'][0].path;
+      const f = req.files['model'][0];
+      const targetPath = f.path;
       const processingPath = targetPath + '.processing';
       
-      // Move original aside
       fs.renameSync(targetPath, processingPath);
-      
-      // Launch background worker
-      startOptimization(targetPath);
+      startOptimization(targetPath, f.filename);
+      response.model = getFinalUrl(f.filename);
     }
 
     res.status(202).json(response);
@@ -125,14 +173,18 @@ router.post('/', requireAuth, upload.fields([
   }
 });
 
-// STATUS endpoint for frontend polling
 router.get('/status', (req, res) => {
   try {
     const fileUrl = req.query.file;
-    if (!fileUrl || !fileUrl.startsWith('/uploads/')) return res.json({ status: 'NOT_FOUND' });
+    if (!fileUrl) return res.json({ status: 'NOT_FOUND' });
+    if (!fileUrl.includes('/uploads/')) return res.json({ status: 'NOT_FOUND' });
     
     const baseName = path.basename(fileUrl);
     const targetPath = path.join(uploadDir, baseName);
+
+    if (s3Client && !fs.existsSync(targetPath) && !fs.existsSync(targetPath + '.processing') && !fs.existsSync(targetPath + '.failed')) {
+        return res.json({ status: 'READY' });
+    }
 
     if (fs.existsSync(targetPath)) return res.json({ status: 'READY' });
     if (fs.existsSync(targetPath + '.processing')) return res.json({ status: 'PROCESSING' });
