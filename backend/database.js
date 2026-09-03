@@ -32,6 +32,16 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_category ON projects(category);
   CREATE INDEX IF NOT EXISTS idx_created_at ON projects(createdAt DESC);
 
+  
+  CREATE TABLE IF NOT EXISTS audit_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    admin_email TEXT NOT NULL,
+    action TEXT NOT NULL,
+    target_id TEXT,
+    details TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS admins (
     username TEXT PRIMARY KEY,
     passwordHash TEXT NOT NULL,
@@ -292,7 +302,24 @@ const deleteSecondaryAdmin = (username) => {
   return info.changes > 0;
 };
 
+
+const insertAuditLog = (admin_email, action, target_id, details) => {
+  const stmt = db.prepare('INSERT INTO audit_logs (admin_email, action, target_id, details) VALUES (?, ?, ?, ?)');
+  stmt.run(admin_email, action, target_id, details ? JSON.stringify(details) : null);
+};
+
+const getAuditLogs = (limit = 100) => {
+  return db.prepare('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ?').all(limit).map(l => {
+    if (l.details) { try { l.details = JSON.parse(l.details); } catch(e){} }
+    return l;
+  });
+};
+
+const getProjectsCount = () => { return db.prepare("SELECT COUNT(*) as count FROM projects WHERE is_deleted = 0").get().count; };
 module.exports = {
+  getProjectsCount,
+  insertAuditLog,
+  getAuditLogs,
   getProjects,
   countProjects,
   getProjectById,

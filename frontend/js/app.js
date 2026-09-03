@@ -1,4 +1,4 @@
-// Global state — these are the single source of truth (map.js reads them via arguments)
+// Global state â these are the single source of truth (map.js reads them via arguments)
 var PROJECTS = [];
 var METADATA = { usStates: [], caProvinces: [], steelTypes: [], buildingTypes: [] };
 var currentCategory = 'All';
@@ -50,7 +50,7 @@ function initThemeToggle() {
 // ============================================================
 async function apiFetch(url, options = {}) {
   const headers = {
-    'Authorization': 'Bearer ' + (sessionStorage.getItem('steeltrack_admin_token') || '')
+    'Authorization': 'Bearer ' + (localStorage.getItem('steeltrack_admin_token') || '')
   };
   if (!(options.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
@@ -132,7 +132,7 @@ function renderCategoryChips() {
   ).join('') + 
   `<div class="inline-search-wrap" style="position: relative; flex: 1; min-width: 180px; height: 34px; margin-left: auto;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none; opacity:0.45;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="globalProjectSearch" placeholder="Search projects..." value="${oldVal.replace(/"/g, '&quot;')}" style="padding: 0 36px 0 32px; width: 100%; height: 100%; background: var(--gray-50, #f8fafc); border: 1.5px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
+    <input type="text" id="globalProjectSearch" placeholder="Search projects... (Ctrl+K)" value="${oldVal.replace(/"/g, '&quot;')}" style="padding: 0 36px 0 32px; width: 100%; height: 100%; background: var(--gray-50, #f8fafc); border: 1.5px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
     <button id="globalSearchBtn" title="Search" style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background: var(--accent); color:#fff; border:none; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background 0.2s;">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </button>
@@ -278,7 +278,7 @@ function setupNavigation() {
   document.getElementById('navMapBtn')?.addEventListener('click', (e) => { e.preventDefault(); goToMap(); });
   document.getElementById('backHome')?.addEventListener('click', () => goToMap());
 
-  // ── Back to Top Button ─────────────────────────────
+  // ââ Back to Top Button âââââââââââââââââââââââââââââ
   const bttBtn = document.getElementById('backToTopBtn');
   if (bttBtn) {
     const checkScroll = (val) => {
@@ -304,7 +304,7 @@ function setupNavigation() {
     });
   }
 
-  // ── New nav buttons ──────────────────────────────────
+  // ââ New nav buttons ââââââââââââââââââââââââââââââââââ
   document.getElementById('navBrochureDlInput')?.addEventListener('change', (e) => {
     if (e.target.checked) {
       const a = document.createElement('a');
@@ -509,10 +509,10 @@ function setupNavigation() {
   }
 
   // Restore login state
-  if (sessionStorage.getItem('steeltrack_admin_token')) updateAuthUI(true);
+  if (localStorage.getItem('steeltrack_admin_token')) updateAuthUI(true);
 
   loginBtn?.addEventListener('click', () => {
-    if (sessionStorage.getItem('steeltrack_admin_token')) {
+    if (localStorage.getItem('steeltrack_admin_token')) {
       renderAdmin(); showView('admin');
     } else {
       showView('login');
@@ -522,40 +522,40 @@ function setupNavigation() {
   adminBtn?.addEventListener('click', () => { renderAdmin(); showView('admin'); });
 
   logoutBtn?.addEventListener('click', () => {
-    sessionStorage.removeItem('steeltrack_admin_token');
-    sessionStorage.removeItem('steeltrack_is_superadmin');
+    localStorage.removeItem('steeltrack_admin_token');
+    localStorage.removeItem('steeltrack_is_superadmin');
     updateAuthUI(false);
     showView('map');
   });
 
-  // Login form submit
-  document.getElementById('loginSubmit')?.addEventListener('click', async () => {
-    const u = document.getElementById('loginUser').value.trim();
-    const p = document.getElementById('loginPass').value.trim();
-    const errEl = document.getElementById('loginError');
-    try {
-      const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
-      if (data.success && data.token) {
-        sessionStorage.setItem('steeltrack_admin_token', data.token);
-        if (data.user && data.user.isSuperAdmin) {
-          sessionStorage.setItem('steeltrack_is_superadmin', 'true');
-        } else {
-          sessionStorage.removeItem('steeltrack_is_superadmin');
+  // ─── Google Sign-In Flow ──────────────────────────────────────────────────
+    window.handleGoogleLogin = async function(response) {
+      const errEl = document.getElementById('loginError');
+      if (errEl) errEl.style.display = 'none';
+      
+      try {
+        const data = await apiFetch('/auth/google', { 
+          method: 'POST', 
+          body: JSON.stringify({ credential: response.credential }) 
+        });
+        
+        if (data.success && data.token) {
+          localStorage.setItem('steeltrack_admin_token', data.token);
+          if (data.user && data.user.isSuperAdmin) {
+            localStorage.setItem('steeltrack_is_superadmin', 'true');
+          } else {
+            localStorage.removeItem('steeltrack_is_superadmin');
+          }
+          if (errEl) errEl.style.display = 'none';
+          updateAuthUI(true);
+          renderAdmin();
+          showView('admin');
+          if (window.showToast) window.showToast('Welcome back, ' + data.user.username, 'success');
         }
-        if (errEl) errEl.style.display = 'none';
-        updateAuthUI(true);
-        renderAdmin();
-        showView('admin');
+      } catch (err) {
+        if (errEl) { errEl.textContent = err.message || 'Login failed.'; errEl.style.display = 'block'; }
       }
-    } catch (err) {
-      if (errEl) { errEl.textContent = err.message || 'Invalid credentials.'; errEl.style.display = 'block'; }
-    }
-  });
-
-  // Allow Enter key on login
-  document.getElementById('loginPass')?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('loginSubmit')?.click();
-  });
+    };
 
   // Country toggle
   document.querySelectorAll('.min-btn').forEach(btn => {
@@ -716,6 +716,26 @@ window.openDetail = function(id) {
 
   const wrap = document.getElementById('detailWrap');
   if (wrap) {
+      const similar = PROJECTS.filter(x => x.id !== p.id && (x.category === p.category || (x.type && p.type && x.type.includes(p.type.split(',')[0])))).slice(0, 3);
+  let similarHtml = '';
+  if (similar.length > 0) {
+    similarHtml = `
+      <div style="margin-top: 64px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 32px;">
+        <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 24px; color: var(--ink); letter-spacing:-0.5px;">Similar Projects</h3>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+          ${similar.map(s => `
+            <div onclick="window.openDetail('${s.id}')" style="cursor:pointer; flex: 1; min-width: 260px; max-width: 320px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; transition:all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.03);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)';">
+              <img src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" style="width:100%; height:160px; object-fit:cover;" onerror="this.src='assets/logo.png';">
+              <div style="padding:20px;">
+                <div style="font-weight:800; font-size:16px; margin-bottom:6px; color:var(--ink);">${s.title}</div>
+                <div style="font-size:13px; color:var(--sub); font-weight:600;">${s.state}, ${s.country}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
     wrap.innerHTML = `
       <div class="premium-kpi-grid">
         <div class="pkpi-card">
@@ -775,16 +795,17 @@ window.openDetail = function(id) {
                 </div>
               </div>
 
-              <div class="model-hint" style="position: absolute; bottom: 12px; z-index: 5;">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.23-9.58l-5.11 5.11"></path></svg>
-                Drag to orbit • Scroll to zoom
-              </div>
+              
             </div>
           </div>
         ` : ''}
-          ${p.images && p.images.length > 1 ? `<div class="detail-gallery">${p.images.slice(1).map(img => `<img loading="lazy" decoding="async" src="${img}" onclick="this.requestFullscreen&&this.requestFullscreen()">`).join('')}</div>` : ''}
+          ${p.images && p.images.length > 1 ? `<div class="detail-gallery">${p.images.slice(1).map(img => `<img loading="lazy" decoding="async" src="${img}" onclick="window.openLightbox(this.src)">`).join('')}</div>` : ''}
           <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
-          ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
+          
+
+
+      ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
+        ${similarHtml}
       `;
     }
     
@@ -836,21 +857,28 @@ window.openDetail = function(id) {
               controls.style.gap = '8px';
               controls.style.alignItems = 'flex-end';
               controls.innerHTML = `
-                <div style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 12px; font-size:11px; line-height:1.4; backdrop-filter:blur(4px); pointer-events:none; text-align:left; white-space:nowrap;">
-                  <b>Controls:</b><br/>
-                  � Left Click + Drag: Orbit<br/>
-                  � Right Click + Drag: Pan<br/>
-                  � Scroll Wheel: Zoom
-                </div>
-                <div style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Desktop Instructions -->
+                <div class="viewer-instructions-desktop" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 12px; font-size:11px; line-height:1.4; backdrop-filter:blur(4px); pointer-events:none; text-align:left; white-space:nowrap;">
+                    <b>Controls:</b><br/>
+                    - Left Click + Drag: Orbit<br/>
+                    - Right Click + Drag: Pan<br/>
+                    - Scroll Wheel: Zoom
+                  </div>
+                <!-- Mobile Instructions -->
+                <div class="viewer-instructions-mobile" style="font-size:9px; color:#fff; background:rgba(0,0,0,0.6); padding:4px 6px; border-radius:6px; line-height:1.2; backdrop-filter:blur(4px); display:none; letter-spacing: -0.2px;">
+  <strong style="font-size:10px;">Touch Controls</strong><br/>
+  [1 Finger] Orbit<br/>
+  [2 Fingers] Pan/Zoom
+</div>
+                <div class="viewer-buttons" style="display:flex; flex-direction:column; gap:8px;">
                   <button id="mv-rotate-${p.id}" title="Pause Auto Rotate" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> <span class="btn-text">Pause</span>
                   </button>
                   <div style="display:flex; gap:8px;">
                     <button id="mv-zoom-in-${p.id}" title="Zoom In" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">+</button>
                     <button id="mv-zoom-out-${p.id}" title="Zoom Out" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">-</button>
                     <button id="mv-fullscreen-${p.id}" title="Full Screen" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg> Fullscreen
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg> <span class="btn-text">Fullscreen</span>
                     </button>
                   </div>
                 </div>
@@ -959,7 +987,7 @@ function renderVideo(v) {
 // ADMIN DASHBOARD
 // ============================================================
 function renderAdmin() {
-  const isSuperAdmin = sessionStorage.getItem('steeltrack_is_superadmin') === 'true';
+  const isSuperAdmin = localStorage.getItem('steeltrack_is_superadmin') === 'true';
   const title = document.getElementById('adminPageTitle');
   if (title) {
     title.textContent = isSuperAdmin ? 'Super Atlas Admin Dashboard' : 'Atlas Admin Dashboard';
@@ -994,14 +1022,26 @@ function renderAdmin() {
       animVal(document.getElementById('stat-state'), stateCount);
       animVal(document.getElementById('stat-tons'), totalTons);
   }
-  renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : PROJECTS);
+  renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS);
+  if (window.innerWidth <= 768 && window.MapModule && window.MapModule.openPanel) {
+    window.MapModule.openPanel('All Projects', window.PROJECTS || []);
+  }
 }
 
-function renderAdminTable(list) {
-  const tbody = document.getElementById('adminTableBody');
-  if (!tbody) return;
-  
-  tbody.innerHTML = list.map(p => {
+window.currentAdminPage = 1;
+  const adminPageSize = 10;
+
+  function renderAdminTable(list) {
+    const tbody = document.getElementById('adminTableBody');
+    if (!tbody) return;
+    
+    // Pagination logic
+    const totalPages = Math.ceil(list.length / adminPageSize) || 1;
+    if (window.currentAdminPage > totalPages) window.currentAdminPage = totalPages;
+    const start = (window.currentAdminPage - 1) * adminPageSize;
+    const pagedList = list.slice(start, start + adminPageSize);
+    
+    tbody.innerHTML = pagedList.map(p => {
     const isCanada = p.country && (p.country.toLowerCase() === 'ca' || p.country.toLowerCase() === 'canada');
     const countryStyle = isCanada 
       ? "color: #ef4444; background: #fef2f2; border: 1px solid #fecaca;" 
@@ -1028,7 +1068,29 @@ function renderAdminTable(list) {
       </tr>
     `;
   }).join('');
-}
+    
+    // Render pagination controls
+    const paginationContainer = document.getElementById('adminPagination') || (function() {
+      const c = document.createElement('div');
+      c.id = 'adminPagination';
+      c.style.display = 'flex';
+      c.style.justifyContent = 'space-between';
+      c.style.alignItems = 'center';
+      c.style.padding = '16px';
+      c.style.borderTop = '1px solid var(--border)';
+      tbody.parentElement.parentElement.appendChild(c);
+      return c;
+    })();
+    
+    paginationContainer.innerHTML = `
+      <div style="font-size:13px; color:var(--sub);">Showing ${start+1}-${Math.min(start+adminPageSize, list.length)} of ${list.length}</div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-sec" style="padding:4px 12px; font-size:13px;" ${window.currentAdminPage === 1 ? 'disabled' : ''} onclick="window.currentAdminPage--; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)">Prev</button>
+        <button class="btn-sec" style="padding:4px 12px; font-size:13px;" ${window.currentAdminPage === totalPages ? 'disabled' : ''} onclick="window.currentAdminPage++; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)">Next</button>
+      </div>
+    `;
+  }
+
 
 async function deleteProject(id) {
   if (confirm('Remove this project?')) {
@@ -1210,7 +1272,7 @@ function setupModal() {
         const media = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open('POST', '/api/media', true);
-          xhr.setRequestHeader('Authorization', 'Bearer ' + (sessionStorage.getItem('steeltrack_admin_token') || ''));
+          xhr.setRequestHeader('Authorization', 'Bearer ' + (localStorage.getItem('steeltrack_admin_token') || ''));
           
           xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
@@ -1444,7 +1506,7 @@ function setupAdminControls() {
       }
       
       document.querySelectorAll('th.sortable .sort-icon').forEach(icon => icon.innerHTML = '');
-      th.querySelector('.sort-icon').innerHTML = currentAdminSort.asc ? ' ▲' : ' ▼';
+      th.querySelector('.sort-icon').innerHTML = currentAdminSort.asc ? ' â²' : ' â¼';
       
       renderAdminTable(getFilteredSortedAdminProjects());
     });
@@ -1461,7 +1523,7 @@ function initApp() {
   setupModal();
   setupAdminControls();
   setupDragAndDrop();
-  // Load data — map renders after data arrives
+  // Load data â map renders after data arrives
   fetchAppInitialData();
 }
 
@@ -1680,3 +1742,193 @@ if (document.readyState === 'loading') {
     if (!res.ok) throw new Error('Failed to save drawings JSON');
   }
 })();
+window.openLightbox = function(src) {
+  const overlay = document.createElement('div');
+  overlay.id = 'customLightbox';
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.zIndex = '99999';
+  overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.cursor = 'zoom-out';
+  overlay.style.animation = 'viewFadeIn 0.3s ease';
+  
+  const img = document.createElement('img');
+  img.src = src;
+  img.style.maxWidth = '100vw';
+  img.style.maxHeight = '100vh';
+  img.style.objectFit = 'contain';
+  
+  const closeBtn = document.createElement('div');
+  closeBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+  closeBtn.style.position = 'absolute';
+  closeBtn.style.top = '20px';
+  closeBtn.style.right = '20px';
+  closeBtn.style.width = '44px';
+  closeBtn.style.height = '44px';
+  closeBtn.style.backgroundColor = '#fff';
+  closeBtn.style.color = '#18181b';
+  closeBtn.style.borderRadius = '50%';
+  closeBtn.style.display = 'flex';
+  closeBtn.style.alignItems = 'center';
+  closeBtn.style.justifyContent = 'center';
+  closeBtn.style.fontSize = '26px';
+  closeBtn.style.cursor = 'pointer';
+  closeBtn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+  
+  overlay.appendChild(img);
+  overlay.appendChild(closeBtn);
+  
+  overlay.onclick = function() {
+    document.body.removeChild(overlay);
+  };
+  
+  document.body.appendChild(overlay);
+};
+
+window.showToast = function(msg, type='success') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.style.background = type === 'success' ? 'rgba(16,185,129,0.95)' : (type === 'error' ? 'rgba(239,68,68,0.95)' : 'rgba(59,130,246,0.95)');
+  toast.style.backdropFilter = 'blur(10px)';
+  toast.style.color = '#fff';
+  toast.style.padding = '12px 24px';
+  toast.style.borderRadius = '30px';
+  toast.style.fontWeight = '600';
+  toast.style.fontSize = '14px';
+  toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+  toast.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+  toast.style.transform = 'translateY(20px)';
+  toast.style.opacity = '0';
+  toast.style.whiteSpace = 'nowrap';
+  toast.innerHTML = msg;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+  }, 10);
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-20px)';
+    setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+  }, 3000);
+};
+
+const STATE_COORDS = {
+  'Texas': {lat: 31.9686, lon: -99.9018}, 'California': {lat: 36.7783, lon: -119.4179},
+  'New York': {lat: 40.7128, lon: -74.0060}, 'Florida': {lat: 27.9944, lon: -81.7603},
+  'Illinois': {lat: 40.0000, lon: -89.0000}, 'Ontario': {lat: 51.2538, lon: -85.3232},
+  'British Columbia': {lat: 53.7267, lon: -127.6476}, 'Quebec': {lat: 52.9399, lon: -73.5491},
+  'Washington': {lat: 47.7511, lon: -120.7401}, 'Nova Scotia': {lat: 44.6820, lon: -63.7443},
+  'Alberta': {lat: 53.9333, lon: -116.5765}, 'Colorado': {lat: 39.5501, lon: -105.7821},
+  'Pennsylvania': {lat: 41.2033, lon: -77.1945}, 'Michigan': {lat: 44.3148, lon: -85.6024},
+  'Ohio': {lat: 40.4173, lon: -82.9071}, 'Georgia': {lat: 32.1656, lon: -82.9001},
+  'North Carolina': {lat: 35.7596, lon: -79.0193}, 'Virginia': {lat: 37.4316, lon: -78.6569},
+  'Massachusetts': {lat: 42.4072, lon: -71.3824}, 'New Jersey': {lat: 40.0583, lon: -74.4057},
+  'Arizona': {lat: 34.0489, lon: -111.0937}, 'Nevada': {lat: 38.8026, lon: -116.4194},
+  'Utah': {lat: 39.3210, lon: -111.0937}, 'Oregon': {lat: 43.8041, lon: -120.5542},
+  'Maryland': {lat: 39.0458, lon: -76.6413}, 'Wisconsin': {lat: 43.7844, lon: -88.7879},
+  'Minnesota': {lat: 46.7296, lon: -94.6859}, 'Missouri': {lat: 37.9643, lon: -91.8318},
+  'Indiana': {lat: 39.7684, lon: -86.1581}, 'Tennessee': {lat: 35.5175, lon: -86.5804},
+  'Manitoba': {lat: 53.7609, lon: -98.8139}, 'Saskatchewan': {lat: 52.9399, lon: -106.4509},
+  'New Brunswick': {lat: 46.5653, lon: -66.4619},
+  'New York State': {lat: 40.7128, lon: -74.0060}, 'United Arab Emirates': {lat: 23.4241, lon: 53.8478}
+};
+
+
+
+
+  // ─── Spotlight Search ───────────────────────────────────────────────────────
+  const spotlightModal = document.getElementById('spotlightSearch');
+  const spotlightInput = document.getElementById('spotlightInput');
+  const spotlightResults = document.getElementById('spotlightResults');
+
+  // Toggle Spotlight
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (spotlightModal.classList.contains('active')) {
+        closeSpotlight();
+      } else {
+        openSpotlight();
+      }
+    }
+    if (e.key === 'Escape' && spotlightModal.classList.contains('active')) {
+      closeSpotlight();
+    }
+  });
+
+  spotlightModal?.addEventListener('click', (e) => {
+    if (e.target === spotlightModal) closeSpotlight();
+  });
+
+  window.openSpotlight = openSpotlight;
+  function openSpotlight() {
+    spotlightModal.classList.add('active');
+    spotlightInput.focus();
+    renderSpotlightResults('');
+  }
+
+  window.closeSpotlight = closeSpotlight;
+  function closeSpotlight() {
+    spotlightModal.classList.remove('active');
+    spotlightInput.value = '';
+  }
+
+  spotlightInput?.addEventListener('input', (e) => {
+    renderSpotlightResults(e.target.value.trim().toLowerCase());
+  });
+
+  function renderSpotlightResults(query) {
+    if (!spotlightResults) return;
+    spotlightResults.innerHTML = '';
+    
+    let filtered = window.PROJECTS || [];
+    if (query) {
+      filtered = filtered.filter(p => 
+        (p.title && p.title.toLowerCase().includes(query)) ||
+        (p.state && p.state.toLowerCase().includes(query)) ||
+        (p.category && p.category.toLowerCase().includes(query)) ||
+        (p.tons && p.tons.toString().includes(query))
+      );
+    }
+    
+    // Limit to 20 results for performance
+    filtered = filtered.slice(0, 20);
+    
+    if (filtered.length === 0) {
+      spotlightResults.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--sub);">No projects found</div>';
+      return;
+    }
+    
+    filtered.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'proj-row';
+      row.style.cursor = 'pointer';
+      
+      const thumb = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : 'uploads/' + p.images[0]) : 'assets/logo.png';
+      const fallback = "this.src='assets/logo.png'";
+      
+      row.innerHTML = `
+        <img class="prow-img" src="${thumb}" onerror="${fallback}">
+        <div class="prow-body">
+          <div class="prow-eyebrow">${p.category}</div>
+          <div class="prow-title">${p.title}</div>
+          <div class="prow-meta">
+            ${p.tons ? `<span class="prow-badge">${p.tons} Tons</span>` : ''}
+            <span style="color:var(--sub); font-size:12px;">${p.state}</span>
+          </div>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        closeSpotlight();
+        window.openDetail(p.id);
+      });
+      spotlightResults.appendChild(row);
+    });
+  }

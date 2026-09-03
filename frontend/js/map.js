@@ -21,8 +21,8 @@ function projectsForState(name, projectsList, categoryFilter) {
 
 function loadMapData(onReady) {
   Promise.all([
-    d3.json('/assets/vendor/us-states.json'),
-    d3.json('/assets/vendor/canada.geojson')
+    d3.json('assets/vendor/us-states.json'),
+    d3.json('assets/vendor/canada.geojson')
   ]).then(function(results) {
     var usTopo = results[0];
     var caGeo  = results[1];
@@ -66,7 +66,7 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
     .attr('class', function(d) {
       var name = d.properties.name;
       var c = projectsForState(name, projectsList, category).length;
-      return 'state ' + (c ? 'band-' + bandFor(c) : 'nodata');
+      return 'state ' + (c ? 'band-' + bandFor(c) + ' has-projects' : 'nodata');
     })
     .attr('d', path)
     .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
@@ -221,15 +221,19 @@ function openPanel(name, list) {
       '<div class="panel-content">' +
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">' +
           '<div style="font-weight:800;font-size:13px; color:var(--sub); letter-spacing:0.5px;">PROJECT LIST</div>' +
-          '<div class="sort-wrap">' +
-            '<select id="projectSort" class="sort-select">' +
-              '<option value="default">Sort: Default</option>' +
-              '<option value="tonnage">Largest Tonnage</option>' +
-              '<option value="year">Newest First</option>' +
-              '<option value="title">Alphabetical (A-Z)</option>' +
-            '</select>' +
-            '<svg class="sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
-          '</div>' +
+          '<div class="custom-select-wrap" id="projectSortWrap">' +
+              '<div class="custom-select-trigger" id="projectSortTrigger" onclick="event.stopPropagation(); document.getElementById(\'projectSortWrap\').classList.toggle(\'open\');">' +
+                '<span id="projectSortLabel">Sort: Default</span>' +
+                '<svg class="sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+              '</div>' +
+              '<div class="custom-select-menu" id="projectSortMenu">' +
+                '<div class="custom-select-option" onclick="window.selectSort(\'default\', \'Sort: Default\')">Sort: Default</div>' +
+                '<div class="custom-select-option" onclick="window.selectSort(\'tonnage\', \'Largest Tonnage\')">Largest Tonnage</div>' +
+                '<div class="custom-select-option" onclick="window.selectSort(\'year\', \'Newest First\')">Newest First</div>' +
+                '<div class="custom-select-option" onclick="window.selectSort(\'title\', \'Alphabetical (A-Z)\')">Alphabetical (A-Z)</div>' +
+              '</div>' +
+            '</div>' +
+            '</div>' +
         '</div>' +
         '<div id="projectListContainer"></div>' +
       '</div>';
@@ -244,21 +248,22 @@ function openPanel(name, list) {
           var imgSrc = (p.images && p.images[0]) ? '<img class="pc-img" loading="lazy" decoding="async" src="' + p.images[0] + '">' : '<div class="pc-img-placeholder"></div>';
           var catLabel = (p.category || 'MISC STEEL').toUpperCase();
           
-          return '<div class="proj-card premium-card" data-id="' + p.id + '" style="animation-delay: ' + delay + 's;">' +
-            imgSrc +
-            '<div class="pc-content">' +
-              '<div class="pc-eyebrow">' + catLabel + '</div>' +
-              '<div class="pc-title">' + p.title + '</div>' +
-              '<div class="pc-meta" style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">' + 
-                  '<span>' + (p.type || catLabel) + '</span>' +
-                  (p.tons ? '<span style="font-weight:800; color:var(--accent); background:#f0f9ff; padding:2px 6px; border-radius:4px; font-size:10px; border: 1px solid #bae6fd; letter-spacing:0.5px;">' + Math.round(p.tons).toLocaleString() + ' TONS</span>' : '') +
+          var imgThumb = (p.images && p.images[0]) ? '<img class="prow-img" loading="lazy" src="' + p.images[0] + '">' : '<div class="prow-img prow-img-ph"></div>';
+            return '<div class="proj-row" data-id="' + p.id + '" style="animation-delay:' + delay + 's;">' +
+              imgThumb +
+              '<div class="prow-body">' +
+                '<div class="prow-eyebrow">' + catLabel + '</div>' +
+                '<div class="prow-title">' + p.title + '</div>' +
+                '<div class="prow-meta">' +
+                  (p.tons ? '<span class="prow-badge">' + Math.round(p.tons).toLocaleString() + ' T</span>' : '') +
+                  (p.year ? '<span class="prow-year">' + p.year + '</span>' : '') +
                 '</div>' +
-            '</div>' +
-            '<div class="pc-arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
-          '</div>';
+              '</div>' +
+              '<div class="prow-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
+            '</div>';
         }).join('');
 
-        container.querySelectorAll('.proj-card').forEach(function(card) {
+        container.querySelectorAll('.proj-row').forEach(function(card) {
           card.addEventListener('click', function() {
             if (window.openDetail) window.openDetail(card.dataset.id);
           });
@@ -268,12 +273,20 @@ function openPanel(name, list) {
 
     renderCards('default');
 
-    var sortSelect = document.getElementById('projectSort');
-    if (sortSelect) {
-      sortSelect.addEventListener('change', function(e) {
-        renderCards(e.target.value);
-      });
-    }
+    
+      window.selectSort = function(val, text) {
+        var wrap = document.getElementById('projectSortWrap');
+        var label = document.getElementById('projectSortLabel');
+        if (label) label.textContent = text;
+        if (wrap) wrap.classList.remove('open');
+        renderCards(val);
+      };
+      
+      document.onclick = function() {
+        var wrap = document.getElementById('projectSortWrap');
+        if (wrap) wrap.classList.remove('open');
+      };
+
   }
 
   document.getElementById('overlay').classList.add('open');
@@ -300,5 +313,6 @@ function renderStats(projectsList, country, category) {
 // Export module
 window.MapModule = {
   loadMapData: loadMapData,
-  drawMap:     drawMap
+  drawMap:     drawMap,
+  openPanel: openPanel
 };

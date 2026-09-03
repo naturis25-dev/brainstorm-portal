@@ -1,12 +1,15 @@
 const express = require('express');
-const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const db = require('../db.js');
+const crypto = require('crypto');
 
 const router = express.Router();
-
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const sessions = new Map();
+
 const generateToken = () => crypto.randomBytes(32).toString('hex');
 
+// ─── Middleware ───────────────────────────────────────────────────────────────
 const requireAuth = (req, res, next) => {
   const token = getToken(req);
   if (!token || !sessions.has(token)) return res.status(401).json({ message: 'Unauthorized' });
@@ -33,27 +36,74 @@ const getToken = (req) => {
   return null;
 };
 
-router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-    const token = generateToken();
-    sessions.set(token, { admin: { username, role: 'SUPER_ADMIN' }, expiresAt: Date.now() + 86400000 });
-    return res.json({ success: true, token, user: { username, isSuperAdmin: true, role: 'admin' } });
-  }
+// ─── Google Sign-In Endpoint ──────────────────────────────────────────────────
+router.post('/google', async (req, res) => {
+  const { credential } = req.body;
+  if (!credential) return res.status(400).json({ message: 'Missing credential' });
+
   try {
-    const admin = await db.getSecondaryAdmin(username);
-    if (admin) {
-      const hash = crypto.pbkdf2Sync(password, admin.salt, 1000, 64, 'sha512').toString('hex');
-      if (hash === admin.passwordHash) {
-        const token = generateToken();
-        sessions.set(token, { admin: { username, role: admin.role || 'MANAGER' }, expiresAt: Date.now() + 86400000 });
-        return res.json({ success: true, token, user: { username, isSuperAdmin: false, role: 'admin' } });
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload.email.toLowerCase();
+
+    // 1. Strict Domain Check
+    if (!email.endsWith('@brainstorminfotech.co.in')) {
+      return res.status(403).json({ message: 'Access denied: Only @brainstorminfotech.co.in emails are allowed.' });
+    }
+
+    let adminData = null;
+    let isSuperAdmin = false;
+
+    // 2. Database / Allowlist Check
+    // First check if it is the primary Super Admin (from .env)
+    const masterEmail = (process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME || '').toLowerCase();
+    
+    if (email === masterEmail) {
+      adminData = { username: email, role: 'SUPER_ADMIN' };
+      isSuperAdmin = true;
+    } else {
+      // Check if they were added as a Secondary Admin in the DB
+      try {
+        const admin = await db.getSecondaryAdmin(email);
+        if (admin) {
+          adminData = { username: email, role: admin.role || 'MANAGER' };
+        }
+      } catch (e) {
+        console.error('[Google Auth] DB error:', e);
       }
     }
-  } catch(e) { console.error(e); }
-  res.status(401).json({ message: 'Invalid credentials' });
+
+    if (!adminData) {
+      return res.status(403).json({ message: 'Access denied: Your email is not registered as an admin.' });
+    }
+
+    // 3. Issue Session
+    const token = generateToken();
+    sessions.set(token, {
+      admin: adminData,
+      expiresAt: Date.now() + 86400000,
+    });
+
+    return res.json({
+      success: true,
+      token,
+      user: {
+        username: email,
+        isSuperAdmin,
+        role: 'admin',
+      },
+    });
+
+  } catch (error) {
+    console.error('[Google Auth] Error verifying token:', error.message);
+    return res.status(401).json({ message: 'Invalid Google token. Please try again.' });
+  }
 });
 
+// ─── Session Management ───────────────────────────────────────────────────────
 router.post('/logout', (req, res) => {
   const token = getToken(req);
   if (token) sessions.delete(token);
@@ -66,15 +116,24 @@ router.get('/verify', (req, res) => {
   else res.status(401).json({ valid: false });
 });
 
+// ─── Admin Management (Updated for Google Sign-In) ────────────────────────────
+// Passwords are no longer needed, we just store the email in the DB
 router.post('/admins', requireSuperAdmin, async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ message: 'Required fields missing' });
+  let { username } = req.body;
+  if (!username) return res.status(400).json({ message: 'Email is required' });
+  
+  username = username.toLowerCase().trim();
+  
+  // Enforce domain on creation too
+  if (!username.endsWith('@brainstorminfotech.co.in')) {
+    return res.status(400).json({ message: 'Admin must have a @brainstorminfotech.co.in email.' });
+  }
+
   try {
-    const salt = crypto.randomBytes(16).toString('hex');
-    const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-    await db.insertSecondaryAdmin(username, hash, salt, 'MANAGER');
+    // Insert with dummy hash/salt since we rely entirely on Google for auth
+    await db.insertSecondaryAdmin(username, 'google_auth', 'google_auth', 'MANAGER');
     res.status(201).json({ success: true });
-  } catch (e) { res.status(500).json({ message: 'Error' }); }
+  } catch (e) { res.status(500).json({ message: 'Error adding admin' }); }
 });
 
 router.get('/admins', requireSuperAdmin, async (req, res) => {
@@ -84,10 +143,21 @@ router.get('/admins', requireSuperAdmin, async (req, res) => {
 
 router.delete('/admins/:username', requireSuperAdmin, async (req, res) => {
   try {
-    const success = await db.deleteSecondaryAdmin(req.params.username);
+    const success = await db.deleteSecondaryAdmin(req.params.username.toLowerCase());
     if (success) res.json({ success: true });
     else res.status(404).json({ message: 'Not found' });
   } catch (e) { res.status(500).json({ message: 'Error' }); }
+});
+
+
+router.get('/audit-logs', requireSuperAdmin, async (req, res) => {
+  try {
+    const logs = await db.getAuditLogs(100);
+    res.json(logs);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Error fetching audit logs' });
+  }
 });
 
 module.exports = { router, requireAuth, requireSuperAdmin };

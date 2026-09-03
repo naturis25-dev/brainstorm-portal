@@ -39,6 +39,17 @@ async function initialize() {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_created_at ON projects(created_at DESC);`);
 
     await client.query(`
+      await client.query(
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id SERIAL PRIMARY KEY,
+        admin_email TEXT NOT NULL,
+        action TEXT NOT NULL,
+        target_id TEXT,
+        details TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    );
+
       CREATE TABLE IF NOT EXISTS admins (
         username TEXT PRIMARY KEY,
         password_hash TEXT NOT NULL,
@@ -355,7 +366,26 @@ const deleteSecondaryAdmin = async (username) => {
   return res.rowCount > 0;
 };
 
+
+const insertAuditLog = async (admin_email, action, target_id, details) => {
+  const query = 'INSERT INTO audit_logs (admin_email, action, target_id, details) VALUES (, , , )';
+  const values = [admin_email, action, target_id, details ? JSON.stringify(details) : null];
+  await pool.query(query, values);
+};
+
+const getAuditLogs = async (limit = 100) => {
+  const res = await pool.query('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ', [limit]);
+  return res.rows.map(l => {
+    if (l.details) { try { l.details = JSON.parse(l.details); } catch(e){} }
+    return l;
+  });
+};
+
+const getProjectsCount = async () => { const res = await pool.query("SELECT COUNT(*) as count FROM projects WHERE is_deleted = 0"); return parseInt(res.rows[0].count, 10); };
 module.exports = {
+  getProjectsCount,
+  insertAuditLog,
+  getAuditLogs,
   pool,
   initialize,
   getProjects,

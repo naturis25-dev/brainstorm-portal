@@ -15,7 +15,7 @@
   <script src="assets/vendor/topojson.min.js"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=1788247574036">
+  <link rel="stylesheet" href="css/style.css?v=1788417958132">
 
   <style>
   /* ================= LOADER ================= */
@@ -132,6 +132,7 @@
   }
   </style>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -304,7 +305,8 @@
     </a>
     <div class="top-actions">
       
-      <button class="icon-btn" id="navMapBtn" title="Back to Map">
+      
+        <button class="icon-btn" id="navMapBtn" title="Back to Map">
         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
         <span class="icon-btn-label">Map</span>
       </button>
@@ -452,26 +454,35 @@
   <!-- Admin Login View -->
   <div class="view" id="view-login">
     <div class="login-wrap">
-      <div class="login-card">
-        <div class="login-logo" id="loginLogo">
-          <img src="assets/logo.png" alt="Brainstorm Infotech Logo">
+        <div class="login-card">
+          <div class="login-logo" id="loginLogo">
+            <img src="assets/logo.png" alt="Brainstorm Infotech Logo">
+          </div>
+          <h2>Admin Authentication</h2>
+          <div class="sub" style="margin-bottom:30px;">Sign in with your @brainstorminfotech.co.in account</div>
+          
+          <div id="g_id_onload"
+               data-client_id="81048370509-mpbp06oepjsvl54na8124pnvvja3ipcv.apps.googleusercontent.com"
+               data-context="signin"
+               data-ux_mode="popup"
+               data-callback="handleGoogleLogin"
+               data-auto_prompt="false">
+          </div>
+          <div style="display:flex; justify-content:center; width:100%;">
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left">
+            </div>
+          </div>
+          
+          <div class="login-error" id="loginError" style="display:none; margin-top:20px; text-align:center;"></div>
+          <span class="back-home" id="backHome" style="margin-top:30px;">← Back to Map View</span>
         </div>
-        <h2>Admin Authentication</h2>
-        <div class="sub">Sign in to manage projects &amp; intelligence data</div>
-        
-        <div class="field">
-          <label>Username</label>
-          <input type="text" id="loginUser" placeholder="Enter username">
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <input type="password" id="loginPass" placeholder="Enter password">
-        </div>
-        <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
-        <button class="login-btn" id="loginSubmit">Sign In to Dashboard</button>
-        <span class="back-home" id="backHome">← Back to Map View</span>
       </div>
-    </div>
   </div>
 
   <!-- Admin Dashboard View -->
@@ -804,7 +815,7 @@
   </button>
 
   <!-- Application Script Modules -->
-  <script src="js/config.js?v=1788247574036" defer></script>
+  <script src="js/config.js?v=1788417958132" defer></script>
   <div class="secret-admin-trigger">
     <button class="secret-admin-btn" id="navLoginBtn" title="Admin Login">
       <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -867,5 +878,16 @@
 
 
 
-  <script src="js/map.js?v=1788247574036" defer></script>
-  <script src="js/app.js?v=1788247574036" defer></script>
+  <script src="js/map.js?v=1788417958132" defer></script>
+  <script src="js/app.js?v=1788417958132" defer></script>
+
+    <!-- Spotlight Search -->
+    <div id="spotlightSearch">
+      <div class="spotlight-box">
+        <div class="spotlight-input-wrap">
+          <input type="text" id="spotlightInput" placeholder="Search projects by name, state, or category... (Esc to close)">
+          <div class="spotlight-close" onclick="closeSpotlight()" style="position: absolute; right: 20px; top: 20px; cursor: pointer; color: var(--sub); font-size: 20px;">&times;</div>
+        </div>
+        <div class="spotlight-results" id="spotlightResults"></div>
+      </div>
+    </div>

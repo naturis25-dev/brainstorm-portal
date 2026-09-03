@@ -36,6 +36,7 @@ router.post('/', requireAuth, async (req, res) => {
   newProject.created_by = req.admin.username;
   try {
     const inserted = await db.insertProject(newProject);
+    try { await db.insertAuditLog(req.admin.username, 'CREATE_PROJECT', inserted.id, { title: newProject.title }); } catch(e){}
     res.status(201).json({ message: 'Project created successfully', project: inserted });
   } catch (e) { console.error(e); res.status(500).json({ message: 'Error' }); }
 });
