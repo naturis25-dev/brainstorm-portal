@@ -43,6 +43,36 @@ app.use('/api/media', bodyParser.json({ limit: '1000mb' }), mediaRouter);
 app.use(bodyParser.json({ limit: '100mb' })); // Reduced from 1000mb for DOS protection
 app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }));
 
+
+app.get('/api/debug-db', async (req, res) => {
+  try {
+    const db = require('./db.js');
+    if (process.env.DB_CLIENT !== 'pg') {
+      return res.json({ status: 'SQLite active', DB_CLIENT: process.env.DB_CLIENT });
+    }
+    if (!db.pool) {
+      return res.json({ status: 'Postgres active but no pool found' });
+    }
+    const client = await db.pool.connect();
+    const result = await client.query('SELECT current_user, current_database();');
+    client.release();
+    res.json({ 
+      status: 'Connected to Postgres!', 
+      DATABASE_URL_LENGTH: process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0,
+      DATABASE_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 15) : null,
+      info: result.rows 
+    });
+  } catch (err) {
+    res.json({ 
+      status: 'Failed to connect', 
+      error: err.message, 
+      stack: err.stack,
+      DATABASE_URL_LENGTH: process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0,
+      DATABASE_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 15) : null
+    });
+  }
+});
+
 // API Routes
 app.use('/api/projects', projectsRouter);
 app.use('/api/auth', authRouter);
