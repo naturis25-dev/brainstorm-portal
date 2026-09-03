@@ -98,6 +98,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
+const db = require('./db.js');
+if (db.initialize) {
+  db.initialize().catch(err => {
+    console.error('DB Init Error:', err);
+  });
+}
+
 const server = app.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚀 Brainstorm Infotech Portal Backend Server Running`);
