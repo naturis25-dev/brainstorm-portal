@@ -468,33 +468,42 @@ function setupNavigation() {
     
     categoryData.files.forEach(file => {
       html += `
-      <div class="proj-card drawing-card" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s ease;" onclick="window.open('/${file.path}', '_blank')">
-        <div class="dc-cover" style="position:relative;height:160px;background:${getGradientForCategory(catKey)};overflow:hidden;display:flex;align-items:center;justify-content:center;">
-          <!-- Subtle dot pattern overlay -->
-          <div style="position:absolute;inset:0;opacity:0.25;background-image:radial-gradient(#ffffff 1px, transparent 1px);background-size:16px 16px;"></div>
-          <!-- Glassmorphic Icon Box -->
-          <div style="position:relative;z-index:2;width:64px;height:64px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.3);border-radius:18px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.15);transition:transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-            ${getIconForCategory(catKey)}
+      <div class="proj-card drawing-card" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.open('/${file.path}', '_blank')">
+        <div class="dc-cover" style="position:relative;height:150px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
+          
+          <!-- Blueprint architectural grid pattern -->
+          <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:24px 24px;"></div>
+          
+          <!-- Elegant Document Icon -->
+          <div style="position:relative;z-index:2;width:76px;height:94px;background:#fff;border-radius:4px 16px 4px 4px;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;border:1px solid var(--line);">
+             <!-- Dog-ear fold effect -->
+             <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 22px 22px 0;border-color:transparent var(--gray-100) transparent transparent;border-bottom-left-radius:4px;"></div>
+             <div style="color:var(--accent);transform:translateY(4px);">${getIconForCategory(catKey)}</div>
           </div>
-          <!-- Hover overlay gradient -->
-          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.6), transparent);opacity:0;transition:opacity 0.3s ease;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;color:#fff;font-size:13px;font-weight:600;letter-spacing:1px;">
-            VIEW PDF
+
+          <!-- Hover action overlay -->
+          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.25);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+            <div style="display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:10px 20px;border-radius:100px;font-weight:800;font-size:13px;letter-spacing:0.5px;box-shadow:0 10px 20px rgba(0,0,0,0.2);">
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+               VIEW PDF
+            </div>
           </div>
         </div>
-        <div style="padding:24px;">
-          <div class="p-eyebrow" style="color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:8px;font-size:11px;">${categoryData.title.toUpperCase()}</div>
-          <div class="pc-title" style="font-size:17px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.4;">${file.name}</div>
-          
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sub)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span class="pc-meta" style="color:var(--sub);font-size:13px;font-weight:500;margin:0;">PDF Document</span>
+        
+        <div style="padding:24px;flex-grow:1;display:flex;flex-direction:column;">
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:24px;">
+            <div class="p-eyebrow" style="color:var(--sub);font-weight:700;letter-spacing:1px;font-size:10px;">${categoryData.title.toUpperCase()}</div>
+            <div class="pc-title" style="font-size:17px;font-weight:800;color:var(--ink);line-height:1.3;margin:0;">${file.name}</div>
           </div>
           
-          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px;">
-            <span class="badge" style="background:var(--gray-50);color:var(--sub);border:1px solid var(--line);padding:4px 10px;font-weight:600;">${file.tag}</span>
-            <span class="dc-arrow" style="color:var(--accent);transform:translateX(-4px);transition:transform 0.3s ease;opacity:0;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </span>
+          <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:16px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <span style="color:var(--sub);font-size:12px;font-weight:700;">PDF Document</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <span style="background:var(--accent-soft);color:var(--accent);padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:800;">${file.tag}</span>
+            </div>
           </div>
         </div>
       </div>
