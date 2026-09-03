@@ -109,11 +109,6 @@ async function fetchAppInitialData() {
     renderCategoryChips();
     renderMap();
     window.PROJECTS = PROJECTS;
-    if (window.innerWidth <= 768 && window.MapModule && window.MapModule.openPanel) {
-      setTimeout(() => {
-         window.MapModule.openPanel('All Projects', window.PROJECTS || []);
-      }, 100);
-    }
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects

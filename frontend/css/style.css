@@ -4551,11 +4551,7 @@ model-viewer::part(interaction-prompt),
 }
 
 @media (max-width: 768px) {
-  #mapContainer {
-    display: none !important;
-  }
   .panel {
-    transform: translateX(0) !important;
     width: 100vw !important;
     max-width: 100vw !important;
     height: 100vh !important;
@@ -4567,10 +4563,6 @@ model-viewer::part(interaction-prompt),
     display: flex !important;
   }
 
-  .panel .btn-icon {
-    display: none !important;
-  }
-
   .panel-header {
     border-radius: 0 !important;
   }
@@ -4578,17 +4570,5 @@ model-viewer::part(interaction-prompt),
   .spotlight-box {
     margin: 20px;
     max-width: calc(100% - 40px);
-  }
-}
-
-@media (max-width: 768px) {
-  .panel > .panel-header > .btn-icon {
-    display: none !important;
-  }
-}
-
-@media (max-width: 768px) {
-  #panelClose, .panel-close {
-    display: none !important;
   }
 }
