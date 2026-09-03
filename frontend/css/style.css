@@ -4556,11 +4556,6 @@ model-viewer::part(interaction-prompt),
   }
   .panel {
     transform: translateX(0) !important;
-
-  .panel .btn-icon {
-    display: none !important;
-  }
-
     width: 100vw !important;
     max-width: 100vw !important;
     height: 100vh !important;
@@ -4571,7 +4566,11 @@ model-viewer::part(interaction-prompt),
     border: none !important;
     display: flex !important;
   }
-  
+
+  .panel .btn-icon {
+    display: none !important;
+  }
+
   .panel-header {
     border-radius: 0 !important;
   }
