@@ -97,8 +97,15 @@ async function fetchAppInitialData() {
       `).join('');
     }
 
+
     renderCategoryChips();
     renderMap();
+    window.PROJECTS = PROJECTS;
+    if (window.innerWidth <= 768 && window.MapModule && window.MapModule.openPanel) {
+      setTimeout(() => {
+         window.MapModule.openPanel('All Projects', window.PROJECTS || []);
+      }, 100);
+    }
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects
@@ -1023,9 +1030,7 @@ function renderAdmin() {
       animVal(document.getElementById('stat-tons'), totalTons);
   }
   renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS);
-  if (window.innerWidth <= 768 && window.MapModule && window.MapModule.openPanel) {
-    window.MapModule.openPanel('All Projects', window.PROJECTS || []);
-  }
+
 }
 
 window.currentAdminPage = 1;
