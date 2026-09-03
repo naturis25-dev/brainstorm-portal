@@ -39,7 +39,6 @@ async function initialize() {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_created_at ON projects(created_at DESC);`);
 
     await client.query(`
-      await client.query(
       CREATE TABLE IF NOT EXISTS audit_logs (
         id SERIAL PRIMARY KEY,
         admin_email TEXT NOT NULL,
@@ -48,16 +47,20 @@ async function initialize() {
         details TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    );
+    `);
 
+    await client.query(`
       CREATE TABLE IF NOT EXISTS admins (
         username TEXT PRIMARY KEY,
         password_hash TEXT NOT NULL,
         salt TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        role TEXT DEFAULT 'MANAGER'
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    
+    console.log('[DB] PostgreSQL tables successfully initialized.');
+  } catch (err) {
+    console.error('[DB] Failed to initialize PostgreSQL:', err);
   } finally {
     client.release();
   }
