@@ -75,12 +75,20 @@ async function apiFetch(url, options = {}) {
 // ============================================================
 async function fetchAppInitialData() {
   try {
-    const [meta, proj] = await Promise.all([
-      apiFetch('/metadata'),
-      apiFetch('/projects')
-    ]);
-    METADATA = meta;
-    PROJECTS = proj.data || proj.projects || proj || [];
+    
+    try {
+      const meta = await apiFetch('/metadata');
+      METADATA = meta;
+    } catch(e) { console.error('Metadata failed', e); }
+    
+    try {
+      const proj = await apiFetch('/projects');
+      PROJECTS = proj.data || proj.projects || proj || [];
+    } catch(e) {
+      console.error('Projects failed', e);
+      PROJECTS = [];
+    }
+
 
     // Populate dropdowns and checkboxes
     const catSel = document.getElementById('f-category');
