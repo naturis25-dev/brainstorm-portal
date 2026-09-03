@@ -40,8 +40,8 @@ app.use('/api/auth/login', authLimiter);
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use('/uploads', express.static(uploadDir, { maxAge: '365d', immutable: true }));
 app.use('/api/media', bodyParser.json({ limit: '1000mb' }), mediaRouter);
-app.use(bodyParser.json({ limit: '10mb' })); // Reduced from 1000mb for DOS protection
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(bodyParser.json({ limit: '100mb' })); // Reduced from 1000mb for DOS protection
+app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }));
 
 // API Routes
 app.use('/api/projects', projectsRouter);

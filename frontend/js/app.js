@@ -84,7 +84,7 @@ async function fetchAppInitialData() {
 
     // Populate dropdowns and checkboxes
     const catSel = document.getElementById('f-category');
-    if (catSel) catSel.innerHTML = (window.CONFIG?.CATEGORIES || []).filter(c => c !== 'All').map(c => `<option value="${c}">${c}</option>`).join('');
+    if (catSel) catSel.innerHTML = ((window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || []).filter(c => c !== 'All').map(c => `<option value="${c}">${c}</option>`).join('');
     
     const typeContainer = document.getElementById('f-type-checkboxes');
     if (typeContainer && METADATA.steelTypes) {
@@ -130,7 +130,7 @@ function renderMap() {
 function renderCategoryChips() {
   const row = document.getElementById('categoryChipRow');
   if (!row) return;
-  const cats = window.CONFIG?.CATEGORIES || ['All'];
+  const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || ['All'];
   const oldSearch = document.getElementById('globalProjectSearch');
   const oldVal = oldSearch ? oldSearch.value : '';
 
