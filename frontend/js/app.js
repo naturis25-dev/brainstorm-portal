@@ -141,8 +141,9 @@ function renderCategoryChips() {
     `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
   ).join('');
 
+  const isMobile = window.innerWidth <= 768;
   row.innerHTML = 
-  `<div class="filter-chip-container" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1;">
+  `<div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: ${isMobile ? 'nowrap' : 'wrap'}; overflow-x: ${isMobile ? 'auto' : 'visible'}; scrollbar-width: none; flex: 1;">
     ${chipsHTML}
   </div>
   <div class="inline-search-wrap" style="position: relative; flex: 0 0 auto; width: 180px; height: 34px; margin-left: 12px;">
