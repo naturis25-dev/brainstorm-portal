@@ -1,1 +1,0 @@
-const Database = require('better-sqlite3'); const db = new Database('data/projects.db'); db.exec("UPDATE projects SET modelUrl = 'https://modelviewer.dev/shared-assets/models/Astronaut.glb' WHERE id IN (SELECT id FROM projects LIMIT 5)");
