@@ -344,8 +344,30 @@ body.dark-mode .icon-btn:hover {
 }
 
 @media (max-width: 768px) {
+  .icon-btn {
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+    font-size: 10px;
+  }
   .icon-btn-label {
-    display: none;
+    display: block;
+    font-size: 10px;
+  }
+  .topbar {
+    padding: 8px 12px;
+    border-radius: 16px;
+    gap: 4px;
+  }
+  .brand .logo-box {
+    width: 32px;
+    height: 32px;
+  }
+  .brand-text .b-name {
+    font-size: 13px;
+  }
+  .brand-text .b-tag {
+    font-size: 8.5px;
   }
 }
 
@@ -4657,3 +4679,17 @@ model-viewer::part(interaction-prompt),
   body { padding-bottom: 64px; }
 }
 body.dark-mode .mobile-bottom-nav { background: var(--card-bg); }
+
+@media (max-width: 768px) {
+  #navBrochureLabel .title {
+    display: block !important;
+    font-size: 10px !important;
+  }
+  #navBrochureLabel {
+    flex-direction: column !important;
+    padding: 6px !important;
+    gap: 4px !important;
+    background: transparent !important;
+    border-radius: 9px !important;
+  }
+}
