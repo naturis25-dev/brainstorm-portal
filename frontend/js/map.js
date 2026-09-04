@@ -54,9 +54,12 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
     return;
   }
 
+  var isMobile = window.innerWidth <= 768;
   var projection = country === 'us'
     ? d3.geoAlbersUsa().translate([480, 300]).scale(1150)
-    : d3.geoAlbers().rotate([96, 0]).center([5, 63]).parallels([50, 70]).translate([480, 380]).scale(950);
+    : d3.geoAlbers().rotate([96, 0]).center([5, 63]).parallels([50, 70])
+        .translate([480, isMobile ? 350 : 300])
+        .scale(isMobile ? 900 : 750);
 
   var path = d3.geoPath(projection);
 

@@ -4112,13 +4112,8 @@ model-viewer::part(interaction-prompt),
     transform: scale(1.05) !important;
     transform-origin: center 45% !important;
   }
-  .map-note {
-    margin-top: 50px !important;
-    position: relative;
-    z-index: 10;
-  }
   .map-card {
-    padding-bottom: 80px !important; /* Space for the bottom floating search bar */
+    padding-bottom: 20px !important;
   }
 }
 @media (max-width: 768px) {
@@ -4743,11 +4738,5 @@ model-viewer::part(interaction-prompt),
 }
 body.dark-mode .map-note-chip {
   background: rgba(255,255,255,0.02);
-}
 
-@media (max-width: 768px) {
-  svg#map {
-    transform: scale(1.15) !important;
-    transform-origin: center center !important;
-  }
-}
+
