@@ -131,10 +131,11 @@ resumeFailedOptimizations();
 router.post('/', requireAuth, upload.fields([
   { name: 'images', maxCount: 20 },
   { name: 'video', maxCount: 1 },
-  { name: 'model', maxCount: 1 }
+  { name: 'model', maxCount: 1 },
+  { name: 'document', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const response = { images: [], video: '', model: '' };
+    const response = { images: [], video: '', model: '', document: '' };
 
     if (req.files['images']) {
       for (const f of req.files['images']) {
@@ -164,6 +165,15 @@ router.post('/', requireAuth, upload.fields([
       fs.renameSync(targetPath, processingPath);
       startOptimization(targetPath, f.filename);
       response.model = getFinalUrl(f.filename);
+    }
+
+    if (req.files['document'] && req.files['document'][0]) {
+      const f = req.files['document'][0];
+      if (s3Client) {
+         response.document = await uploadToR2AndDelete(f.path, f.filename);
+      } else {
+         response.document = `/uploads/${f.filename}`;
+      }
     }
 
     res.status(202).json(response);

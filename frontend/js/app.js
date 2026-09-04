@@ -471,18 +471,22 @@ function setupNavigation() {
       <div class="proj-card drawing-card" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.open('/${file.path}', '_blank')">
         <div class="dc-cover" style="position:relative;height:150px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
           
-          <!-- Blueprint architectural grid pattern -->
-          <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:24px 24px;"></div>
-          
-          <!-- Elegant Document Icon -->
-          <div style="position:relative;z-index:2;width:76px;height:94px;background:#fff;border-radius:4px 16px 4px 4px;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;border:1px solid var(--line);">
-             <!-- Dog-ear fold effect -->
-             <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 22px 22px 0;border-color:transparent var(--gray-100) transparent transparent;border-bottom-left-radius:4px;"></div>
-             <div style="color:var(--accent);transform:translateY(4px);">${getIconForCategory(catKey)}</div>
-          </div>
+          ${file.cover ? `
+            <img src="/${file.cover}" alt="Cover" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
+          ` : `
+            <!-- Blueprint architectural grid pattern -->
+            <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:24px 24px;"></div>
+            
+            <!-- Elegant Document Icon -->
+            <div style="position:relative;z-index:2;width:76px;height:94px;background:#fff;border-radius:4px 16px 4px 4px;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;border:1px solid var(--line);">
+               <!-- Dog-ear fold effect -->
+               <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 22px 22px 0;border-color:transparent var(--gray-100) transparent transparent;border-bottom-left-radius:4px;"></div>
+               <div style="color:var(--accent);transform:translateY(4px);">${getIconForCategory(catKey)}</div>
+            </div>
+          `}
 
           <!-- Hover action overlay -->
-          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.25);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.25);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);z-index:3;">
             <div style="display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:10px 20px;border-radius:100px;font-weight:800;font-size:13px;letter-spacing:0.5px;box-shadow:0 10px 20px rgba(0,0,0,0.2);">
                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                VIEW PDF
@@ -1674,6 +1678,7 @@ if (document.readyState === 'loading') {
     const name = document.getElementById('d-name').value.trim();
     const tag = document.getElementById('d-tag').value.trim();
     const fileInput = document.getElementById('d-file');
+    const coverInput = document.getElementById('d-cover');
     const status = document.getElementById('d-upload-status');
 
     if (!name || !tag || !fileInput.files[0]) {
@@ -1686,34 +1691,36 @@ if (document.readyState === 'loading') {
     status.innerText = 'Uploading PDF...';
 
     try {
-      const file = fileInput.files[0];
-      const reader = new FileReader();
-      
-      const base64Data = await new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject('Error reading file');
-        reader.readAsDataURL(file);
-      });
+      const formData = new FormData();
+      formData.append('document', fileInput.files[0]);
+      if (coverInput && coverInput.files[0]) {
+        formData.append('images', coverInput.files[0]);
+      }
 
       const res = await fetch('/api/media', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
-        body: JSON.stringify({ files: [{ data: base64Data }] })
+        body: formData
       });
 
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Upload failed');
 
-      const path = json.files[0].substring(1);
+      // The returned path might have a leading slash, remove it so it's relative
+      let pdfPath = json.document || '';
+      if (pdfPath.startsWith('/')) pdfPath = pdfPath.substring(1);
+      
+      let coverPath = (json.images && json.images.length > 0) ? json.images[0] : '';
+      if (coverPath.startsWith('/')) coverPath = coverPath.substring(1);
       
       if (!cachedDrawingsData[catKey]) {
         cachedDrawingsData[catKey] = { title: catKey, files: [] };
       }
       cachedDrawingsData[catKey].files.push({
-        path: path,
+        path: pdfPath,
+        cover: coverPath,
         name: name,
         tag: tag
       });
