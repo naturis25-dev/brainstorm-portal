@@ -56,7 +56,7 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var projection = country === 'us'
     ? d3.geoAlbersUsa().translate([480, 300]).scale(1150)
-    : d3.geoAlbers().rotate([96, 0]).center([5, 63]).parallels([50, 70]).translate([480, 300]).scale(750);
+    : d3.geoAlbers().rotate([96, 0]).center([5, 63]).parallels([50, 70]).translate([480, 380]).scale(950);
 
   var path = d3.geoPath(projection);
 
