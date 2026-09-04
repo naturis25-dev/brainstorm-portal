@@ -23,7 +23,7 @@ app.use(helmet({
   contentSecurityPolicy: false, // Prevents breaking inline 3D viewers and styles
   crossOriginEmbedderPolicy: false,
   crossOriginOpenerPolicy: false,
-  referrerPolicy: false
+  referrerPolicy: { policy: 'no-referrer-when-downgrade' }
 }));
 app.use(compression()); // Gzip compress responses for massive bandwidth savings
 app.use(morgan('dev')); // Log API requests to terminal
