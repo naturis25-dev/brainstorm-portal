@@ -34,14 +34,15 @@ function initCustomCursor() {
 // THEME TOGGLE
 // ============================================================
 function initThemeToggle() {
-  const btn = document.getElementById('dntToggle');
-  if (!btn) return;
   if (localStorage.getItem('steeltrack_theme') === 'dark') {
     document.body.classList.add('dark-mode');
   }
-  btn.addEventListener('click', () => {
+  const toggleTheme = () => {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('steeltrack_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+  };
+  document.querySelectorAll('.minimal-theme-toggle').forEach(btn => {
+    btn.addEventListener('click', toggleTheme);
   });
 }
 
@@ -136,23 +137,80 @@ function renderCategoryChips() {
   const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || ['All'];
   const oldSearch = document.getElementById('globalProjectSearch');
   const oldVal = oldSearch ? oldSearch.value : '';
-  const searchPlaceholder = window.innerWidth > 768 ? 'Search projects... (Ctrl+K)' : 'Search projects...';
+  const isMobile = window.innerWidth <= 768;
+  const searchPlaceholder = isMobile ? 'Search projects...' : 'Search projects... (Ctrl+K)';
   const chipsHTML = cats.map(c =>
     `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
   ).join('');
 
-  const isMobile = window.innerWidth <= 768;
-  row.innerHTML = 
-  `<div class="filter-chip-container" style="display: flex; gap: 10px; flex-wrap: ${isMobile ? 'nowrap' : 'wrap'}; overflow-x: ${isMobile ? 'auto' : 'visible'}; scrollbar-width: none; align-items: center; padding-bottom: ${isMobile ? '0' : '12px'}; width: 100%;">
-    ${chipsHTML}
-    <div class="inline-search-wrap" style="position: relative; flex: 1; min-width: 200px; max-width: 350px; height: 36px; margin-left: ${isMobile ? '12px' : 'auto'}; flex-shrink: 0;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none; opacity:0.45;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" style="padding: 0 36px 0 32px; width: 100%; height: 100%; background: var(--gray-50, #f8fafc); border: 1.5px solid var(--line); border-radius: 100px; font-size: 13px; font-weight: 500; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
-      <button id="globalSearchBtn" title="Search" style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background: var(--accent); color:#fff; border:none; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background 0.2s;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+  if (isMobile) {
+    row.innerHTML = 
+    `<div class="chip-scroll-wrapper" style="position: relative; width: 100%;">
+      <div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; width: 100%;">
+        ${chipsHTML}
+      </div>
+      <div class="m-floating-search-row">
+        <div class="inline-search-wrap">
+          <div class="search-badge-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input type="text" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" autocomplete="off" spellcheck="false">
+        </div>
+        <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="m-search-website-btn" title="Visit Website">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span>Website</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+      <button class="chip-scroll-arrow right" id="chipScrollRightBtn" title="Scroll right for more categories" aria-label="Scroll right">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </button>
-    </div>
-  </div>`;
+    </div>`;
+  } else {
+    row.innerHTML = 
+    `<div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; width: 100%;">
+      ${chipsHTML}
+      <div class="inline-search-wrap">
+        <div class="search-badge-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <input type="text" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" autocomplete="off" spellcheck="false">
+        <div class="search-kbd-pill"><span class="kbd-key">⌘K</span></div>
+        <button id="globalSearchBtn" title="Search" class="search-action-btn" aria-label="Search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  const scrollBtn = document.getElementById('chipScrollRightBtn');
+  const chipContainer = row.querySelector('.filter-chip-container');
+  if (scrollBtn && chipContainer) {
+    scrollBtn.addEventListener('click', () => {
+      chipContainer.scrollBy({ left: 160, behavior: 'smooth' });
+    });
+    chipContainer.addEventListener('scroll', () => {
+      const isEnd = chipContainer.scrollLeft + chipContainer.clientWidth >= chipContainer.scrollWidth - 15;
+      scrollBtn.style.opacity = isEnd ? '0' : '1';
+      scrollBtn.style.pointerEvents = isEnd ? 'none' : 'auto';
+    });
+  }
 
   row.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -190,13 +248,7 @@ function renderCategoryChips() {
           return;
         }
         
-        const lowerQ = q.toLowerCase();
-        const filtered = (window.PROJECT_STATS || PROJECTS).filter(p => {
-          return (p.title || '').toLowerCase().includes(lowerQ) ||
-                 (p.state || '').toLowerCase().includes(lowerQ) ||
-                 (p.category || '').toLowerCase().includes(lowerQ) ||
-                 (p.type || '').toLowerCase().includes(lowerQ);
-        });
+        const filtered = (window.PROJECT_STATS || PROJECTS).filter(p => projectMatchesQuery(p, q));
         
         if (window.MapModule) {
           window.MapModule.drawMap(filtered, currentCategory, currentCountry);
@@ -290,14 +342,42 @@ function renderCategoryChips() {
     
     }
 
-    if (searchBtn) searchBtn.addEventListener('click', executeSearch);
-    if (searchInput) {
-      searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') executeSearch();
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          openSpotlight(searchInput ? searchInput.value.trim() : '');
+        } else {
+          executeSearch();
+        }
       });
-      // also allow instant filtering
+    }
+    if (searchInput) {
+      searchInput.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          openSpotlight(searchInput.value.trim());
+        }
+      });
+      searchInput.addEventListener('focus', () => {
+        if (window.innerWidth <= 768) {
+          searchInput.blur();
+          openSpotlight(searchInput.value.trim());
+        }
+      });
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          if (window.innerWidth <= 768) {
+            openSpotlight(searchInput.value.trim());
+          } else {
+            executeSearch();
+          }
+        }
+      });
       searchInput.addEventListener('input', () => {
-         if (searchInput.value.trim() === '') executeSearch();
+        if (window.innerWidth <= 768) {
+          openSpotlight(searchInput.value.trim());
+        } else {
+          if (searchInput.value.trim() === '') executeSearch();
+        }
       });
     }
   }
@@ -310,11 +390,18 @@ function setupNavigation() {
   document.getElementById('navMapBtn')?.addEventListener('click', (e) => { e.preventDefault(); goToMap(); });
   document.getElementById('backHome')?.addEventListener('click', () => goToMap());
 
-  // ââ Back to Top Button âââââââââââââââââââââââââââââ
+  // ── Back to Top Button ────────────────────────────
   const bttBtn = document.getElementById('backToTopBtn');
   if (bttBtn) {
-    const checkScroll = (val) => {
-      if (val > 300) {
+    const checkScroll = (val, isPanel = false) => {
+      const isMap = document.getElementById('view-map')?.classList.contains('active');
+      // If user is on the main map view and no panel is open, do not show back to top button
+      if (isMap && !isPanel) {
+        bttBtn.style.opacity = '0';
+        bttBtn.style.pointerEvents = 'none';
+        return;
+      }
+      if (val > 120) {
         bttBtn.style.opacity = '1';
         bttBtn.style.pointerEvents = 'auto';
       } else {
@@ -323,29 +410,73 @@ function setupNavigation() {
       }
     };
     document.querySelectorAll('.view').forEach(container => {
-      container.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop));
+      container.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, false));
     });
     const panel = document.getElementById('panel');
-    if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop));
-    window.addEventListener('scroll', () => checkScroll(window.scrollY));
+    const panelBody = document.getElementById('panelBody');
+    if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
+    if (panelBody) panelBody.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
+    window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
 
     bttBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
       if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
+      if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
-  // ââ New nav buttons ââââââââââââââââââââââââââââââââââ
+  // â”€â”€ New nav buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   document.getElementById('navBrochureDlInput')?.addEventListener('change', (e) => {
     if (e.target.checked) {
       const a = document.createElement('a');
       a.href = 'assets/docs/brochure.pdf';
       a.download = 'Brainstorm_Infotech_Brochure.pdf';
       a.click();
+      if (window.showToast) window.showToast('Downloading Brochure PDF...', 'success');
       setTimeout(() => { e.target.checked = false; }, 4000); // Reset animation after it finishes
     }
   });
+  // Mobile Bottom Dock Button Listeners
+  document.getElementById('mNavMapBtn')?.addEventListener('click', (e) => { e.preventDefault(); goToMap(); });
+  document.getElementById('mNavDrawingsBtn')?.addEventListener('click', () => {
+    showView('drawings');
+    if (!drawingsLoaded) {
+      loadDrawingsData();
+    } else {
+      setupDrawingsFilter();
+    }
+  });
+  const mNavBrochure = document.getElementById('mNavBrochureBtn');
+  if (mNavBrochure) {
+    mNavBrochure.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (mNavBrochure.classList.contains('is-downloading') || mNavBrochure.classList.contains('is-downloaded')) return;
+      
+      mNavBrochure.classList.add('is-downloading');
+      const label = mNavBrochure.querySelector('.m-dock-label');
+      if (label) label.textContent = 'Downloading...';
+      
+      const a = document.createElement('a');
+      a.href = 'assets/docs/brochure.pdf';
+      a.download = 'Brainstorm_Infotech_Brochure.pdf';
+      a.click();
+      
+      if (window.showToast) window.showToast('Downloading Brochure PDF...', 'success');
+
+      setTimeout(() => {
+        mNavBrochure.classList.remove('is-downloading');
+        mNavBrochure.classList.add('is-downloaded');
+        if (label) label.textContent = 'Downloaded';
+      }, 1200);
+
+      setTimeout(() => {
+        mNavBrochure.classList.remove('is-downloaded');
+        if (label) label.textContent = 'Brochure';
+      }, 4000);
+    });
+  }
+
   let drawingsLoaded = false;
   document.getElementById('navDrawingsBtn')?.addEventListener('click', () => {
     showView('drawings');
@@ -602,37 +733,56 @@ function setupNavigation() {
       }
     };
 
-  // Country toggle
+  // Country toggle with interactive ripple burst
   document.querySelectorAll('.min-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
       document.querySelectorAll('.min-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentCountry = btn.dataset.country;
+
+      // Ripple burst effect
+      const rect = btn.getBoundingClientRect();
+      const circle = document.createElement('span');
+      circle.className = 'toggle-burst-dot';
+      circle.style.left = (e.clientX ? (e.clientX - rect.left) : (rect.width / 2)) + 'px';
+      circle.style.top = (e.clientY ? (e.clientY - rect.top) : (rect.height / 2)) + 'px';
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
       
       var minSlider = document.getElementById('minSlider');
+      var sliderText = document.getElementById('sliderText');
       var heroPill = document.getElementById('heroPill');
       var heroHighlight = document.getElementById('heroCountryHighlight');
+      var brandFooter = document.getElementById('atlasBrandFooter');
       
       if (currentCountry === 'ca' || currentCountry === 'Canada') {
         if (minSlider) minSlider.classList.add('ca');
+        if (brandFooter) brandFooter.classList.add('ca');
+        if (sliderText) {
+          sliderText.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 17 L 12 17 L 13 19 L 15 18 L 17 17 L 20 16 L 22 15 L 22 11 L 19 8 L 16 10 L 13 10 L 12 6 L 6 5 L 4 5 L 4 11 L 2 14 Z"></path></svg> Canada';
+        }
         if (heroPill) { heroPill.classList.remove('usa'); heroPill.classList.add('ca'); }
         if (heroHighlight) heroHighlight.className = 'highlight-ca';
       } else {
         if (minSlider) minSlider.classList.remove('ca');
+        if (brandFooter) brandFooter.classList.remove('ca');
+        if (sliderText) {
+          sliderText.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg> USA';
+        }
         if (heroPill) { heroPill.classList.remove('ca'); heroPill.classList.add('usa'); }
         if (heroHighlight) heroHighlight.className = 'highlight-usa';
-        }
+      }
   
-        const mapEl = document.getElementById('map');
-        if (mapEl) {
-          mapEl.classList.add('fade-out');
-          setTimeout(() => {
-            if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-            setTimeout(() => mapEl.classList.remove('fade-out'), 50);
-          }, 250);
-        } else {
+      const mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.classList.add('fade-out');
+        setTimeout(() => {
           if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-        }
+          setTimeout(() => mapEl.classList.remove('fade-out'), 50);
+        }, 250);
+      } else {
+        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      }
     });
   });
 
@@ -662,8 +812,41 @@ function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + name);
   if (target) target.classList.add('active');
+
+  // Dynamically update header pill active state
+  document.querySelectorAll('.top-actions .icon-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mobile-bottom-dock .m-dock-btn').forEach(b => b.classList.remove('active'));
+  if (name === 'map') {
+    document.getElementById('navMapBtn')?.classList.add('active');
+    document.getElementById('mNavMapBtn')?.classList.add('active');
+  } else if (name === 'drawings') {
+    document.getElementById('navDrawingsBtn')?.classList.add('active');
+    document.getElementById('mNavDrawingsBtn')?.classList.add('active');
+  } else if (name === 'admin') {
+    document.getElementById('navAdminBtn')?.classList.add('active');
+  } else if (name === 'brochure') {
+    document.getElementById('navBrochureLabel')?.classList.add('active');
+    document.getElementById('mNavBrochureBtn')?.classList.add('active');
+  }
+
   updateAdminBtnVisibility();
 }
+
+// Global Search Shortcut (⌘K / Ctrl+K)
+window.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (window.innerWidth <= 768) {
+      if (typeof openSpotlight === 'function') openSpotlight();
+    } else {
+      const searchInput = document.getElementById('globalProjectSearch');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+  }
+});
 
 function goToMap() {
   showView('map');
@@ -844,7 +1027,36 @@ window.openDetail = function(id) {
             </div>
           </div>
         ` : ''}
-          ${p.images && p.images.length > 1 ? `<div class="detail-gallery">${p.images.slice(1).map(img => `<img loading="lazy" decoding="async" src="${img}" onclick="window.openLightbox(this.src)">`).join('')}</div>` : ''}
+          ${p.images && p.images.length > 0 ? `
+            <div class="project-carousel-section">
+              <div class="project-carousel-wrapper" id="projCarouselWrap-${p.id}">
+                <div class="project-carousel-track" id="projCarouselTrack-${p.id}">
+                  ${p.images.map((img, i) => `
+                    <div class="carousel-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.selectCarouselSlide('${p.id}', ${i})">
+                      <div class="carousel-card-inner">
+                        <img loading="lazy" decoding="async" src="${img}" alt="Project View ${i + 1}" onerror="this.src='assets/logo.png'">
+                        <div class="carousel-card-badge">View ${i + 1} of ${p.images.length}</div>
+                        <button class="carousel-zoom-btn" title="View Fullscreen" onclick="event.stopPropagation(); window.openLightbox('${img}')">
+                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+                ${p.images.length > 1 ? `
+                  <button class="carousel-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" aria-label="Previous image">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </button>
+                  <button class="carousel-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" aria-label="Next image">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                  <div class="carousel-dots" id="projCarouselDots-${p.id}">
+                    ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
           <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
           
 
@@ -1011,6 +1223,68 @@ window.openDetail = function(id) {
   document.getElementById('detailOverlay')?.scrollTo({ top: 0, behavior: 'instant' });
   document.getElementById('detailOverlay')?.classList.add('open');
   updateAdminBtnVisibility();
+
+  // Initialize carousel gesture and slide position
+  setTimeout(() => {
+    window.selectCarouselSlide(p.id, 0);
+    const wrapEl = document.getElementById(`projCarouselWrap-${p.id}`);
+    if (wrapEl && !wrapEl._swipeInit) {
+      wrapEl._swipeInit = true;
+      let startX = 0;
+      let endX = 0;
+      wrapEl.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+      wrapEl.addEventListener('touchend', (e) => {
+        endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0) window.stepCarouselSlide(p.id, 1);
+          else window.stepCarouselSlide(p.id, -1);
+        }
+      }, { passive: true });
+    }
+  }, 60);
+};
+
+window.currentCarouselIndexes = window.currentCarouselIndexes || {};
+
+window.selectCarouselSlide = function(projId, targetIdx) {
+  const track = document.getElementById(`projCarouselTrack-${projId}`);
+  if (!track) return;
+  const cards = track.querySelectorAll('.carousel-card');
+  const dotsWrap = document.getElementById(`projCarouselDots-${projId}`);
+  const dots = dotsWrap ? dotsWrap.querySelectorAll('.c-dot') : [];
+  
+  if (targetIdx < 0) targetIdx = 0;
+  if (targetIdx >= cards.length) targetIdx = cards.length - 1;
+  window.currentCarouselIndexes[projId] = targetIdx;
+
+  cards.forEach((c, idx) => {
+    c.classList.remove('active', 'prev-1', 'next-1', 'far-left', 'far-right');
+    const diff = idx - targetIdx;
+    if (diff === 0) {
+      c.classList.add('active');
+    } else if (diff === -1) {
+      c.classList.add('prev-1');
+    } else if (diff === 1) {
+      c.classList.add('next-1');
+    } else if (diff < -1) {
+      c.classList.add('far-left');
+    } else if (diff > 1) {
+      c.classList.add('far-right');
+    }
+  });
+
+  dots.forEach((d, idx) => {
+    if (idx === targetIdx) d.classList.add('active');
+    else d.classList.remove('active');
+  });
+};
+
+window.stepCarouselSlide = function(projId, step) {
+  const cur = window.currentCarouselIndexes[projId] || 0;
+  window.selectCarouselSlide(projId, cur + step);
 };
 
 document.getElementById('detailClose')?.addEventListener('click', () => {
@@ -1913,17 +2187,62 @@ const STATE_COORDS = {
     if (e.target === spotlightModal) closeSpotlight();
   });
 
+  const STATE_NAMES = {
+    'al': 'alabama', 'ak': 'alaska', 'az': 'arizona', 'ar': 'arkansas', 'ca': 'california',
+    'co': 'colorado', 'ct': 'connecticut', 'de': 'delaware', 'fl': 'florida', 'ga': 'georgia',
+    'hi': 'hawaii', 'id': 'idaho', 'il': 'illinois', 'in': 'indiana', 'ia': 'iowa',
+    'ks': 'kansas', 'ky': 'kentucky', 'la': 'louisiana', 'me': 'maine', 'md': 'maryland',
+    'ma': 'massachusetts', 'mi': 'michigan', 'mn': 'minnesota', 'ms': 'mississippi', 'mo': 'missouri',
+    'mt': 'montana', 'ne': 'nebraska', 'nv': 'nevada', 'nh': 'new hampshire', 'nj': 'new jersey',
+    'nm': 'new mexico', 'ny': 'new york', 'nc': 'north carolina', 'nd': 'north dakota', 'oh': 'ohio',
+    'ok': 'oklahoma', 'or': 'oregon', 'pa': 'pennsylvania', 'ri': 'rhode island', 'sc': 'south carolina',
+    'sd': 'south dakota', 'tn': 'tennessee', 'tx': 'texas', 'ut': 'utah', 'vt': 'vermont',
+    'va': 'virginia', 'wa': 'washington', 'wv': 'west virginia', 'wi': 'wisconsin', 'wy': 'wyoming',
+    'dc': 'district of columbia',
+    'on': 'ontario', 'qc': 'quebec', 'bc': 'british columbia', 'ab': 'alberta', 'mb': 'manitoba',
+    'sk': 'saskatchewan', 'ns': 'nova scotia', 'nb': 'new brunswick', 'nl': 'newfoundland and labrador',
+    'pe': 'prince edward island', 'nt': 'northwest territories', 'yt': 'yukon', 'nu': 'nunavut'
+  };
+
+  function projectMatchesQuery(p, q) {
+    if (!q) return true;
+    const lowerQ = q.toLowerCase();
+    const title = (p.title || '').toLowerCase();
+    const cat = (p.category || '').toLowerCase();
+    const desc = (p.description || '').toLowerCase();
+    const type = (p.type || '').toLowerCase();
+    const state = (p.state || '').toLowerCase();
+    const stateFull = STATE_NAMES[state] || '';
+    const tons = (p.tons || '').toString().toLowerCase();
+    const year = (p.year || '').toString().toLowerCase();
+
+    return title.includes(lowerQ) ||
+           cat.includes(lowerQ) ||
+           desc.includes(lowerQ) ||
+           type.includes(lowerQ) ||
+           state.includes(lowerQ) ||
+           stateFull.includes(lowerQ) ||
+           tons.includes(lowerQ) ||
+           year.includes(lowerQ);
+  }
+
+  window.projectMatchesQuery = projectMatchesQuery;
+
   window.openSpotlight = openSpotlight;
-  function openSpotlight() {
+  function openSpotlight(initialQuery = '') {
     spotlightModal.classList.add('active');
-    spotlightInput.focus();
-    renderSpotlightResults('');
+    if (spotlightInput) {
+      spotlightInput.value = initialQuery;
+      spotlightInput.placeholder = window.innerWidth <= 768 ? 'Search projects by name, state, or category...' : 'Search projects by name, state, or category... (Esc to close)';
+      setTimeout(() => spotlightInput.focus(), 60);
+    }
+    renderSpotlightResults(initialQuery);
   }
 
   window.closeSpotlight = closeSpotlight;
   function closeSpotlight() {
     spotlightModal.classList.remove('active');
-    spotlightInput.value = '';
+    if (spotlightInput) spotlightInput.value = '';
   }
 
   spotlightInput?.addEventListener('input', (e) => {
@@ -1934,21 +2253,11 @@ const STATE_COORDS = {
     if (!spotlightResults) return;
     spotlightResults.innerHTML = '';
     
-    let filtered = window.PROJECTS || [];
-    if (query) {
-      filtered = filtered.filter(p => 
-        (p.title && p.title.toLowerCase().includes(query)) ||
-        (p.state && p.state.toLowerCase().includes(query)) ||
-        (p.category && p.category.toLowerCase().includes(query)) ||
-        (p.tons && p.tons.toString().includes(query))
-      );
-    }
-    
-    // Limit to 20 results for performance
-    filtered = filtered.slice(0, 20);
+    const allProjects = window.PROJECT_STATS || window.PROJECTS || PROJECTS || [];
+    let filtered = allProjects.filter(p => projectMatchesQuery(p, query));
     
     if (filtered.length === 0) {
-      spotlightResults.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--sub);">No projects found</div>';
+      spotlightResults.innerHTML = '<div style="padding: 36px 20px; text-align: center; color: var(--sub); font-size: 13px; font-weight: 500;">No matching projects found</div>';
       return;
     }
     
@@ -1957,18 +2266,22 @@ const STATE_COORDS = {
       row.className = 'proj-row';
       row.style.cursor = 'pointer';
       
-      const thumb = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : 'uploads/' + p.images[0]) : 'assets/logo.png';
+      const thumb = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : (p.images[0].startsWith('/') ? p.images[0] : '/' + p.images[0])) : 'assets/logo.png';
       const fallback = "this.src='assets/logo.png'";
       
       row.innerHTML = `
         <img class="prow-img" src="${thumb}" onerror="${fallback}">
         <div class="prow-body">
-          <div class="prow-eyebrow">${p.category}</div>
-          <div class="prow-title">${p.title}</div>
+          <div class="prow-eyebrow">${p.category || 'STRUCTURAL'}</div>
+          <div class="prow-title">${p.title || 'Untitled Project'}</div>
           <div class="prow-meta">
             ${p.tons ? `<span class="prow-badge">${p.tons} Tons</span>` : ''}
-            <span style="color:var(--sub); font-size:12px;">${p.state}</span>
+            <span style="color:var(--sub); font-size:12px; font-weight:600;">${p.state || ''}</span>
+            ${p.year ? `<span class="prow-year">&middot; ${p.year}</span>` : ''}
           </div>
+        </div>
+        <div class="prow-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
       `;
       row.addEventListener('click', () => {
@@ -1983,3 +2296,18 @@ const STATE_COORDS = {
 document.getElementById('mbnMap')?.addEventListener('click', () => { showView('map'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnMap').classList.add('active'); });
 document.getElementById('mbnDrawings')?.addEventListener('click', () => { showView('drawings'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnDrawings').classList.add('active'); });
 document.getElementById('mbnBrochure')?.addEventListener('click', () => { showView('brochure'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnBrochure').classList.add('active'); });
+
+let _resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    const searchInput = document.getElementById('globalProjectSearch');
+    if (searchInput) {
+      searchInput.placeholder = window.innerWidth <= 768 ? 'Search projects...' : 'Search projects... (Ctrl+K)';
+    }
+    const spotlightInp = document.getElementById('spotlightInput');
+    if (spotlightInp) {
+      spotlightInp.placeholder = window.innerWidth <= 768 ? 'Search projects by name, state, or category...' : 'Search projects by name, state, or category... (Esc to close)';
+    }
+  }, 100);
+});

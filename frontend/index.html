@@ -289,11 +289,11 @@
         <span class="b-tag">PROJECT PORTAL</span>
       </div>
     </a>
+
     <div class="top-actions">
       
-      
-        <button class="icon-btn" id="navMapBtn" title="Back to Map">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+      <button class="icon-btn active" id="navMapBtn" title="Back to Map">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         <span class="icon-btn-label">Map</span>
       </button>
 
@@ -303,7 +303,7 @@
       </button>
 
       <button class="icon-btn" id="navDrawingsBtn" title="Sample Drawings">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
         <span class="icon-btn-label">Drawings</span>
       </button>
 
@@ -322,18 +322,7 @@
         <span class="title">Downloaded</span>
       </label>
 
-
-
-      <button class="Btn" id="navLogoutBtn" style="display:none;" title="Logout">
-        <div class="sign">
-          <svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
-        </div>
-        <div class="text">Logout</div>
-      </button>
-
-      <div class="nav-divider"></div>
-
-      <!-- Minimal Theme Toggle -->
+      <!-- Minimal Theme Toggle next to Brochure -->
       <button class="minimal-theme-toggle" id="dntToggle" aria-label="Toggle Theme" title="Toggle Theme">
         <svg class="theme-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
@@ -349,6 +338,13 @@
         <svg class="theme-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
+      </button>
+
+      <button class="Btn" id="navLogoutBtn" style="display:none;" title="Logout">
+        <div class="sign">
+          <svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
+        </div>
+        <div class="text">Logout</div>
       </button>
     </div>
   </div>
@@ -371,18 +367,24 @@
       </div>
 
       
-      <!-- Country Toggle (centered, separate) -->
-      <div style="display: flex; justify-content: center;">
-        <div class="minimal-toggle" id="countryToggle">
-          <div class="min-slider" id="minSlider"></div>
-          <button class="min-btn active" data-country="us">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>
-            United States
-          </button>
-          <button class="min-btn" data-country="ca">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M 4 17 L 12 17 L 13 19 L 15 18 L 17 17 L 20 16 L 22 15 L 22 11 L 19 8 L 16 10 L 13 10 L 12 6 L 6 5 L 4 5 L 4 11 L 2 14 Z"></path></svg>
-            Canada
-          </button>
+      <!-- Country Toggle (Premium Capsule Switch) -->
+      <div class="toggle-container-wrapper">
+        <div class="toggle-card">
+          <span class="toggle-card-label">Region</span>
+          <div class="minimal-toggle" id="countryToggle">
+            <div class="min-slider" id="minSlider">
+              <span class="slider-text" id="sliderText">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>
+                USA
+              </span>
+            </div>
+            <button class="min-btn active" data-country="us">
+              <span class="min-btn-content">USA</span>
+            </button>
+            <button class="min-btn" data-country="ca">
+              <span class="min-btn-content">Canada</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -405,6 +407,46 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; color:var(--accent);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <div><strong>Note:</strong> We have successfully delivered 4,000+ projects over the years. This interactive map highlights a curated selection of our key portfolio projects.</div>
       </div>
+
+      <!-- Dynamic Brand Footer -->
+      <!-- Dynamic Baggy-Style Industrial Contact Footer -->
+      <footer class="atlas-brand-footer" id="atlasBrandFooter">
+        <!-- 4 Corner Metal Rivet Screws -->
+        <span class="footer-rivet top-left"></span>
+        <span class="footer-rivet top-right"></span>
+        <span class="footer-rivet bottom-left"></span>
+        <span class="footer-rivet bottom-right"></span>
+
+        <!-- Giant Subtle Background Brand Typography -->
+        <div class="footer-bg-watermark">
+          <span class="watermark-text" id="footerBigText">brainstorm</span>
+        </div>
+
+        <div class="footer-card-content">
+          <div class="footer-top-split">
+            <div class="footer-contact-block">
+              <h2 class="footer-heading">Contacts</h2>
+              <a href="mailto:info@brainstorminfotech.com" class="footer-email-link">
+                info@brainstorminfotech.com <span>↗</span>
+              </a>
+            </div>
+            <div class="footer-copyright-top">
+              © 2026 Brainstorm Infotech
+            </div>
+          </div>
+
+          <div class="footer-bottom-split">
+            <div class="footer-text-links">
+              <a href="https://www.linkedin.com/company/brainstorm-infotech/" target="_blank" rel="noopener noreferrer" class="footer-nav-link">LinkedIn ↗</a>
+              <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="footer-nav-link">YouTube ↗</a>
+              <a href="https://www.facebook.com/brainstorminfotech" target="_blank" rel="noopener noreferrer" class="footer-nav-link">Facebook ↗</a>
+            </div>
+            <div class="footer-mobile-copy">
+              © 2026 Brainstorm Infotech
+            </div>
+          </div>
+        </div>
+      </footer>
 
     </div>
   </div>
@@ -872,16 +914,82 @@
   <script src="js/map.js?v=20260904001" defer></script>
   <script src="js/app.js?v=20260904001" defer></script>
 
-    <!-- Spotlight Search -->
-    <div id="spotlightSearch">
-      <div class="spotlight-box">
-        <div class="spotlight-input-wrap">
-          <input type="text" id="spotlightInput" placeholder="Search projects by name, state, or category... (Esc to close)">
-          <div class="spotlight-close" onclick="closeSpotlight()" style="position: absolute; right: 20px; top: 20px; cursor: pointer; color: var(--sub); font-size: 20px;">&times;</div>
+  <!-- Mobile Bottom Floating Navigation Dock (Zepto/Blinkit Style) -->
+  <nav class="mobile-bottom-dock-wrapper" id="mobileBottomDock">
+    <div class="mobile-bottom-dock">
+      <button class="m-dock-btn active" id="mNavMapBtn" title="Map">
+        <div class="m-dock-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
         </div>
-        <div class="spotlight-results" id="spotlightResults"></div>
-      </div>
+        <span class="m-dock-label">Map</span>
+      </button>
+
+      <button class="m-dock-btn" id="mNavDrawingsBtn" title="Drawings">
+        <div class="m-dock-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </div>
+        <span class="m-dock-label">Drawings</span>
+      </button>
+
+      <button class="m-dock-btn" id="mNavBrochureBtn" title="Download Brochure">
+        <div class="m-dock-icon">
+          <svg class="m-brochure-icon-default" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <svg class="m-brochure-icon-loading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="4" x2="12" y2="16"></line>
+            <polyline points="7 11 12 16 17 11"></polyline>
+            <line x1="5" y1="20" x2="19" y2="20"></line>
+          </svg>
+          <svg class="m-brochure-icon-success" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <span class="m-dock-label">Brochure</span>
+      </button>
     </div>
+
+    <!-- Floating Circular Theme Toggle Button (Integrated into bottom dock) -->
+    <button class="m-dock-badge minimal-theme-toggle" id="mDockThemeToggle" aria-label="Toggle Theme" title="Toggle Theme">
+      <svg class="theme-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="theme-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Spotlight Search -->
+  <div id="spotlightSearch">
+    <div class="spotlight-box">
+      <div class="spotlight-input-wrap">
+        <input type="text" id="spotlightInput" placeholder="Search projects by name, state, or category... (Esc to close)">
+        <div class="spotlight-close" onclick="closeSpotlight()" style="position: absolute; right: 20px; top: 20px; cursor: pointer; color: var(--sub); font-size: 20px;">&times;</div>
+      </div>
+      <div class="spotlight-results" id="spotlightResults"></div>
+    </div>
+  </div>
 
 </body>
 </html>
