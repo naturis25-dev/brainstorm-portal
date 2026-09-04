@@ -137,17 +137,23 @@ function renderCategoryChips() {
   const oldSearch = document.getElementById('globalProjectSearch');
   const oldVal = oldSearch ? oldSearch.value : '';
 
-  row.innerHTML = cats.map(c =>
-    `<button class="cat-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
-  ).join('') + 
-  `<div class="inline-search-wrap" style="position: relative; flex: 1; min-width: 180px; height: 34px; margin-left: auto;">
+  const chipsHTML = cats.map(c =>
+    `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
+  ).join('');
+
+  row.innerHTML = 
+  `<div class="filter-chip-container" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1;">
+    ${chipsHTML}
+  </div>
+  <div class="inline-search-wrap" style="position: relative; flex: 0 0 auto; width: 180px; height: 34px; margin-left: 12px;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none; opacity:0.45;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     <input type="text" id="globalProjectSearch" placeholder="Search projects... (Ctrl+K)" value="${oldVal.replace(/"/g, '&quot;')}" style="padding: 0 36px 0 32px; width: 100%; height: 100%; background: var(--gray-50, #f8fafc); border: 1.5px solid var(--line); border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
     <button id="globalSearchBtn" title="Search" style="position:absolute; right:4px; top:50%; transform:translateY(-50%); background: var(--accent); color:#fff; border:none; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: background 0.2s;">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </button>
   </div>`;
-  row.querySelectorAll('.cat-chip').forEach(chip => {
+
+  row.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       currentCategory = chip.dataset.cat;
       renderCategoryChips();

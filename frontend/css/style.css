@@ -4572,3 +4572,61 @@ model-viewer::part(interaction-prompt),
     max-width: calc(100% - 40px);
   }
 }
+/* Smooth View Transitions */
+.view-section {
+  animation: fadeSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Filter Chips */
+.filter-chip-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+.filter-chip-container::-webkit-scrollbar { display: none; }
+.filter-chip {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--sub);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.panel-drag-handle { display: none; }
+
+@media (max-width: 768px) {
+  .panel-drag-handle {
+    display: block !important;
+    width: 40px;
+    height: 5px;
+    background: var(--line);
+    border-radius: 5px;
+    margin: 0 auto 15px;
+  }
+}
+@media (max-width: 768px) {
+  .panel {
+    top: auto !important;
+    bottom: 0 !important;
+    height: 85vh !important;
+    border-radius: 24px 24px 0 0 !important;
+    transform: translateY(100%) !important;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.2) !important;
+  }
+  .panel.open {
+    transform: translateY(0) !important;
+  }
+}
