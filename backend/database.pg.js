@@ -1,9 +1,13 @@
 const { Pool } = require('pg');
 
 
-const pool = new Pool({
+const config = {
   connectionString: process.env.DATABASE_URL,
-});
+};
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('railway')) {
+  config.ssl = { rejectUnauthorized: false };
+}
+const pool = new Pool(config);
 
 async function initialize() {
   const client = await pool.connect();
