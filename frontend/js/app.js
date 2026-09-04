@@ -162,6 +162,21 @@ function renderCategoryChips() {
       });
     });
 
+    // Desktop dropdown
+    const desktopSelect = document.getElementById('categorySelectDesktop');
+    if (desktopSelect) {
+      desktopSelect.innerHTML = '<option value="All">All Categories</option>' + cats.map(c =>
+        `<option value="${c}" ${c === currentCategory ? 'selected' : ''}>${c}</option>`
+      ).join('');
+      desktopSelect.value = currentCategory;
+      desktopSelect.onchange = function() {
+        currentCategory = this.value;
+        renderCategoryChips();
+        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+        closePanel();
+      };
+    }
+
     const searchInput = document.getElementById('globalProjectSearch');
     const searchBtn = document.getElementById('globalSearchBtn');
     

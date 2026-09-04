@@ -4740,3 +4740,34 @@ body.dark-mode .map-note-chip {
   background: rgba(255,255,255,0.02);
 
 
+}
+
+/* Desktop: show dropdown, hide chips */
+.desktop-category-select {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: auto;
+}
+#categoryChipRow {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  /* Mobile: hide dropdown, show chips */
+  .desktop-category-select {
+    display: none !important;
+  }
+  #categoryChipRow {
+    display: flex !important;
+  }
+  .map-note-chip {
+    margin: 8px 16px 0 !important;
+  }
+}
