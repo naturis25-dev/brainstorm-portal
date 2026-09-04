@@ -4667,3 +4667,57 @@ model-viewer::part(interaction-prompt),
     border-radius: 9px !important;
   }
 }
+
+@media (max-width: 768px) {
+  /* Ultra-compact topbar to fit icons and text */
+  .topbar {
+    padding: 6px 10px !important;
+  }
+  .top-actions {
+    gap: 0px !important;
+  }
+  .icon-btn {
+    padding: 4px 5px !important; 
+    gap: 3px !important;
+  }
+  .icon-btn svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .icon-btn-label {
+    font-size: 8.5px !important;
+    letter-spacing: -0.2px !important;
+    font-weight: 700 !important;
+  }
+  
+  #navBrochureLabel {
+    padding: 4px 5px !important;
+    gap: 3px !important;
+  }
+  #navBrochureLabel svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  #navBrochureLabel .title {
+    font-size: 8.5px !important;
+    letter-spacing: -0.2px !important;
+    font-weight: 700 !important;
+  }
+  
+  /* Shrink brand text so it doesn't get squished */
+  .brand {
+    gap: 6px !important;
+  }
+  .brand .logo-box {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .brand-text .b-name {
+    font-size: 12px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+  .brand-text .b-tag {
+    font-size: 7.5px !important;
+  }
+}
