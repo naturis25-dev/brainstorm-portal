@@ -4721,3 +4721,29 @@ model-viewer::part(interaction-prompt),
     font-size: 7.5px !important;
   }
 }
+
+/* Separate Map Note Chip Box */
+.map-note-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  color: var(--sub);
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  margin-top: 20px;
+}
+body.dark-mode .map-note-chip {
+  background: rgba(255,255,255,0.02);
+}
+
+@media (max-width: 768px) {
+  svg#map {
+    transform: scale(1.4) !important;
+    transform-origin: center center !important;
+  }
+}
