@@ -738,6 +738,7 @@ function setupNavigation() {
 
       drawingCards.forEach(card => observer.observe(card));
     }
+  }
 
   function setupDrawingsFilter() {
     // No longer needed as we use folder navigation instead of toggle tabs
