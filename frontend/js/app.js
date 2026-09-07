@@ -178,9 +178,9 @@ function renderCategoryChips() {
     </div>`;
   } else {
     row.innerHTML = 
-    `<div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; width: 100%;">
+    `<div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; width: 100%; box-sizing: border-box;">
       ${chipsHTML}
-      <div class="inline-search-wrap">
+      <div class="inline-search-wrap" style="flex: 1 1 280px; min-width: 260px; margin: 0;">
         <div class="search-badge-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
