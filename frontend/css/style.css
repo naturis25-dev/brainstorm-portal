@@ -4810,9 +4810,12 @@ model-viewer::part(interaction-prompt),
 }
 @media (max-width: 768px) {
   #backToTopBtn {
-    bottom: 18px !important;
+    bottom: 124px !important;
     right: 16px !important;
-    z-index: 100 !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    z-index: 995 !important;
   }
 }
 @media (max-width: 768px) {
@@ -6117,9 +6120,9 @@ body.dark-mode .map-note-chip {
     padding: 6px 12px 18px 12px !important;
   }
   
-  /* Back to top button positioned cleanly on mobile floating directly above theme toggle badge */
+  /* Back to top button positioned cleanly on mobile floating directly above search row and bottom dock */
   #backToTopBtn {
-    bottom: 68px !important;
+    bottom: 124px !important;
     right: 16px !important;
     width: 44px !important;
     height: 44px !important;
