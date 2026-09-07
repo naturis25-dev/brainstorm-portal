@@ -2310,92 +2310,33 @@ body.dark-mode .c-dot {
 }
 
 /* ============================================================
-   BAGGY-STYLE INDUSTRIAL CONTACT CARD FOOTER
+   MINIMALIST PILL CONTACT & BRAND FOOTER (MATCHING DESIGN)
 ============================================================ */
 .atlas-brand-footer {
   position: relative;
   width: 100%;
-  max-width: 1100px;
-  margin: 32px auto 20px;
-  padding: 26px 30px 22px;
+  max-width: 540px;
+  margin: 40px auto 24px;
+  padding: 24px 20px 20px;
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 28px;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 30px -6px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.03);
-  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
   color: #111827;
   transition: all 0.35s ease;
-  min-height: 155px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 body.dark-mode .atlas-brand-footer {
-  background: #1c1d1f;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: #18191d;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
   color: #ffffff;
-}
-
-/* 4 Corner Metal Rivet Screws */
-.footer-rivet {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #94a3b8;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(255, 255, 255, 0.8);
-  z-index: 5;
-  border: 1px solid #cbd5e1;
-}
-
-body.dark-mode .footer-rivet {
-  background: #64748b;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6), 0 1px 1px rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.footer-rivet.top-left { top: 12px; left: 12px; }
-.footer-rivet.top-right { top: 12px; right: 12px; }
-.footer-rivet.bottom-left { bottom: 12px; left: 12px; }
-.footer-rivet.bottom-right { bottom: 12px; right: 12px; }
-
-/* Background Watermark */
-.footer-bg-watermark {
-  position: absolute;
-  bottom: -6px;
-  right: 18px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.watermark-text {
-  font-family: 'Inter', 'Manrope', -apple-system, sans-serif;
-  font-size: clamp(40px, 8.5vw, 92px);
-  font-weight: 900;
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-  color: #f1f5f9;
-  user-select: none;
-  white-space: nowrap;
-  transition: color 0.4s ease;
-}
-
-body.dark-mode .watermark-text {
-  color: #26272b;
-}
-
-.atlas-brand-footer:hover .watermark-text {
-  color: #e2e8f0;
-}
-
-body.dark-mode .atlas-brand-footer:hover .watermark-text {
-  color: #2c2e33;
 }
 
 .footer-card-content {
@@ -2403,180 +2344,125 @@ body.dark-mode .atlas-brand-footer:hover .watermark-text {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 22px;
-}
-
-/* Top Split */
-.footer-top-split {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.footer-contact-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.footer-heading {
-  font-size: 20px;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-body.dark-mode .footer-heading {
-  color: #f1f5f9;
-}
-
-.footer-email-link {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: #ea580c; /* High contrast energetic orange */
-  text-decoration: none;
-  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
 }
 
-.footer-email-link:hover {
-  color: #c2410c;
-  transform: translateX(2px);
-}
-
-body.dark-mode .footer-email-link {
-  color: #ff6b35;
-}
-
-body.dark-mode .footer-email-link:hover {
-  color: #ff8555;
-}
-
-/* Bottom Split */
-.footer-bottom-split {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.footer-bottom-left-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.footer-text-links {
+/* Social Buttons Row (Circular Light Badges) */
+.footer-social-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
 }
 
-.footer-nav-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
+.footer-social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f1f3f5;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.footer-nav-link:hover {
-  color: #0f172a;
-}
-
-body.dark-mode .footer-nav-link {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-body.dark-mode .footer-nav-link:hover {
+.footer-social-btn:hover {
+  background: var(--accent);
   color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 109, 244, 0.25);
 }
 
+body.dark-mode .footer-social-btn {
+  background: #25272c;
+  color: #9ca3af;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+body.dark-mode .footer-social-btn:hover {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(42, 109, 244, 0.4);
+}
+
+/* Footer Copyright Text */
 .footer-copyright {
-  font-size: 12px;
-  color: #64748b;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-size: 13.5px;
+  color: #4b5563;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  margin: 2px 0 4px;
 }
 
 body.dark-mode .footer-copyright {
-  color: #8c9ba5;
+  color: #94a3b8;
 }
 
-/* Dynamic Canadian Red Theme Integration */
-.atlas-brand-footer.ca .footer-email-link {
-  color: #dc2626;
+/* Top ^ Pill Button */
+.footer-top-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f1f3f5;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.atlas-brand-footer.ca .footer-email-link:hover {
-  color: #b91c1c;
+.footer-top-pill:hover {
+  background: #e5e7eb;
+  color: #111827;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
 
-body.dark-mode .atlas-brand-footer.ca .footer-email-link {
-  color: #ef4444;
+.footer-top-pill:active {
+  transform: scale(0.96);
 }
 
-body.dark-mode .atlas-brand-footer.ca .footer-email-link:hover {
-  color: #f87171;
+body.dark-mode .footer-top-pill {
+  background: #25272c;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .footer-top-pill:hover {
+  background: #31343a;
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {
   .atlas-brand-footer {
-    margin: 18px 0 10px !important;
-    padding: 20px 18px 18px !important;
-    border-radius: 18px !important;
-    min-height: 150px !important;
+    max-width: calc(100% - 24px);
+    margin: 24px auto 90px;
+    padding: 20px 16px 18px;
+    border-radius: 24px;
   }
-  .footer-rivet {
-    width: 6px !important;
-    height: 6px !important;
-  }
-  .footer-rivet.top-left { top: 10px !important; left: 10px !important; }
-  .footer-rivet.top-right { top: 10px !important; right: 10px !important; }
-  .footer-rivet.bottom-left { bottom: 10px !important; left: 10px !important; }
-  .footer-rivet.bottom-right { bottom: 10px !important; right: 10px !important; }
-  
-  .footer-card-content {
-    gap: 16px !important;
-  }
-
-  .footer-top-split {
-    flex-direction: column !important;
-    gap: 4px !important;
-    align-items: flex-start !important;
-  }
-  .footer-heading {
-    font-size: 18px !important;
-  }
-  .footer-email-link {
-    font-size: 13.5px !important;
-  }
-  .footer-bottom-split {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 8px !important;
-    justify-content: flex-start !important;
-  }
-  .footer-bottom-left-block {
-    gap: 6px !important;
-  }
-  .footer-text-links {
-    gap: 12px !important;
-  }
-  .footer-nav-link {
-    font-size: 12px !important;
+  .footer-social-btn {
+    width: 36px;
+    height: 36px;
   }
   .footer-copyright {
-    font-size: 11.5px !important;
+    font-size: 12.5px;
   }
-  .watermark-text {
-    font-size: clamp(32px, 12vw, 64px) !important;
-    line-height: 0.85 !important;
+  .footer-top-pill {
+    padding: 5px 16px;
+    font-size: 12px;
   }
 }
 
