@@ -2315,9 +2315,9 @@ body.dark-mode .c-dot {
 .atlas-brand-footer {
   position: relative;
   width: 100%;
-  max-width: 360px;
-  margin: 32px auto 20px;
-  padding: 16px 18px 14px;
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 16px 20px 14px;
   background: #ffffff;
   border-radius: 22px;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -2477,8 +2477,8 @@ body.dark-mode .footer-top-pill:hover {
 
 @media (max-width: 768px) {
   .atlas-brand-footer {
-    max-width: 290px;
-    margin: 20px auto 90px;
+    max-width: 100%;
+    margin: 16px auto 90px;
     padding: 14px 14px 12px;
     border-radius: 20px;
   }
