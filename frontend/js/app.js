@@ -2230,19 +2230,34 @@ const STATE_COORDS = {
 
   window.openSpotlight = openSpotlight;
   function openSpotlight(initialQuery = '') {
+    if (!spotlightModal) return;
     spotlightModal.classList.add('active');
     if (spotlightInput) {
       spotlightInput.value = initialQuery;
       spotlightInput.placeholder = window.innerWidth <= 768 ? 'Search projects by name, state, or category...' : 'Search projects by name, state, or category... (Esc to close)';
-      setTimeout(() => spotlightInput.focus(), 60);
+      if (window.innerWidth <= 768) {
+        setTimeout(() => {
+          if (spotlightModal.classList.contains('active')) {
+            spotlightInput.focus();
+          }
+        }, 100);
+      } else {
+        setTimeout(() => spotlightInput.focus(), 50);
+      }
     }
     renderSpotlightResults(initialQuery);
   }
 
   window.closeSpotlight = closeSpotlight;
   function closeSpotlight() {
+    if (!spotlightModal) return;
+    if (spotlightInput) spotlightInput.blur();
     spotlightModal.classList.remove('active');
-    if (spotlightInput) spotlightInput.value = '';
+    setTimeout(() => {
+      if (!spotlightModal.classList.contains('active') && spotlightInput) {
+        spotlightInput.value = '';
+      }
+    }, 350);
   }
 
   spotlightInput?.addEventListener('input', (e) => {
@@ -2252,44 +2267,65 @@ const STATE_COORDS = {
   function renderSpotlightResults(query) {
     if (!spotlightResults) return;
     spotlightResults.innerHTML = '';
-    
+
+    const cleanQuery = (query || '').trim().toLowerCase();
+
     const allProjects = window.PROJECT_STATS || window.PROJECTS || PROJECTS || [];
-    let filtered = allProjects.filter(p => projectMatchesQuery(p, query));
     
+    // Filter out test/dummy concurrency test projects
+    const publicProjects = allProjects.filter(p => {
+      const title = (p.title || '').toLowerCase();
+      return !title.includes('test') && !title.includes('concurrency') && !title.includes('manager b');
+    });
+
+    if (!cleanQuery) {
+      spotlightResults.innerHTML = `
+        <div style="padding: 40px 20px; text-align: center; color: var(--sub); font-size: 13.5px; font-weight: 500; opacity: 0.7;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-bottom: 8px; opacity: 0.6;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <div>Type to search projects by name, location, or category...</div>
+        </div>
+      `;
+      return;
+    }
+
+    let filtered = publicProjects.filter(p => projectMatchesQuery(p, cleanQuery));
+
     if (filtered.length === 0) {
       spotlightResults.innerHTML = '<div style="padding: 36px 20px; text-align: center; color: var(--sub); font-size: 13px; font-weight: 500;">No matching projects found</div>';
       return;
     }
-    
-    filtered.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'proj-row';
-      row.style.cursor = 'pointer';
-      
-      const thumb = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : (p.images[0].startsWith('/') ? p.images[0] : '/' + p.images[0])) : 'assets/logo.png';
-      const fallback = "this.src='assets/logo.png'";
-      
-      row.innerHTML = `
-        <img class="prow-img" src="${thumb}" onerror="${fallback}">
-        <div class="prow-body">
-          <div class="prow-eyebrow">${p.category || 'STRUCTURAL'}</div>
-          <div class="prow-title">${p.title || 'Untitled Project'}</div>
-          <div class="prow-meta">
-            ${p.tons ? `<span class="prow-badge">${p.tons} Tons</span>` : ''}
-            <span style="color:var(--sub); font-size:12px; font-weight:600;">${p.state || ''}</span>
-            ${p.year ? `<span class="prow-year">&middot; ${p.year}</span>` : ''}
-          </div>
+
+    filtered.forEach(p => appendSpotlightRow(p));
+  }
+
+  function appendSpotlightRow(p) {
+    const row = document.createElement('div');
+    row.className = 'proj-row spotlight-apple-row';
+    row.style.cursor = 'pointer';
+
+    const thumb = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : (p.images[0].startsWith('/') ? p.images[0] : '/' + p.images[0])) : 'assets/logo.png';
+    const fallback = "this.src='assets/logo.png'";
+
+    row.innerHTML = `
+      <img class="prow-img" src="${thumb}" onerror="${fallback}">
+      <div class="prow-body">
+        <div class="prow-eyebrow">${p.category || 'STRUCTURAL'}</div>
+        <div class="prow-title">${p.title || 'Untitled Project'}</div>
+        <div class="prow-meta">
+          ${p.tons ? `<span class="prow-badge">${p.tons} Tons</span>` : ''}
+          <span style="color:var(--sub); font-size:12px; font-weight:600;">${p.state || ''}</span>
+          ${p.year ? `<span class="prow-year">&middot; ${p.year}</span>` : ''}
         </div>
-        <div class="prow-arrow">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </div>
-      `;
-      row.addEventListener('click', () => {
-        closeSpotlight();
-        window.openDetail(p.id);
-      });
-      spotlightResults.appendChild(row);
+      </div>
+      <div class="prow-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    `;
+    row.addEventListener('click', () => {
+      closeSpotlight();
+      window.openDetail(p.id);
     });
+    spotlightResults.appendChild(row);
   }
 
 // Mobile Bottom Nav Hooks
@@ -2311,3 +2347,33 @@ window.addEventListener('resize', () => {
     }
   }, 100);
 });
+
+// Interactive Footer Handlers
+document.addEventListener('DOMContentLoaded', () => {
+  initInteractiveFooter();
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initInteractiveFooter();
+}
+
+function initInteractiveFooter() {
+  // 1. Dynamic Year
+  const yearEl = document.getElementById('footerCurrentYear');
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear();
+  }
+
+  // 2. Smooth Back to Top
+  const backToTopBtn = document.getElementById('footerBackToTop');
+  if (backToTopBtn && !backToTopBtn.dataset.bound) {
+    backToTopBtn.dataset.bound = 'true';
+    backToTopBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+}
+
