@@ -598,18 +598,41 @@ function setupNavigation() {
       });
     });
 
-    if ('IntersectionObserver' in window) {
+    // Mobile scroll observer: strict 1-by-1 active state for cards centered in viewport
+    if ('IntersectionObserver' in window && window.innerWidth <= 768) {
+      let activeCard = null;
+
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          // Trigger when card is nicely centered in viewport on touch/mobile devices
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in-view');
+        let bestEntry = null;
+        let maxRatio = 0;
+
+        // Find the card closest to the middle of the viewport
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          const cardCenter = rect.top + rect.height / 2;
+          const screenCenter = viewportHeight / 2;
+          const distFromCenter = Math.abs(screenCenter - cardCenter);
+
+          // Active range: card center within middle 50% of screen
+          if (distFromCenter < viewportHeight * 0.35) {
+            const visibilityRatio = 1 - (distFromCenter / (viewportHeight * 0.35));
+            if (visibilityRatio > maxRatio) {
+              maxRatio = visibilityRatio;
+              bestEntry = card;
+            }
+          }
+        });
+
+        cards.forEach(card => {
+          if (card === bestEntry) {
+            card.classList.add('is-in-view');
           } else {
-            entry.target.classList.remove('is-in-view');
+            card.classList.remove('is-in-view');
           }
         });
       }, {
-        threshold: 0.65 // Card activates when 65% visible in scroll
+        threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
       });
 
       cards.forEach(card => observer.observe(card));
