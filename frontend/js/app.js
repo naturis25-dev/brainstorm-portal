@@ -701,7 +701,43 @@ function setupNavigation() {
     });
     
     gallery.innerHTML = html;
-  }
+
+    // Mobile scroll observer for drawing detail cards: 1-by-1 active state for cards centered in viewport
+    if ('IntersectionObserver' in window && window.innerWidth <= 768) {
+      const drawingCards = document.querySelectorAll('.drawing-card');
+      const observer = new IntersectionObserver((entries) => {
+        let bestEntry = null;
+        let maxRatio = 0;
+
+        drawingCards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          const cardCenter = rect.top + rect.height / 2;
+          const screenCenter = viewportHeight / 2;
+          const distFromCenter = Math.abs(screenCenter - cardCenter);
+
+          if (distFromCenter < viewportHeight * 0.35) {
+            const visibilityRatio = 1 - (distFromCenter / (viewportHeight * 0.35));
+            if (visibilityRatio > maxRatio) {
+              maxRatio = visibilityRatio;
+              bestEntry = card;
+            }
+          }
+        });
+
+        drawingCards.forEach(card => {
+          if (card === bestEntry) {
+            card.classList.add('is-in-view');
+          } else {
+            card.classList.remove('is-in-view');
+          }
+        });
+      }, {
+        threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
+      });
+
+      drawingCards.forEach(card => observer.observe(card));
+    }
 
   function setupDrawingsFilter() {
     // No longer needed as we use folder navigation instead of toggle tabs

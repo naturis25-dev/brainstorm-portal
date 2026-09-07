@@ -3406,15 +3406,44 @@ body.dark-mode .smooky-title {
   }
 }
 
-/* Dark Mode Support */
-body.dark-mode .smooky-card {
-  background: #18191d;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+/* Drawing PDF Detail Cards Hover & Mobile Scroll Popup Effect */
+.drawing-card {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s ease !important;
 }
-body.dark-mode .smooky-title { color: #f8fafc; }
-body.dark-mode .smooky-subtext { color: #94a3b8; }
-body.dark-mode .smooky-card:hover .smooky-title { color: #0f172a; }
-body.dark-mode .smooky-card:hover .smooky-subtext { color: #1e293b; }
+
+.drawing-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
+  border-color: var(--accent) !important;
+}
+
+.drawing-card:hover .dc-hover-overlay {
+  opacity: 1 !important;
+}
+
+.drawing-card:hover .dc-cover img {
+  transform: scale(1.05);
+}
+
+.drawing-card .dc-cover img {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (max-width: 768px) {
+  .drawing-card.is-in-view {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12) !important;
+    border-color: var(--accent) !important;
+  }
+
+  .drawing-card.is-in-view .dc-hover-overlay {
+    opacity: 1 !important;
+  }
+
+  .drawing-card.is-in-view .dc-cover img {
+    transform: scale(1.05);
+  }
+}
 
 .uiverse-blob-card[data-cat="uae"] .blob { background-color: #059669; }
 .uiverse-blob-card[data-cat="uae"] .card-icon { color: #059669; background: #d1fae5; }
