@@ -3181,21 +3181,37 @@ body.dark-mode .drop-zone {
   z-index: 2;
 }
 
-@keyframes rotation_481 {
-  0% { transform: rotateZ(0deg); }
-  100% { transform: rotateZ(360deg); }
+/* Category Specific Glow Colors for Drawing Folder Cards */
+.drawing-folder-card[data-cat="misc"] .flip-front::before { background: linear-gradient(90deg, transparent, #0284c7, #0284c7, transparent); }
+.drawing-folder-card[data-cat="misc"] .card-icon { background: #e0f2fe; color: #0284c7; }
+
+.drawing-folder-card[data-cat="canada"] .flip-front::before { background: linear-gradient(90deg, transparent, #dc2626, #dc2626, transparent); }
+.drawing-folder-card[data-cat="canada"] .card-icon { background: #fee2e2; color: #dc2626; }
+
+.drawing-folder-card[data-cat="quebec"] .flip-front::before { background: linear-gradient(90deg, transparent, #4f46e5, #4f46e5, transparent); }
+.drawing-folder-card[data-cat="quebec"] .card-icon { background: #e0e7ff; color: #4f46e5; }
+
+.drawing-folder-card[data-cat="usa"] .flip-front::before { background: linear-gradient(90deg, transparent, #2563eb, #2563eb, transparent); }
+.drawing-folder-card[data-cat="usa"] .card-icon { background: #dbeafe; color: #2563eb; }
+
+.drawing-folder-card[data-cat="uae"] .flip-front::before { background: linear-gradient(90deg, transparent, #059669, #059669, transparent); }
+.drawing-folder-card[data-cat="uae"] .card-icon { background: #d1fae5; color: #059669; }
+
+/* Dark mode adjustments for folder cards */
+body.dark-mode .flip-front-content,
+body.dark-mode .flip-front {
+  background-color: #18191d !important;
 }
 
-.drawing-folder-card .card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  background: #fff0f2;
-  color: #dc143c;
+body.dark-mode .flip-front-content .heading {
+  color: #f1f5f9 !important;
 }
+
+body.dark-mode .drawing-folder-card[data-cat="misc"] .card-icon { background: rgba(2, 132, 199, 0.18); color: #38bdf8; }
+body.dark-mode .drawing-folder-card[data-cat="canada"] .card-icon { background: rgba(220, 38, 38, 0.18); color: #f87171; }
+body.dark-mode .drawing-folder-card[data-cat="quebec"] .card-icon { background: rgba(79, 70, 229, 0.18); color: #818cf8; }
+body.dark-mode .drawing-folder-card[data-cat="usa"] .card-icon { background: rgba(37, 99, 235, 0.18); color: #60a5fa; }
+body.dark-mode .drawing-folder-card[data-cat="uae"] .card-icon { background: rgba(5, 150, 105, 0.18); color: #34d399; }
 
 .drawing-folder-card .card-icon svg {
   width: 32px;
