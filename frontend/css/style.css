@@ -3150,52 +3150,59 @@ body.dark-mode .drop-zone {
 }
 
 /* FRONT SIDE */
+/* Reference Style Card Layout with Colored Top Accent Line */
 .flip-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 }
 
+/* Colored Top Accent Line from Reference Image */
 .flip-front::before {
+  content: '';
   position: absolute;
-  content: ' ';
-  display: block;
-  width: 100%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent, #dc143c, #dc143c, transparent);
-  animation: rotation_481 4000ms infinite linear;
-  opacity: 0.15;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 16px 16px 0 0;
+  z-index: 3;
 }
 
 .flip-front-content {
-  position: absolute;
-  width: 98%;
-  height: 98%;
-  background-color: #ffffff;
-  border-radius: 10px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  box-sizing: border-box;
   z-index: 2;
 }
 
-/* Category Specific Glow Colors for Drawing Folder Cards */
-.drawing-folder-card[data-cat="misc"] .flip-front::before { background: linear-gradient(90deg, transparent, #0284c7, #0284c7, transparent); }
-.drawing-folder-card[data-cat="misc"] .card-icon { background: #e0f2fe; color: #0284c7; }
+.drawing-folder-card[data-cat="misc"] .flip-front::before { background: #0284c7; }
+.drawing-folder-card[data-cat="misc"] .card-icon { color: #0284c7; background: #e0f2fe; }
 
-.drawing-folder-card[data-cat="canada"] .flip-front::before { background: linear-gradient(90deg, transparent, #dc2626, #dc2626, transparent); }
-.drawing-folder-card[data-cat="canada"] .card-icon { background: #fee2e2; color: #dc2626; }
+.drawing-folder-card[data-cat="canada"] .flip-front::before { background: #dc2626; }
+.drawing-folder-card[data-cat="canada"] .card-icon { color: #dc2626; background: #fee2e2; }
 
-.drawing-folder-card[data-cat="quebec"] .flip-front::before { background: linear-gradient(90deg, transparent, #4f46e5, #4f46e5, transparent); }
-.drawing-folder-card[data-cat="quebec"] .card-icon { background: #e0e7ff; color: #4f46e5; }
+.drawing-folder-card[data-cat="quebec"] .flip-front::before { background: #4f46e5; }
+.drawing-folder-card[data-cat="quebec"] .card-icon { color: #4f46e5; background: #e0e7ff; }
 
-.drawing-folder-card[data-cat="usa"] .flip-front::before { background: linear-gradient(90deg, transparent, #2563eb, #2563eb, transparent); }
-.drawing-folder-card[data-cat="usa"] .card-icon { background: #dbeafe; color: #2563eb; }
+.drawing-folder-card[data-cat="usa"] .flip-front::before { background: #2563eb; }
+.drawing-folder-card[data-cat="usa"] .card-icon { color: #2563eb; background: #dbeafe; }
 
-.drawing-folder-card[data-cat="uae"] .flip-front::before { background: linear-gradient(90deg, transparent, #059669, #059669, transparent); }
-.drawing-folder-card[data-cat="uae"] .card-icon { background: #d1fae5; color: #059669; }
+.drawing-folder-card[data-cat="uae"] .flip-front::before { background: #059669; }
+.drawing-folder-card[data-cat="uae"] .card-icon { color: #059669; background: #d1fae5; }
 
 /* Dark mode adjustments for folder cards */
 body.dark-mode .flip-front-content,
@@ -3217,9 +3224,11 @@ body.dark-mode .drawing-folder-card[data-cat="uae"] .card-icon { background: rgb
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 68px;
-  height: 68px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  align-self: flex-end;
+  margin-top: auto;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -3228,18 +3237,31 @@ body.dark-mode .drawing-folder-card[data-cat="uae"] .card-icon { background: rgb
 }
 
 .drawing-folder-card .card-icon svg {
-  width: 44px;
-  height: 44px;
-  overflow: visible;
+  width: 28px;
+  height: 28px;
 }
 
 .drawing-folder-card .flip-front-content .heading {
-  font-weight: 700;
-  font-size: 20px;
-  color: #2d3748;
-  text-align: center;
-  padding: 0 15px;
+  font-weight: 800;
+  font-size: 22px;
+  color: #1e293b;
+  text-align: left;
+  padding: 0;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.4px;
+}
+
+.drawing-folder-card .flip-front-content .subtext {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+  text-align: left;
   margin: 0;
+  font-weight: 500;
+}
+
+body.dark-mode .drawing-folder-card .flip-front-content .subtext {
+  color: #94a3b8;
 }
 
 /* BACK SIDE */
