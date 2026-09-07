@@ -3213,9 +3213,24 @@ body.dark-mode .drawing-folder-card[data-cat="quebec"] .card-icon { background: 
 body.dark-mode .drawing-folder-card[data-cat="usa"] .card-icon { background: rgba(37, 99, 235, 0.18); color: #60a5fa; }
 body.dark-mode .drawing-folder-card[data-cat="uae"] .card-icon { background: rgba(5, 150, 105, 0.18); color: #34d399; }
 
+.drawing-folder-card .card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.drawing-folder-card:hover .card-icon {
+  transform: scale(1.08);
+}
+
 .drawing-folder-card .card-icon svg {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  overflow: visible;
 }
 
 .drawing-folder-card .flip-front-content .heading {

@@ -542,11 +542,20 @@ function setupNavigation() {
     let html = '';
     
     const regionIcons = {
+      // Miscellaneous Framing (Structural Steel Layers / Drawings)
       misc: `<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 12 12 17 22 12"></polyline><polyline points="2 17 12 22 22 17"></polyline>`,
-      canada: `<path d="M 4 8 L 4 3 L 8 2 L 10 4 C 11 5, 12 5, 13 3 L 15 2 L 18 3 C 20 4, 22 5, 21 7 L 18 7 L 14 9 L 11 8 Z"></path>`,
-      quebec: `<path d="M 7 16 L 6 9 L 10 6 L 15 4 L 17 8 L 20 9 L 17 14 L 13 12 L 9 17 Z"></path>`,
-      usa: `<path d="M 4 8 L 11 8 L 14 9 L 18 7 L 20 6 C 21 9, 19 11, 18 12 L 18 16 C 17 17, 16 17, 15 13 C 14 15, 12 15, 11 18 L 8 15 C 6 16, 4 15, 4 14 C 2 12, 3 9, 4 8 Z"></path>`,
-      uae: `<path d="M 18 6 L 16 10 C 12 10 8 12 4 14 L 6 18 L 14 16 L 18 12 L 20 8 Z"></path>`
+      
+      // High-precision Canada Geographic Silhouette Map Outline
+      canada: `<path d="M 2.2 7.8 L 3.5 6.2 L 5.1 6.5 L 6.2 5.0 L 8.0 4.8 L 9.5 3.5 L 11.2 4.2 L 12.8 3.2 L 14.5 4.5 L 16.0 3.8 L 17.5 4.9 L 19.8 4.2 L 21.8 6.0 L 20.5 7.8 L 21.2 9.2 L 19.5 10.5 L 19.2 12.8 L 17.8 14.0 L 16.2 13.5 L 14.8 14.8 L 13.2 13.8 L 11.8 15.2 L 9.5 14.2 L 8.2 15.5 L 6.5 14.8 L 5.2 16.0 L 3.8 14.5 L 2.8 12.5 L 3.5 10.2 Z" fill="currentColor" fill-opacity="0.15" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path>`,
+      
+      // High-precision Quebec Province Geographic Outline
+      quebec: `<path d="M 12.5 3.2 C 14.0 3.5, 15.5 4.2, 16.8 5.5 C 18.0 6.8, 18.5 8.2, 17.5 9.8 C 16.8 11.2, 17.8 12.5, 18.5 14.0 C 19.2 15.5, 17.5 17.2, 16.0 18.5 C 14.5 19.5, 13.2 18.2, 12.0 17.0 C 10.5 16.5, 9.2 17.8, 8.0 18.8 C 7.2 17.2, 7.8 15.5, 8.5 14.0 C 9.0 12.5, 8.2 11.0, 7.5 9.5 C 8.5 8.0, 9.8 6.5, 11.0 4.8 Z" fill="currentColor" fill-opacity="0.15" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path>`,
+      
+      // High-precision USA Map Outline (Lower 48 Contiguous States + Florida Peninsula)
+      usa: `<path d="M 2.2 7.2 L 4.8 6.8 L 8.5 6.2 L 12.8 6.0 L 16.5 6.5 L 20.2 7.8 L 21.8 10.2 L 20.5 12.5 L 18.8 12.2 L 17.8 14.5 L 18.2 17.8 L 17.2 19.5 L 16.2 19.2 L 15.8 16.2 L 14.5 15.2 L 12.8 16.8 L 10.5 15.8 L 8.2 16.2 L 6.2 17.5 L 4.2 15.2 L 2.8 12.8 L 3.8 10.2 L 2.5 8.5 Z" fill="currentColor" fill-opacity="0.15" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path>`,
+      
+      // High-precision UAE (United Arab Emirates) Map Outline (Arabian Gulf coastline + Peninsula)
+      uae: `<path d="M 3.2 14.8 C 4.5 13.2, 6.8 11.5, 9.2 10.8 C 11.5 10.2, 14.0 9.8, 16.2 8.5 C 17.8 7.5, 19.5 6.2, 20.8 7.5 C 21.5 8.8, 20.5 10.5, 19.8 12.2 C 18.5 14.0, 16.8 15.5, 14.5 16.8 C 12.0 17.8, 9.2 18.5, 6.5 18.0 C 4.8 17.5, 3.5 16.2, 3.2 14.8 Z" fill="currentColor" fill-opacity="0.15" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path>`
     };
     
     for (const catKey in cachedDrawingsData) {
