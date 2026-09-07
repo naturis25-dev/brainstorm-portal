@@ -200,13 +200,24 @@ function renderCategoryChips() {
         <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
           ${row2HTML}
         </div>
-        <div class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
-          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
-            <g>
-              <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
-            </g>
-          </svg>
-          <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="input" autocomplete="off" spellcheck="false">
+        <div class="ask-ai-wrapper" style="flex: 1 1 auto; margin: 0; min-width: 220px;">
+          <div class="ai-input-container">
+            <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="ai-input" autocomplete="off" spellcheck="false">
+            <div class="icon-container">
+              <svg class="ai-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#4a4a4a"/>
+              </svg>
+            </div>
+            <div class="underline-effect"></div>
+            <div class="ripple-circle"></div>
+            <div class="floating-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="bg-fade"></div>
+          </div>
         </div>
       </div>
     </div>`;
