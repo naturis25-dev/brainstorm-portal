@@ -4846,7 +4846,57 @@ model-viewer::part(interaction-prompt),
   
   /* Reduce gap between header and content cards */
   .detail-wrap {
-    padding-top: 24px !important;
+    padding-top: 20px !important;
+  }
+
+  /* Compact Mobile KPI Metric Cards */
+  .premium-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin: 16px auto 20px !important;
+    padding: 0 12px !important;
+  }
+
+  .pkpi-card {
+    padding: 10px 14px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .pkpi-card::before {
+    width: 3.5px !important;
+    border-radius: 14px 0 0 14px !important;
+  }
+
+  .pkpi-icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .pkpi-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .pkpi-info {
+    gap: 2px !important;
+  }
+
+  .pkpi-lbl {
+    font-size: 10px !important;
+    letter-spacing: 0.4px !important;
+  }
+
+  .pkpi-val {
+    font-size: 15.5px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+  }
+
+  .pkpi-val span {
+    font-size: 12px !important;
   }
 }
 @media (max-width: 768px) {
