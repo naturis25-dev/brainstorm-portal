@@ -2315,13 +2315,13 @@ body.dark-mode .c-dot {
 .atlas-brand-footer {
   position: relative;
   width: 100%;
-  max-width: 540px;
-  margin: 40px auto 24px;
-  padding: 24px 20px 20px;
+  max-width: 360px;
+  margin: 32px auto 20px;
+  padding: 16px 18px 14px;
   background: #ffffff;
-  border-radius: 28px;
+  border-radius: 22px;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
   color: #111827;
   transition: all 0.35s ease;
   display: flex;
@@ -2330,13 +2330,37 @@ body.dark-mode .c-dot {
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Glowing blue top accent line from reference image */
+.atlas-brand-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, #2563eb 30%, #3b82f6 50%, #2563eb 70%, transparent);
+  border-radius: 100px;
+  box-shadow: 0 1px 8px rgba(37, 99, 235, 0.6);
+  z-index: 3;
+}
+
+body.theme-ca .atlas-brand-footer::before {
+  background: linear-gradient(90deg, transparent, #dc2626 30%, #ef4444 50%, #dc2626 70%, transparent);
+  box-shadow: 0 1px 8px rgba(220, 38, 38, 0.6);
 }
 
 body.dark-mode .atlas-brand-footer {
   background: #18191d;
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   color: #ffffff;
+}
+
+body.dark-mode .atlas-brand-footer::before {
+  box-shadow: 0 1px 10px rgba(59, 130, 246, 0.8);
 }
 
 .footer-card-content {
@@ -2346,7 +2370,7 @@ body.dark-mode .atlas-brand-footer {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -2355,12 +2379,12 @@ body.dark-mode .atlas-brand-footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .footer-social-btn {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #f1f3f5;
   color: #4b5563;
@@ -2372,15 +2396,20 @@ body.dark-mode .atlas-brand-footer {
   border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+.footer-social-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
 .footer-social-btn:hover {
   background: var(--accent);
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(42, 109, 244, 0.25);
+  box-shadow: 0 4px 12px rgba(42, 109, 244, 0.25);
 }
 
 body.dark-mode .footer-social-btn {
-  background: #25272c;
+  background: #23252a;
   color: #9ca3af;
   border-color: rgba(255, 255, 255, 0.06);
 }
@@ -2388,16 +2417,16 @@ body.dark-mode .footer-social-btn {
 body.dark-mode .footer-social-btn:hover {
   background: var(--accent);
   color: #ffffff;
-  box-shadow: 0 6px 16px rgba(42, 109, 244, 0.4);
+  box-shadow: 0 4px 12px rgba(42, 109, 244, 0.4);
 }
 
 /* Footer Copyright Text */
 .footer-copyright {
-  font-size: 13.5px;
-  color: #4b5563;
+  font-size: 12px;
+  color: #52525b;
   font-weight: 600;
-  letter-spacing: -0.2px;
-  margin: 2px 0 4px;
+  letter-spacing: -0.1px;
+  margin: 1px 0 2px;
 }
 
 body.dark-mode .footer-copyright {
@@ -2409,25 +2438,25 @@ body.dark-mode .footer-copyright {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   background: #f1f3f5;
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 100px;
-  padding: 6px 18px;
-  font-size: 13px;
+  padding: 4px 14px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #1f2937;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   outline: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .footer-top-pill:hover {
   background: #e5e7eb;
   color: #111827;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .footer-top-pill:active {
@@ -2435,34 +2464,38 @@ body.dark-mode .footer-copyright {
 }
 
 body.dark-mode .footer-top-pill {
-  background: #25272c;
+  background: #23252a;
   border-color: rgba(255, 255, 255, 0.08);
   color: #e2e8f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode .footer-top-pill:hover {
-  background: #31343a;
+  background: #2e3036;
   color: #ffffff;
 }
 
 @media (max-width: 768px) {
   .atlas-brand-footer {
-    max-width: calc(100% - 24px);
-    margin: 24px auto 90px;
-    padding: 20px 16px 18px;
-    border-radius: 24px;
+    max-width: 290px;
+    margin: 20px auto 90px;
+    padding: 14px 14px 12px;
+    border-radius: 20px;
   }
   .footer-social-btn {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
+  }
+  .footer-social-btn svg {
+    width: 13.5px;
+    height: 13.5px;
   }
   .footer-copyright {
-    font-size: 12.5px;
+    font-size: 11px;
   }
   .footer-top-pill {
-    padding: 5px 16px;
-    font-size: 12px;
+    padding: 3px 12px;
+    font-size: 11px;
   }
 }
 
