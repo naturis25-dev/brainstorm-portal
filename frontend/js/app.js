@@ -589,13 +589,31 @@ function setupNavigation() {
     
     gallery.innerHTML = html;
     
-    // Add click listeners to folders
-    document.querySelectorAll('.smooky-card').forEach(card => {
+    // Add click listeners and scroll observer for mobile popup animation
+    const cards = document.querySelectorAll('.smooky-card');
+    cards.forEach(card => {
       card.addEventListener('click', function() {
         const cat = this.dataset.cat;
         renderFolderContents(cat);
       });
     });
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // Trigger when card is nicely centered in viewport on touch/mobile devices
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in-view');
+          } else {
+            entry.target.classList.remove('is-in-view');
+          }
+        });
+      }, {
+        threshold: 0.65 // Card activates when 65% visible in scroll
+      });
+
+      cards.forEach(card => observer.observe(card));
+    }
   }
 
   function renderFolderContents(catKey) {
