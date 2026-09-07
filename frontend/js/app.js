@@ -177,24 +177,37 @@ function renderCategoryChips() {
       </button>
     </div>`;
   } else {
-    row.innerHTML = 
-    `<div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; width: 100%; box-sizing: border-box;">
-      ${chipsHTML}
-      <div class="inline-search-wrap" style="flex: 1 1 280px; min-width: 260px; margin: 0;">
-        <div class="search-badge-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+    // 2-Row Grid layout on desktop so Row 1 ends with Data Center and Row 2 ends with Search Bar aligned with map box edge
+    const row1Cats = ['All', 'Industrial', 'Commercial', 'Healthcare', 'Airport', 'Warehouse', 'Stadium', 'Institutional', 'Manufacturing', 'Data Center'];
+    const row2Cats = cats.filter(c => !row1Cats.includes(c));
+
+    const row1HTML = row1Cats.filter(c => cats.includes(c)).map(c =>
+      `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
+    ).join('');
+
+    const row2HTML = row2Cats.map(c =>
+      `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
+    ).join('');
+
+    row.innerHTML = `
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+      <!-- Row 1: All -> Data Center -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        ${row1HTML}
+      </div>
+      <!-- Row 2: Remaining Chips + Search Bar ending at same edge -->
+      <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
+          ${row2HTML}
         </div>
-        <input type="text" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" autocomplete="off" spellcheck="false">
-        <div class="search-kbd-pill"><span class="kbd-key">⌘K</span></div>
-        <button id="globalSearchBtn" title="Search" class="search-action-btn" aria-label="Search">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
+        <div class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
+            <g>
+              <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+            </g>
           </svg>
-        </button>
+          <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="input" autocomplete="off" spellcheck="false">
+        </div>
       </div>
     </div>`;
   }
@@ -541,76 +554,43 @@ function setupNavigation() {
     breadcrumb.style.display = 'none';
     let html = '';
     
-    const regionIcons = {
-      // Miscellaneous Framing: Layered Framing Blueprint Icon
-      misc: `<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>`,
-      
-      // Projects Canada: Globe / Region Landmark Icon
-      canada: `<circle cx="12" cy="12" r="9" stroke-width="2"></circle><path d="M3.6 9h16.8M3.6 15h16.8M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9z" stroke-width="2"></path>`,
-      
-      // Projects Quebec Canada: Castle / Fortress Structure Icon
-      quebec: `<path d="M3 21h18M5 21V7l4-2 4 2 4-2 4 2v14M9 10h1M15 10h1M9 14h1M15 14h1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>`,
-      
-      // Projects USA: Landmark Flag / Empire Building Icon
-      usa: `<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>`,
-      
-      // Projects UAE: Modern Tower / Burj Skyline Icon
-      uae: `<path d="M12 2l3 5v15H9V7l3-5zM9 12h6M9 16h6M12 2v20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>`
+    const categoryIcons = {
+      canada: 'assets/map_icons/map_canada.png',
+      quebec: 'assets/map_icons/map_quebec.png',
+      usa: 'assets/map_icons/map_usa.png',
+      uae: 'assets/map_icons/map_uae.png',
+      misc: 'assets/map_icons/map_misc.png'
     };
     
-    for (const catKey in cachedDrawingsData) {
+    // Explicit requested order: Canada -> Quebec Canada -> USA -> UAE -> Miscellaneous Framing Sheets
+    const desiredOrder = ['canada', 'quebec', 'usa', 'uae', 'misc'];
+    
+    desiredOrder.forEach(catKey => {
       const categoryData = cachedDrawingsData[catKey];
-      const iconPaths = regionIcons[catKey] || `<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>`;
+      if (!categoryData) return;
+      
+      const count = categoryData.files ? categoryData.files.length : 0;
+      const imgSrc = categoryIcons[catKey] || 'assets/map_icons/map_misc.png';
       
       html += `
-      <div class="drawing-folder-card card" data-cat="${catKey}" style="cursor:pointer;">
-        <div class="content">
-          <div class="flip-front">
-            <div class="flip-front-content">
-              <div>
-                <h3 class="heading">${categoryData.title}</h3>
-                <p class="subtext">Explore structural detailing samples & drawing files for this category.</p>
-              </div>
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  ${iconPaths}
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div class="flip-back">
-            <div class="img">
-              <div class="circle"></div>
-              <div class="circle" id="right"></div>
-              <div class="circle" id="bottom"></div>
-            </div>
-            <div class="flip-back-content">
-              <div class="description">
-                <div class="title">
-                  <p class="title">
-                    <strong>${categoryData.title}</strong>
-                  </p>
-                </div>
-                <p class="para" style="margin-top: 10px;">
-                  Explore <strong>${categoryData.files.length}</strong> sample drawing files in this category. Click to view or download the detailed PDFs.
-                </p>
-                <button class="btn" style="margin-top: 15px;">
-                  View Drawings
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </button>
-              </div>
-            </div>
-          </div>
+      <div class="smooky-card group" data-cat="${catKey}" onclick="window.renderDrawingsList('${catKey}')">
+        <div class="smooky-icon-box">
+          <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
+        </div>
+        <h3 class="smooky-title">${categoryData.title}</h3>
+        <p class="smooky-subtext">Explore structural detailing samples & drawing files for this category.</p>
+        <div class="smooky-footer">
+          <span class="smooky-files-badge">${count} Files</span>
+          <button class="smooky-action-btn">Explore Now</button>
         </div>
       </div>
       `;
-    }
+    });
     
     gallery.innerHTML = html;
     
     // Add click listeners to folders
-    document.querySelectorAll('.drawing-folder-card').forEach(card => {
+    document.querySelectorAll('.smooky-card').forEach(card => {
       card.addEventListener('click', function() {
         const cat = this.dataset.cat;
         renderFolderContents(cat);
