@@ -6612,6 +6612,64 @@ body.dark-mode .map-note-chip {
     z-index: 200 !important;
   }
 
+  /* Region Panel Mobile Responsiveness Fixes */
+  .panel-hero {
+    padding: 24px 18px 20px !important;
+    border-radius: 20px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+  }
+
+  .sd-head .p-title {
+    font-size: 26px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.8px !important;
+    word-break: break-word !important;
+  }
+
+  .sd-summary {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .sd-summary .summary-cell {
+    padding: 12px 10px !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+
+  .sd-summary .summary-cell .cell-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .sd-summary .summary-cell .cell-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .sd-summary .summary-cell .n {
+    font-size: 17px !important;
+    line-height: 1.1 !important;
+  }
+
+  .sd-summary .summary-cell .l {
+    font-size: 9.5px !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
   /* Global iOS 27 Glassmorphism & Spring Physics for Mobile Cards & Buttons */
   .proj-card, .drawing-card, .filter-chip, .btn, .stat, .detail-overlay, .panel, .map-card, .spotlight-box, .m-dock-btn, .inline-search-wrap, .search-action-btn, #backToTopBtn {
     transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.4s ease, opacity 0.4s ease, filter 0.4s ease !important;
