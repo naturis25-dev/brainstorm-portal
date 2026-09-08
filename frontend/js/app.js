@@ -596,6 +596,9 @@ function setupNavigation() {
         renderFolderContents(cat);
       });
     });
+
+    // Attach IntersectionObserver for mobile auto-reveal on scroll
+    setupFolderIntersectionObserver();
   }
 
   function renderFolderContents(catKey) {
@@ -670,6 +673,59 @@ function setupNavigation() {
     });
     
     gallery.innerHTML = html;
+
+    // Attach IntersectionObserver for mobile auto-open on scroll
+    setupFolderIntersectionObserver();
+  }
+
+  function setupFolderIntersectionObserver() {
+    if (window.innerWidth > 768) return; // Mobile focused one-by-one scroll activation
+
+    const updateActiveCard = () => {
+      const cards = Array.from(document.querySelectorAll('.uiverse-folder-card, .smooky-card'));
+      if (!cards.length) return;
+
+      const viewportCenter = window.innerHeight / 2;
+      let closestCard = null;
+      let minDistance = Infinity;
+
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        // Check if card is visible on screen
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          const cardCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(viewportCenter - cardCenter);
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestCard = card;
+          }
+        }
+      });
+
+      cards.forEach(card => {
+        if (card === closestCard) {
+          card.classList.add('is-in-view');
+        } else {
+          card.classList.remove('is-in-view');
+        }
+      });
+    };
+
+    // Attach scroll and resize listeners with requestAnimationFrame for smooth 60fps performance
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateActiveCard();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateActiveCard();
   }
 
   function setupDrawingsFilter() {

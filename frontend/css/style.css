@@ -3259,12 +3259,14 @@ body.dark-mode .drop-zone {
 .smooky-card[data-cat="usa"]::after { background: #60a5fa; }
 .smooky-card[data-cat="uae"]::after { background: #34d399; }
 
-.smooky-card:hover {
+.smooky-card:hover,
+.smooky-card.is-in-view {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
-.smooky-card:hover::after {
+.smooky-card:hover::after,
+.smooky-card.is-in-view::after {
   transform: translateY(0);
 }
 
@@ -3306,7 +3308,8 @@ body.dark-mode .smooky-card-img {
   filter: none;
 }
 
-.smooky-card:hover .smooky-icon-box {
+.smooky-card:hover .smooky-icon-box,
+.smooky-card.is-in-view .smooky-icon-box {
   transform: translateY(-4px) scale(1.08);
   background: #ffffff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -3322,7 +3325,8 @@ body.dark-mode .smooky-card-img {
   transition: color 0.3s ease;
 }
 
-.smooky-card:hover .smooky-title {
+.smooky-card:hover .smooky-title,
+.smooky-card.is-in-view .smooky-title {
   color: #ffffff;
 }
 
@@ -3336,7 +3340,8 @@ body.dark-mode .smooky-card-img {
   transition: color 0.3s ease;
 }
 
-.smooky-card:hover .smooky-subtext {
+.smooky-card:hover .smooky-subtext,
+.smooky-card.is-in-view .smooky-subtext {
   color: rgba(255, 255, 255, 0.9);
 }
 
@@ -3351,7 +3356,8 @@ body.dark-mode .smooky-card-img {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.smooky-card:hover .smooky-footer {
+.smooky-card:hover .smooky-footer,
+.smooky-card.is-in-view .smooky-footer {
   border-top-color: rgba(255, 255, 255, 0.25);
 }
 
@@ -3367,7 +3373,8 @@ body.dark-mode .smooky-card-img {
 .smooky-card[data-cat="usa"] .smooky-files-badge { color: #2563eb; }
 .smooky-card[data-cat="uae"] .smooky-files-badge { color: #059669; }
 
-.smooky-card:hover .smooky-files-badge {
+.smooky-card:hover .smooky-files-badge,
+.smooky-card.is-in-view .smooky-files-badge {
   color: #ffffff;
 }
 
@@ -3388,7 +3395,8 @@ body.dark-mode .smooky-card-img {
 .smooky-card[data-cat="usa"] .smooky-action-btn { background: #2563eb; }
 .smooky-card[data-cat="uae"] .smooky-action-btn { background: #059669; }
 
-.smooky-card:hover .smooky-action-btn {
+.smooky-card:hover .smooky-action-btn,
+.smooky-card.is-in-view .smooky-action-btn {
   background: #ffffff !important;
   color: #0f172a !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
