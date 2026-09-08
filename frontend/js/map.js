@@ -271,43 +271,6 @@ function openPanel(name, list) {
             if (window.openDetail) window.openDetail(card.dataset.id);
           });
         });
-
-        // Mobile scroll observer for Region Project rows: 1-by-1 active state for cards centered in viewport
-        if ('IntersectionObserver' in window && window.innerWidth <= 768) {
-          var projRows = container.querySelectorAll('.proj-row');
-          var observer = new IntersectionObserver(function() {
-            var bestEntry = null;
-            var maxRatio = 0;
-
-            projRows.forEach(function(card) {
-              var rect = card.getBoundingClientRect();
-              var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-              var cardCenter = rect.top + rect.height / 2;
-              var screenCenter = viewportHeight / 2;
-              var distFromCenter = Math.abs(screenCenter - cardCenter);
-
-              if (distFromCenter < viewportHeight * 0.35) {
-                var visibilityRatio = 1 - (distFromCenter / (viewportHeight * 0.35));
-                if (visibilityRatio > maxRatio) {
-                  maxRatio = visibilityRatio;
-                  bestEntry = card;
-                }
-              }
-            });
-
-            projRows.forEach(function(card) {
-              if (card === bestEntry) {
-                card.classList.add('is-in-view');
-              } else {
-                card.classList.remove('is-in-view');
-              }
-            });
-          }, {
-            threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
-          });
-
-          projRows.forEach(function(card) { observer.observe(card); });
-        }
       }
     }
 

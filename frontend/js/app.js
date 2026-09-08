@@ -200,24 +200,13 @@ function renderCategoryChips() {
         <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
           ${row2HTML}
         </div>
-        <div class="ask-ai-wrapper" style="flex: 1 1 auto; margin: 0; min-width: 220px;">
-          <div class="ai-input-container">
-            <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="ai-input" autocomplete="off" spellcheck="false">
-            <div class="icon-container">
-              <svg class="ai-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#4a4a4a"/>
-              </svg>
-            </div>
-            <div class="underline-effect"></div>
-            <div class="ripple-circle"></div>
-            <div class="floating-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="bg-fade"></div>
-          </div>
+        <div class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
+            <g>
+              <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+            </g>
+          </svg>
+          <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="input" autocomplete="off" spellcheck="false">
         </div>
       </div>
     </div>`;
@@ -600,54 +589,13 @@ function setupNavigation() {
     
     gallery.innerHTML = html;
     
-    // Add click listeners and scroll observer for mobile popup animation
-    const cards = document.querySelectorAll('.smooky-card');
-    cards.forEach(card => {
+    // Add click listeners to folders
+    document.querySelectorAll('.smooky-card').forEach(card => {
       card.addEventListener('click', function() {
         const cat = this.dataset.cat;
         renderFolderContents(cat);
       });
     });
-
-    // Mobile scroll observer: strict 1-by-1 active state for cards centered in viewport
-    if ('IntersectionObserver' in window && window.innerWidth <= 768) {
-      let activeCard = null;
-
-      const observer = new IntersectionObserver((entries) => {
-        let bestEntry = null;
-        let maxRatio = 0;
-
-        // Find the card closest to the middle of the viewport
-        cards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-          const cardCenter = rect.top + rect.height / 2;
-          const screenCenter = viewportHeight / 2;
-          const distFromCenter = Math.abs(screenCenter - cardCenter);
-
-          // Active range: card center within middle 50% of screen
-          if (distFromCenter < viewportHeight * 0.35) {
-            const visibilityRatio = 1 - (distFromCenter / (viewportHeight * 0.35));
-            if (visibilityRatio > maxRatio) {
-              maxRatio = visibilityRatio;
-              bestEntry = card;
-            }
-          }
-        });
-
-        cards.forEach(card => {
-          if (card === bestEntry) {
-            card.classList.add('is-in-view');
-          } else {
-            card.classList.remove('is-in-view');
-          }
-        });
-      }, {
-        threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
-      });
-
-      cards.forEach(card => observer.observe(card));
-    }
   }
 
   function renderFolderContents(catKey) {
@@ -665,28 +613,38 @@ function setupNavigation() {
     
     categoryData.files.forEach(file => {
       html += `
-      <div class="proj-card drawing-card" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.open('/${file.path}', '_blank')">
-        <div class="dc-cover" style="position:relative;height:150px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
+      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.open('/${file.path}', '_blank')">
+        <div class="dc-cover uiverse-folder-wrapper" style="position:relative;height:165px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
           
-          ${file.cover ? `
-            <img src="/${file.cover}" alt="Cover" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
-          ` : `
-            <!-- Blueprint architectural grid pattern -->
-            <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:24px 24px;"></div>
-            
-            <!-- Elegant Document Icon -->
-            <div style="position:relative;z-index:2;width:76px;height:94px;background:#fff;border-radius:4px 16px 4px 4px;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;border:1px solid var(--line);">
-               <!-- Dog-ear fold effect -->
-               <div style="position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 22px 22px 0;border-color:transparent var(--gray-100) transparent transparent;border-bottom-left-radius:4px;"></div>
-               <div style="color:var(--accent);transform:translateY(4px);">${getIconForCategory(catKey)}</div>
+          <!-- Blueprint architectural grid pattern background -->
+          <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:20px 20px;"></div>
+          
+          <!-- 3D Folder Animation (From Uiverse.io by Cobp) -->
+          <div class="uiverse-folder-container">
+            <div class="file relative w-36 h-24 cursor-pointer origin-bottom [perspective:1000px] z-20">
+              <div class="work-5 bg-amber-600 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all ease duration-300 relative after:absolute after:content-[''] after:bottom-[99%] after:left-0 after:w-12 after:h-3 after:bg-amber-600 after:rounded-t-xl before:absolute before:content-[''] before:-top-[11px] before:left-[45px] before:w-3 before:h-3 before:bg-amber-600 before:[clip-path:polygon(0_35%,0%_100%,50%_100%);]"></div>
+              
+              <!-- Document Sheet 4 (Inner PDF Page Preview) -->
+              <div class="work-4 absolute inset-1 bg-zinc-400 rounded-xl transition-all ease duration-300 origin-bottom select-none group-hover:[transform:rotateX(-20deg)] flex flex-col items-center justify-center p-2 text-center shadow-sm">
+                <span class="text-[9px] font-bold text-zinc-700 leading-tight truncate w-full px-1">${file.name}</span>
+              </div>
+              
+              <!-- Document Sheet 3 -->
+              <div class="work-3 absolute inset-1 bg-zinc-300 rounded-xl transition-all ease duration-300 origin-bottom group-hover:[transform:rotateX(-30deg)]"></div>
+              
+              <!-- Document Sheet 2 -->
+              <div class="work-2 absolute inset-1 bg-zinc-200 rounded-xl transition-all ease duration-300 origin-bottom group-hover:[transform:rotateX(-38deg)]"></div>
+              
+              <!-- Front Folder Flap (work-1) -->
+              <div class="work-1 absolute bottom-0 bg-gradient-to-t from-amber-500 to-amber-400 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:bg-amber-400 after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:bg-amber-400 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all ease duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_#fbbf24,_inset_0_-12px_24px_#d97706] group-hover:[transform:rotateX(-46deg)_translateY(1px)]"></div>
             </div>
-          `}
+          </div>
 
           <!-- Hover action overlay -->
-          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.25);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);z-index:3;">
-            <div style="display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:10px 20px;border-radius:100px;font-weight:800;font-size:13px;letter-spacing:0.5px;box-shadow:0 10px 20px rgba(0,0,0,0.2);">
-               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-               VIEW PDF
+          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.2);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);z-index:30;">
+            <div style="display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:100px;font-weight:800;font-size:12px;letter-spacing:0.5px;box-shadow:0 8px 16px rgba(0,0,0,0.25);">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+               OPEN DRAWING
             </div>
           </div>
         </div>
@@ -712,43 +670,6 @@ function setupNavigation() {
     });
     
     gallery.innerHTML = html;
-
-    // Mobile scroll observer for drawing detail cards: 1-by-1 active state for cards centered in viewport
-    if ('IntersectionObserver' in window && window.innerWidth <= 768) {
-      const drawingCards = document.querySelectorAll('.drawing-card');
-      const observer = new IntersectionObserver((entries) => {
-        let bestEntry = null;
-        let maxRatio = 0;
-
-        drawingCards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-          const cardCenter = rect.top + rect.height / 2;
-          const screenCenter = viewportHeight / 2;
-          const distFromCenter = Math.abs(screenCenter - cardCenter);
-
-          if (distFromCenter < viewportHeight * 0.35) {
-            const visibilityRatio = 1 - (distFromCenter / (viewportHeight * 0.35));
-            if (visibilityRatio > maxRatio) {
-              maxRatio = visibilityRatio;
-              bestEntry = card;
-            }
-          }
-        });
-
-        drawingCards.forEach(card => {
-          if (card === bestEntry) {
-            card.classList.add('is-in-view');
-          } else {
-            card.classList.remove('is-in-view');
-          }
-        });
-      }, {
-        threshold: [0.1, 0.3, 0.5, 0.7, 0.9]
-      });
-
-      drawingCards.forEach(card => observer.observe(card));
-    }
   }
 
   function setupDrawingsFilter() {
