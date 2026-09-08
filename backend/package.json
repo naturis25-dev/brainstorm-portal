@@ -1,7 +1,7 @@
 {
-  "name": "brainstorm-portal-backend",
+  "name": "brainstorm-atlas-backend",
   "version": "1.0.0",
-  "description": "REST API Backend for Brainstorm Infotech Project Intelligence Portal",
+  "description": "REST API Backend for Brainstorm Infotech Project Intelligence Atlas",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

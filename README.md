@@ -1,4 +1,4 @@
-# Brainstorm Portal — IT Team Handover & Technical Specification
+# Brainstorm Atlas — IT Team Handover & Technical Specification
 
 > **Document Purpose**: This technical handover document is prepared for the IT & Infrastructure Engineering Team. It details the system architecture, technology stack, backend database design, required environment configurations, deployment setup, and CI/CD automated deployment workflow for hosting on private/on-premise cloud servers.
 
@@ -6,7 +6,7 @@
 
 ## 1. Executive System Overview
 
-The **Brainstorm Portal** is a high-performance, full-stack web application for interactive 3D structural steel project visualization, regional map filtering, drawing portfolio management, and administrative control.
+The **Brainstorm Atlas** is a high-performance, full-stack web application for interactive 3D structural steel project visualization, regional map filtering, drawing portfolio management, and administrative control.
 
 ### Architecture Highlights:
 - **Unified Node.js / Express Server**: Serves both high-throughput REST APIs and static single-page frontend assets.
