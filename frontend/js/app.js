@@ -861,6 +861,34 @@ function updateAdminBtnVisibility() {
   }
 }
 
+function updateMobileDockIndicator() {
+  const indicator = document.getElementById('mDockIndicator');
+  const dock = document.querySelector('.mobile-bottom-dock');
+  if (!indicator || !dock) return;
+
+  const mapBtn = document.getElementById('mNavMapBtn');
+  const drawingsBtn = document.getElementById('mNavDrawingsBtn');
+  const brochureBtn = document.getElementById('mNavBrochureBtn');
+
+  let activeBtn = mapBtn;
+  if (drawingsBtn && drawingsBtn.classList.contains('active')) {
+    activeBtn = drawingsBtn;
+  } else if (brochureBtn && brochureBtn.classList.contains('active')) {
+    activeBtn = brochureBtn;
+  } else if (mapBtn && mapBtn.classList.contains('active')) {
+    activeBtn = mapBtn;
+  }
+
+  if (activeBtn) {
+    const dockRect = dock.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const leftOffset = btnRect.left - dockRect.left;
+    indicator.style.width = `${btnRect.width}px`;
+    indicator.style.transform = `translateX(${leftOffset - 4}px)`;
+  }
+}
+window.updateMobileDockIndicator = updateMobileDockIndicator;
+
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById('view-' + name);
@@ -882,6 +910,7 @@ function showView(name) {
     document.getElementById('mNavBrochureBtn')?.classList.add('active');
   }
 
+  updateMobileDockIndicator();
   updateAdminBtnVisibility();
 }
 
@@ -2288,15 +2317,13 @@ const STATE_COORDS = {
     if (spotlightInput) {
       spotlightInput.value = initialQuery;
       spotlightInput.placeholder = window.innerWidth <= 768 ? 'Search projects by name, state, or category...' : 'Search projects by name, state, or category... (Esc to close)';
-      if (window.innerWidth <= 768) {
-        setTimeout(() => {
-          if (spotlightModal.classList.contains('active')) {
-            spotlightInput.focus();
-          }
-        }, 100);
-      } else {
-        setTimeout(() => spotlightInput.focus(), 50);
-      }
+      spotlightInput.focus();
+      spotlightInput.click();
+      setTimeout(() => {
+        if (spotlightModal.classList.contains('active')) {
+          spotlightInput.focus();
+        }
+      }, 50);
     }
     renderSpotlightResults(initialQuery);
   }
@@ -2385,10 +2412,30 @@ const STATE_COORDS = {
 document.getElementById('mbnMap')?.addEventListener('click', () => { showView('map'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnMap').classList.add('active'); });
 document.getElementById('mbnDrawings')?.addEventListener('click', () => { showView('drawings'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnDrawings').classList.add('active'); });
 
+function adjustMobileFooterPadding() {
+  if (window.innerWidth <= 768) {
+    const dockWrap = document.getElementById('mobileBottomDock');
+    const floatingSearch = document.querySelector('.m-floating-search-row');
+    const wrap = document.querySelector('.wrap');
+    if (wrap) {
+      let requiredBottomPadding = 118;
+      if (floatingSearch) {
+        const rect = floatingSearch.getBoundingClientRect();
+        const totalHeight = window.innerHeight - rect.top;
+        if (totalHeight > 0) {
+          requiredBottomPadding = Math.max(110, Math.round(totalHeight + 12));
+        }
+      }
+      wrap.style.setProperty('padding-bottom', requiredBottomPadding + 'px', 'important');
+    }
+  }
+}
+
 let _resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(_resizeTimer);
   _resizeTimer = setTimeout(() => {
+    adjustMobileFooterPadding();
     const searchInput = document.getElementById('globalProjectSearch');
     if (searchInput) {
       searchInput.placeholder = window.innerWidth <= 768 ? 'Search projects...' : 'Search projects... (Ctrl+K)';
@@ -2399,6 +2446,11 @@ window.addEventListener('resize', () => {
     }
   }, 100);
 });
+
+document.addEventListener('DOMContentLoaded', adjustMobileFooterPadding);
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  adjustMobileFooterPadding();
+}
 
 // Interactive Footer Handlers
 document.addEventListener('DOMContentLoaded', () => {
@@ -2441,7 +2493,8 @@ function showDownloadToast() {
   }, 3500);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initBrochureHandlers() {
+  if (window._brochureHandlersInitialized) return;
   const triggerBtn = document.getElementById('brochureDropdownTrigger');
   const dropdownContainer = document.querySelector('.brochure-dropdown-container');
   const viewOption = document.getElementById('brochureViewOption');
@@ -2449,8 +2502,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('brochureViewerModal');
   const closeModalBtn = document.getElementById('closeBrochureModal');
   const iframe = document.getElementById('brochureIframe');
+  const brochureObj = document.getElementById('brochureObject');
 
-  // Toggle Dropdown Menu
+  if (!triggerBtn && !document.getElementById('mNavBrochureBtn')) return;
+  window._brochureHandlersInitialized = true;
+
+  // Toggle Desktop Dropdown Menu
   if (triggerBtn && dropdownContainer) {
     triggerBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2465,7 +2522,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 1. View Brochure Modal Option
-  const brochureObj = document.getElementById('brochureObject');
   if (viewOption && modal) {
     viewOption.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -2543,10 +2599,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const mDlOption = document.getElementById('mBrochureDlOption');
 
   if (mTriggerBtn && mDropdownContainer) {
-    mTriggerBtn.addEventListener('click', (e) => {
+    const handleMobileBrochureToggle = (e) => {
       e.preventDefault();
       e.stopPropagation();
       mDropdownContainer.classList.toggle('active');
+    };
+
+    mTriggerBtn.addEventListener('click', handleMobileBrochureToggle);
+    mTriggerBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleMobileBrochureToggle(e);
     });
 
     document.addEventListener('click', (e) => {
@@ -2554,23 +2616,38 @@ document.addEventListener('DOMContentLoaded', () => {
         mDropdownContainer.classList.remove('active');
       }
     });
+    document.addEventListener('touchend', (e) => {
+      if (!mDropdownContainer.contains(e.target)) {
+        mDropdownContainer.classList.remove('active');
+      }
+    });
   }
 
-  if (mViewOption && modal) {
-    mViewOption.addEventListener('click', (e) => {
-      e.stopPropagation();
-      mDropdownContainer?.classList.remove('active');
-      const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
-      if (brochureObj) brochureObj.data = pdfUrl;
-      if (iframe) iframe.src = pdfUrl;
+  const handleMobileViewBrochure = (e) => {
+    e.stopPropagation();
+    mDropdownContainer?.classList.remove('active');
+    const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
+    if (brochureObj) brochureObj.data = pdfUrl;
+    if (iframe) iframe.src = pdfUrl;
+    if (modal) {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+    } else {
+      window.open(pdfUrl, '_blank');
+    }
+  };
+
+  if (mViewOption) {
+    mViewOption.addEventListener('click', handleMobileViewBrochure);
+    mViewOption.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleMobileViewBrochure(e);
     });
   }
 
   if (mDlOption) {
     const mLabelText = mDlOption.querySelector('.brochure-text');
-    mDlOption.addEventListener('click', (e) => {
+    const handleMobileDownload = (e) => {
       e.stopPropagation();
       mDropdownContainer?.classList.remove('active');
 
@@ -2589,9 +2666,20 @@ document.addEventListener('DOMContentLoaded', () => {
           mDlOption.classList.remove('downloaded');
           if (mLabelText) mLabelText.textContent = 'Download Brochure';
         }, 4000);
-      }, 1000);
+      }, 800);
+    };
+
+    mDlOption.addEventListener('click', handleMobileDownload);
+    mDlOption.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleMobileDownload(e);
     });
   }
-});
+}
+
+document.addEventListener('DOMContentLoaded', initBrochureHandlers);
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initBrochureHandlers();
+}
 
 

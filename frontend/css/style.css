@@ -6355,24 +6355,51 @@ body.dark-mode .uiverse-search-group .input:focus {
   .mobile-bottom-dock {
     flex: 1 !important;
     height: 50px !important;
-    background: rgba(255, 255, 255, 0.96) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
     backdrop-filter: blur(24px) !important;
     -webkit-backdrop-filter: blur(24px) !important;
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
     border-radius: 100px !important;
-    padding: 3px 6px !important;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    padding: 4px !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-around !important;
-    gap: 2px !important;
+    gap: 0 !important;
     pointer-events: auto !important;
+    position: relative !important;
+    overflow: visible !important;
   }
 
   body.dark-mode .mobile-bottom-dock {
-    background: rgba(24, 25, 29, 0.96) !important;
+    background: rgba(24, 25, 29, 0.94) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .m-dock-indicator {
+    position: absolute !important;
+    top: 4px !important;
+    bottom: 4px !important;
+    left: 4px !important;
+    width: calc((100% - 8px) / 3);
+    background: var(--accent-soft, rgba(37, 99, 235, 0.12)) !important;
+    border-radius: 100px !important;
+    transition: transform 250ms cubic-bezier(0.2, 0, 0, 1), width 250ms cubic-bezier(0.2, 0, 0, 1), background-color 250ms ease !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  body.dark-mode .m-dock-indicator {
+    background: rgba(42, 109, 244, 0.22) !important;
+  }
+
+  body.theme-ca .m-dock-indicator {
+    background: rgba(226, 60, 51, 0.12) !important;
+  }
+
+  body.dark-mode.theme-ca .m-dock-indicator {
+    background: rgba(226, 60, 51, 0.22) !important;
   }
 
   .m-brochure-dropdown-container {
@@ -6382,6 +6409,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     align-items: center !important;
     justify-content: center !important;
     height: 100% !important;
+    z-index: 2 !important;
   }
   .m-brochure-dropdown-container .m-dock-btn {
     width: 100% !important;
@@ -6405,29 +6433,24 @@ body.dark-mode .uiverse-search-group .input:focus {
     letter-spacing: -0.2px !important;
     text-decoration: none !important;
     cursor: pointer !important;
-    transition: all 0.35s cubic-bezier(0.32, 0.72, 0, 1) !important;
+    transition: color 200ms ease !important;
     min-width: 44px !important;
-    height: 40px !important;
+    height: 100% !important;
     flex: 1 !important;
     user-select: none !important;
-    transform: translateZ(0) !important;
-    will-change: transform, background, color;
+    position: relative !important;
+    z-index: 2 !important;
   }
 
   .m-dock-btn:active {
-    transform: scale(0.92) translateZ(0) !important;
-    background: rgba(0, 0, 0, 0.04) !important;
-  }
-
-  body.dark-mode .m-dock-btn:active {
-    background: rgba(255, 255, 255, 0.06) !important;
+    transform: scale(0.95) !important;
   }
 
   .m-dock-icon {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition: transform 200ms ease !important;
   }
 
   .m-dock-icon svg {
@@ -6442,35 +6465,55 @@ body.dark-mode .uiverse-search-group .input:focus {
     display: block !important;
     line-height: 1 !important;
     letter-spacing: -0.2px !important;
-    transition: color 0.25s ease !important;
+    transition: color 200ms ease !important;
   }
 
-  /* Active Pill State on Mobile (Apple Glassmorphism style) */
-  .m-dock-btn.active {
-    background: var(--accent-soft) !important;
-    color: var(--accent) !important;
+  .m-active-bar {
+    position: absolute !important;
+    bottom: 2px !important;
+    width: 20px !important;
+    height: 2.5px !important;
     border-radius: 100px !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18) !important;
+    background: var(--accent, #2563eb) !important;
+    opacity: 0 !important;
+    transform: scaleX(0) !important;
+    transition: transform 250ms ease, opacity 250ms ease !important;
   }
 
-  .m-dock-btn.active .m-dock-icon {
-    transform: scale(1.12) !important;
+  .m-dock-btn.active .m-active-bar {
+    opacity: 1 !important;
+    transform: scaleX(1) !important;
+  }
+
+  body.theme-ca .m-dock-btn.active .m-active-bar {
+    background: var(--red, #dc2626) !important;
+  }
+
+  body.dark-mode .m-dock-btn.active .m-active-bar {
+    background: #60a5fa !important;
+  }
+
+  /* Active Pill State on Mobile */
+  .m-dock-btn.active {
+    background: transparent !important;
+    color: var(--accent, #2563eb) !important;
+    box-shadow: none !important;
   }
 
   body.theme-ca .m-dock-btn.active {
-    box-shadow: 0 4px 14px rgba(226, 60, 51, 0.18) !important;
+    color: var(--red, #dc2626) !important;
   }
 
   body.dark-mode .m-dock-btn.active {
-    background: rgba(42, 109, 244, 0.25) !important;
+    background: transparent !important;
     color: #60a5fa !important;
-    box-shadow: 0 4px 16px rgba(42, 109, 244, 0.3) !important;
+    box-shadow: none !important;
   }
 
   body.dark-mode.theme-ca .m-dock-btn.active {
-    background: rgba(226, 60, 51, 0.25) !important;
+    background: transparent !important;
     color: #f87171 !important;
-    box-shadow: 0 4px 16px rgba(226, 60, 51, 0.3) !important;
+    box-shadow: none !important;
   }
 
   /* Floating Circular Theme Toggle Badge in Mobile Dock */
@@ -6588,7 +6631,7 @@ body.dark-mode .uiverse-search-group .input:focus {
   /* Floating Row Directly Above Bottom Dock (Search Pill + Website Pill) */
   .m-floating-search-row {
     position: fixed !important;
-    bottom: 68px !important;
+    bottom: 66px !important;
     left: 12px !important;
     right: 12px !important;
     z-index: 890 !important;
@@ -6627,6 +6670,12 @@ body.dark-mode .uiverse-search-group .input:focus {
     pointer-events: auto !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    transition: border-color 250ms ease, box-shadow 250ms ease !important;
+  }
+
+  .inline-search-wrap:focus-within {
+    border-color: var(--accent, #2563eb) !important;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04) !important;
   }
 
   body.dark-mode .inline-search-wrap {
@@ -6701,12 +6750,14 @@ body.dark-mode .uiverse-search-group .input:focus {
     box-shadow: 0 8px 24px rgba(226, 60, 51, 0.25), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
   }
 
-  .m-search-website-btn:active {
-    transform: scale(0.94) !important;
-  }
-
   .m-search-website-btn svg {
     flex-shrink: 0 !important;
+    transition: transform 250ms cubic-bezier(0.2, 0, 0, 1) !important;
+  }
+
+  .m-search-website-btn:hover svg,
+  .m-search-website-btn:active svg {
+    transform: translateX(3px) !important;
   }
 
   /* Brand Logo & Title on Mobile Header */
@@ -6743,9 +6794,44 @@ body.dark-mode .uiverse-search-group .input:focus {
     letter-spacing: 0.5px !important;
   }
 
-  /* Page container bottom padding for floating elements */
+  /* Floating Bottom Navigation Dock (Zepto/Blinkit Style) */
+  .mobile-bottom-dock-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    position: fixed !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+    right: 12px !important;
+    z-index: 900 !important;
+    pointer-events: none !important;
+  }
+
+  /* Floating Row Directly Above Bottom Dock (Search Pill + Website Pill) */
+  .m-floating-search-row {
+    position: fixed !important;
+    bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+    right: 12px !important;
+    z-index: 890 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Page container bottom padding automatically adapting to viewport height & safe areas */
   .wrap {
-    padding: 14px 14px 140px !important;
+    padding: 14px 14px calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  
+  .atlas-brand-footer {
+    margin-bottom: 0 !important;
   }
 }
 
@@ -6935,16 +7021,16 @@ body.dark-mode .map-note-chip {
   
   /* Mobile Spotlight Centered Modal (Leaves room for soft keyboard) */
   #spotlightSearch {
-    align-items: center !important;
+    align-items: flex-start !important;
     justify-content: center !important;
-    padding: 16px !important;
+    padding: 30px 16px 16px !important;
     transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
   }
   .spotlight-box {
-    margin: 0 0 10vh 0 !important;
+    margin: 20px 0 0 0 !important;
     max-width: 92vw !important;
     width: 92vw !important;
-    max-height: 60vh !important;
+    max-height: 55vh !important;
     border-radius: 24px !important;
     transform: scale(0.92) translateZ(0) !important;
     will-change: transform, opacity;
