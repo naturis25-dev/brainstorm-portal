@@ -440,16 +440,7 @@ function setupNavigation() {
   }
 
   // â”€â”€ New nav buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  document.getElementById('navBrochureDlInput')?.addEventListener('change', (e) => {
-    if (e.target.checked) {
-      const a = document.createElement('a');
-      a.href = 'assets/docs/brochure.pdf';
-      a.download = 'Brainstorm_Infotech_Brochure.pdf';
-      a.click();
-      if (window.showToast) window.showToast('Downloading Brochure PDF...', 'success');
-      setTimeout(() => { e.target.checked = false; }, 4000); // Reset animation after it finishes
-    }
-  });
+
   // Mobile Bottom Dock Button Listeners
   document.getElementById('mNavMapBtn')?.addEventListener('click', (e) => { e.preventDefault(); goToMap(); });
   document.getElementById('mNavDrawingsBtn')?.addEventListener('click', () => {
@@ -460,35 +451,7 @@ function setupNavigation() {
       setupDrawingsFilter();
     }
   });
-  const mNavBrochure = document.getElementById('mNavBrochureBtn');
-  if (mNavBrochure) {
-    mNavBrochure.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (mNavBrochure.classList.contains('is-downloading') || mNavBrochure.classList.contains('is-downloaded')) return;
-      
-      mNavBrochure.classList.add('is-downloading');
-      const label = mNavBrochure.querySelector('.m-dock-label');
-      if (label) label.textContent = 'Downloading...';
-      
-      const a = document.createElement('a');
-      a.href = 'assets/docs/brochure.pdf';
-      a.download = 'Brainstorm_Infotech_Brochure.pdf';
-      a.click();
-      
-      if (window.showToast) window.showToast('Downloading Brochure PDF...', 'success');
 
-      setTimeout(() => {
-        mNavBrochure.classList.remove('is-downloading');
-        mNavBrochure.classList.add('is-downloaded');
-        if (label) label.textContent = 'Downloaded';
-      }, 1200);
-
-      setTimeout(() => {
-        mNavBrochure.classList.remove('is-downloaded');
-        if (label) label.textContent = 'Brochure';
-      }, 4000);
-    });
-  }
 
   let drawingsLoaded = false;
   document.getElementById('navDrawingsBtn')?.addEventListener('click', () => {
