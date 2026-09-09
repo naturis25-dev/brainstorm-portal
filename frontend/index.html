@@ -291,40 +291,51 @@
     </a>
 
     <div class="top-actions">
-      
-      <button class="icon-btn active" id="navMapBtn" title="Back to Map">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <button class="icon-btn active" id="navMapBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
         <span class="icon-btn-label">Map</span>
       </button>
 
-      <button class="icon-btn" id="navAdminBtn" style="display:none;" title="Admin Dashboard">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
-        <span class="icon-btn-label">Dashboard</span>
-      </button>
-
-      <button class="icon-btn" id="navDrawingsBtn" title="Sample Drawings">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+      <button class="icon-btn" id="navDrawingsBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         <span class="icon-btn-label">Drawings</span>
       </button>
 
-      <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="icon-btn" id="navWebsiteBtn" title="Visit Website">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      <!-- Brochure Dropdown Menu -->
+      <div class="brochure-dropdown-container">
+        <button class="icon-btn brochure-trigger-btn" id="brochureDropdownTrigger" title="Brochure Options">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="icon-btn-label">Brochure</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="dropdown-chevron"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+
+        <div class="brochure-dropdown-menu" id="brochureDropdownMenu">
+          <!-- View Option -->
+          <button class="brochure-menu-item" id="brochureViewOption">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>View Brochure</span>
+          </button>
+
+          <!-- Download Option with Animation -->
+          <button class="brochure-menu-item brochure-dl-btn" id="navBrochureLabel">
+            <span class="brochure-icon-wrap">
+              <svg class="icon-dl-default" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg class="icon-dl-spinner" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+              <svg class="icon-dl-check" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+            <span class="brochure-text">Download Brochure</span>
+          </button>
+        </div>
+      </div>
+
+      <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="icon-btn" id="navWebsiteBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         <span class="icon-btn-label">Website</span>
       </a>
 
-      <label class="icon-btn label-dl" id="navBrochureLabel" title="Download Brochure">
-        <input class="input" type="checkbox" id="navBrochureDlInput">
-        <div class="circle">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          <div class="square"></div>
-        </div>
-        <span class="title">Brochure</span>
-        <span class="title">Downloaded</span>
-      </label>
-
-      <!-- Minimal Theme Toggle next to Brochure -->
+      <!-- Minimal Theme Toggle -->
       <button class="minimal-theme-toggle" id="dntToggle" aria-label="Toggle Theme" title="Toggle Theme">
-        <svg class="theme-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="theme-sun" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -335,9 +346,14 @@
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
-        <svg class="theme-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="theme-moon" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
+      </button>
+
+      <button class="icon-btn" id="navAdminBtn" style="display:none;" title="Admin Dashboard">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+        <span class="icon-btn-label">Dashboard</span>
       </button>
 
       <button class="Btn" id="navLogoutBtn" style="display:none;" title="Logout">
@@ -408,29 +424,44 @@
         <div><strong>Note:</strong> We have successfully delivered 4,000+ projects over the years. This interactive map highlights a curated selection of our key portfolio projects.</div>
       </div>
 
-      <!-- Dynamic Brand Footer -->
+      <!-- Premium Elegant Brand Footer -->
       <footer class="atlas-brand-footer" id="atlasBrandFooter">
+        <div class="footer-shimmer-line"></div>
+        
         <div class="footer-card-content">
-          <div class="footer-social-row">
-            <a href="https://www.linkedin.com/company/brainstorminfotech/" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn" aria-label="LinkedIn">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.69 1.69 0 0 0 1.69-1.69 1.69 1.69 0 0 0-1.69-1.69 1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.69 1.69 1.69m1.39 9.94v-8.37H5.07v8.37h2.78z"/>
-              </svg>
-            </a>
-            <a href="https://www.youtube.com/@Brainstorminfotech" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="YouTube" aria-label="YouTube">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-            </a>
-            <a href="https://www.facebook.com/BrainstormInfotechIndia" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook" aria-label="Facebook">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </a>
+          <!-- Left side: Brand Logo & Title -->
+          <div class="footer-brand-side">
+            <div class="footer-logo-box">
+              <img src="assets/logo.png" alt="Brainstorm Infotech Logo">
+            </div>
+            <div class="footer-brand-text">
+              <span class="fb-name">Brainstorm Infotech</span>
+            </div>
           </div>
 
-          <div class="footer-copyright">
-            &copy; 2026 Brainstorm Infotech
+          <!-- Right side: Social Icons + Copyright & Professional Info -->
+          <div class="footer-right-side">
+            <div class="footer-social-row">
+              <a href="https://www.linkedin.com/company/brainstorminfotech/" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn" aria-label="LinkedIn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.69 1.69 0 0 0 1.69-1.69 1.69 1.69 0 0 0-1.69-1.69 1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.69 1.69 1.69m1.39 9.94v-8.37H5.07v8.37h2.78z"/>
+                </svg>
+              </a>
+              <a href="https://www.youtube.com/@Brainstorminfotech" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="YouTube" aria-label="YouTube">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+              <a href="https://www.facebook.com/BrainstormInfotechIndia" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook" aria-label="Facebook">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+            </div>
+
+            <div class="footer-info-text">
+              <div class="footer-copyright">&copy; 2026 Brainstorm Infotech. All rights reserved.</div>
+            </div>
           </div>
         </div>
       </footer>
@@ -791,13 +822,13 @@
       </div>
 
       <!-- Breadcrumbs / Navigation -->
-      <div class="toggle-row" style="justify-content:flex-start;margin-bottom:24px;display:none;" id="drawingsBreadcrumbRow">
+      <div class="toggle-row" style="justify-content:flex-start;margin-bottom:12px;display:none;" id="drawingsBreadcrumbRow">
         <button class="btn nav-pill" id="btnBackToFolders" style="margin-right:8px;">← Back to Folders</button>
         <div id="currentFolderName" style="font-weight:800;font-size:18px;align-self:center;">Folder Name</div>
       </div>
 
       <!-- Drawings Gallery -->
-      <div id="drawingsGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
+      <div id="drawingsGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px;">
         <!-- Dynamically populated by app.js -->
       </div>
 
@@ -926,26 +957,35 @@
         <span class="m-dock-label">Drawings</span>
       </button>
 
-      <button class="m-dock-btn" id="mNavBrochureBtn" title="Download Brochure">
-        <div class="m-dock-icon">
-          <svg class="m-brochure-icon-default" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-          <svg class="m-brochure-icon-loading" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="4" x2="12" y2="16"></line>
-            <polyline points="7 11 12 16 17 11"></polyline>
-            <line x1="5" y1="20" x2="19" y2="20"></line>
-          </svg>
-          <svg class="m-brochure-icon-success" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
+      <!-- Mobile Brochure Dropdown -->
+      <div class="m-brochure-dropdown-container">
+        <button type="button" class="m-dock-btn" id="mNavBrochureBtn" title="Brochure Options">
+          <div class="m-dock-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <span class="m-dock-label">Brochure</span>
+        </button>
+
+        <div class="m-brochure-dropdown-menu" id="mBrochureDropdownMenu">
+          <button type="button" class="m-brochure-menu-item" id="mBrochureViewOption">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>View Brochure</span>
+          </button>
+          <button type="button" class="m-brochure-menu-item brochure-dl-btn" id="mBrochureDlOption">
+            <span class="brochure-icon-wrap">
+              <svg class="icon-dl-default" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg class="icon-dl-spinner" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+              <svg class="icon-dl-check" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </span>
+            <span class="brochure-text">Download Brochure</span>
+          </button>
         </div>
-        <span class="m-dock-label">Brochure</span>
-      </button>
+      </div>
     </div>
 
     <!-- Floating Circular Theme Toggle Button (Integrated into bottom dock) -->
@@ -982,6 +1022,43 @@
         <div class="spotlight-close" onclick="closeSpotlight()" style="position: absolute; right: 20px; top: 20px; cursor: pointer; color: var(--sub); font-size: 20px;">&times;</div>
       </div>
       <div class="spotlight-results" id="spotlightResults"></div>
+    </div>
+  </div>
+
+  <!-- Brochure Viewer Modal Sheet -->
+  <div id="brochureViewerModal" class="brochure-modal-overlay">
+    <div class="brochure-modal-container">
+      <div class="brochure-modal-header">
+        <div class="bm-header-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Brainstorm Infotech Brochure</span>
+        </div>
+        <div class="bm-header-actions">
+          <a href="assets/docs/brochure.pdf" download="Brainstorm_Infotech_Brochure.pdf" class="btn primary small" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none;">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </a>
+          <button class="bm-close-btn" id="closeBrochureModal">&times;</button>
+        </div>
+      </div>
+      <div class="brochure-modal-body">
+        <object id="brochureObject" data="" type="application/pdf" width="100%" height="100%">
+          <iframe id="brochureIframe" src="" title="Brainstorm Infotech Brochure Viewer"></iframe>
+        </object>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Notification Toast -->
+  <div id="downloadToast" class="download-toast">
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6L9 17l-5-5"></path>
+      </svg>
+    </div>
+    <div class="toast-text">
+      <span class="toast-title">Downloaded!</span>
+      <span class="toast-sub">Brochure saved to your device</span>
     </div>
   </div>
 

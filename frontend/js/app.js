@@ -500,6 +500,38 @@ function setupNavigation() {
     }
   });
 
+  // Footer Navigation Listeners
+  document.getElementById('footerNavMapLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    goToMap();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.getElementById('footerNavDrawingsLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('drawings');
+    if (!drawingsLoaded) {
+      loadDrawingsData();
+    } else {
+      setupDrawingsFilter();
+    }
+  });
+
+  document.getElementById('footerNavBrochureLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const brochureInput = document.getElementById('navBrochureDlInput');
+    if (brochureInput) {
+      brochureInput.checked = true;
+      brochureInput.dispatchEvent(new Event('change'));
+    } else {
+      const a = document.createElement('a');
+      a.href = 'assets/docs/brochure.pdf';
+      a.download = 'Brainstorm_Infotech_Brochure.pdf';
+      a.click();
+      if (window.showToast) window.showToast('Downloading Brochure PDF...', 'success');
+    }
+  });
+
   function loadDrawingsData() {
     fetch('/drawings_data.json')
       .then(res => res.json())
@@ -2389,7 +2421,6 @@ const STATE_COORDS = {
 // Mobile Bottom Nav Hooks
 document.getElementById('mbnMap')?.addEventListener('click', () => { showView('map'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnMap').classList.add('active'); });
 document.getElementById('mbnDrawings')?.addEventListener('click', () => { showView('drawings'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnDrawings').classList.add('active'); });
-document.getElementById('mbnBrochure')?.addEventListener('click', () => { showView('brochure'); document.querySelectorAll('.mbn-item').forEach(e => e.classList.remove('active')); document.getElementById('mbnBrochure').classList.add('active'); });
 
 let _resizeTimer;
 window.addEventListener('resize', () => {
@@ -2434,4 +2465,170 @@ function initInteractiveFooter() {
     });
   }
 }
+
+// Brochure Download Notification Toast Trigger
+let _toastTimeout;
+function showDownloadToast() {
+  const toast = document.getElementById('downloadToast');
+  if (!toast) return;
+  toast.classList.add('show');
+  clearTimeout(_toastTimeout);
+  _toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3500);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const triggerBtn = document.getElementById('brochureDropdownTrigger');
+  const dropdownContainer = document.querySelector('.brochure-dropdown-container');
+  const viewOption = document.getElementById('brochureViewOption');
+  const downloadOption = document.getElementById('navBrochureLabel');
+  const modal = document.getElementById('brochureViewerModal');
+  const closeModalBtn = document.getElementById('closeBrochureModal');
+  const iframe = document.getElementById('brochureIframe');
+
+  // Toggle Dropdown Menu
+  if (triggerBtn && dropdownContainer) {
+    triggerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownContainer.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownContainer.contains(e.target)) {
+        dropdownContainer.classList.remove('active');
+      }
+    });
+  }
+
+  // 1. View Brochure Modal Option
+  const brochureObj = document.getElementById('brochureObject');
+  if (viewOption && modal) {
+    viewOption.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownContainer?.classList.remove('active');
+      const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
+      if (brochureObj) brochureObj.data = pdfUrl;
+      if (iframe) iframe.src = pdfUrl;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  // Close Modal Handler
+  const closeModal = () => {
+    if (modal) {
+      modal.classList.remove('active');
+      if (brochureObj) brochureObj.data = '';
+      if (iframe) iframe.src = '';
+      document.body.style.overflow = '';
+    }
+  };
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal();
+  });
+
+  // Helper to trigger actual PDF download programmatically
+  const triggerPdfDownload = () => {
+    const a = document.createElement('a');
+    a.href = 'assets/docs/brochure.pdf';
+    a.download = 'Brainstorm_Infotech_Brochure.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  // 2. Download Option with Animation & Toast
+  if (downloadOption) {
+    const labelText = downloadOption.querySelector('.brochure-text');
+    downloadOption.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownContainer?.classList.remove('active');
+
+      downloadOption.classList.remove('downloaded');
+      downloadOption.classList.add('downloading');
+      if (labelText) labelText.textContent = 'Downloading...';
+
+      setTimeout(() => {
+        triggerPdfDownload();
+        downloadOption.classList.remove('downloading');
+        downloadOption.classList.add('downloaded');
+        if (labelText) labelText.textContent = 'Downloaded';
+        showDownloadToast();
+
+        setTimeout(() => {
+          downloadOption.classList.remove('downloaded');
+          if (labelText) labelText.textContent = 'Download Brochure';
+        }, 4000);
+      }, 1000);
+    });
+  }
+
+  // ============================================================
+  // MOBILE BROCHURE DROPDOWN HANDLERS
+  // ============================================================
+  const mTriggerBtn = document.getElementById('mNavBrochureBtn');
+  const mDropdownContainer = document.querySelector('.m-brochure-dropdown-container');
+  const mViewOption = document.getElementById('mBrochureViewOption');
+  const mDlOption = document.getElementById('mBrochureDlOption');
+
+  if (mTriggerBtn && mDropdownContainer) {
+    mTriggerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      mDropdownContainer.classList.toggle('active');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!mDropdownContainer.contains(e.target)) {
+        mDropdownContainer.classList.remove('active');
+      }
+    });
+  }
+
+  if (mViewOption && modal) {
+    mViewOption.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mDropdownContainer?.classList.remove('active');
+      const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
+      if (brochureObj) brochureObj.data = pdfUrl;
+      if (iframe) iframe.src = pdfUrl;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (mDlOption) {
+    const mLabelText = mDlOption.querySelector('.brochure-text');
+    mDlOption.addEventListener('click', (e) => {
+      e.stopPropagation();
+      mDropdownContainer?.classList.remove('active');
+
+      mDlOption.classList.remove('downloaded');
+      mDlOption.classList.add('downloading');
+      if (mLabelText) mLabelText.textContent = 'Downloading...';
+
+      setTimeout(() => {
+        triggerPdfDownload();
+        mDlOption.classList.remove('downloading');
+        mDlOption.classList.add('downloaded');
+        if (mLabelText) mLabelText.textContent = 'Downloaded';
+        showDownloadToast();
+
+        setTimeout(() => {
+          mDlOption.classList.remove('downloaded');
+          if (mLabelText) mLabelText.textContent = 'Download Brochure';
+        }, 4000);
+      }, 1000);
+    });
+  }
+});
+
 
