@@ -1064,13 +1064,13 @@ window.openDetail = function(id) {
                 <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(10, 107, 204, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid rgba(10, 107, 204, 0.3); box-shadow: 0 0 30px rgba(10, 107, 204, 0.2);">
                   <svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--accent)" stroke-width="2" fill="none" style="margin-left: 4px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 </div>
-                <div style="font-size: 16px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Launch 3D Engine</div>
-                <div style="font-size: 13px; color: #a1a1aa; margin-top: 8px;">(High-Performance BIM Viewer)</div>
+                <div style="font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Load 3D Structural Model</div>
+                <div style="font-size: 13px; color: #a1a1aa; margin-top: 6px;">(Interactive Tekla BIM Viewer)</div>
               </div>
 
               <!-- Loading State -->
               <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; z-index: 9;">
-                <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 15px; color: white;">Initializing 3D Engine...</div>
+                <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 15px; color: white;">Loading 3D Structural Model...</div>
                 <div style="width: 250px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative;">
                   <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease;"></div>
                 </div>
