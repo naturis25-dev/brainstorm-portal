@@ -2374,20 +2374,104 @@ body.dark-mode .c-dot {
 /* ============================================================
    MINIMALIST PILL CONTACT & BRAND FOOTER (MATCHING DESIGN)
 ============================================================ */
-.atlas-brand-footer {
-  position: relative;
+.atlas-split-footer {
   width: 100%;
   max-width: 1100px;
-  margin: 28px auto 20px;
-  padding: 22px 32px;
+  margin: 32px auto 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+/* --- Top CTA Bar Pill --- */
+.footer-cta-pill {
+  position: relative;
+  width: 100%;
+  padding: 20px 28px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(6, 182, 212, 0.06) 100%), var(--bg, #ffffff);
+  border-radius: 20px;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.footer-cta-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-cta-text h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink, #0f172a);
+  letter-spacing: -0.01em;
+}
+
+.footer-cta-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted, #64748b);
+  font-weight: 450;
+}
+
+.footer-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--accent, #2563eb) 0%, #1d4ed8 100%);
+  color: #ffffff !important;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.footer-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.footer-cta-btn svg {
+  transition: transform 0.25s ease;
+}
+
+.footer-cta-btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* --- Bottom Brand Bar Pill --- */
+.footer-brand-pill {
+  position: relative;
+  width: 100%;
+  padding: 18px 28px;
   background: var(--bg, #ffffff);
-  border-radius: 24px;
+  border-radius: 20px;
   border: 1px solid var(--line, rgba(0, 0, 0, 0.08));
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
   color: var(--ink, #111827);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
   overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footer-center-copyright {
+  font-size: 0.82rem;
+  color: var(--muted, #64748b);
+  font-weight: 500;
+  text-align: center;
 }
 
 /* Glowing animated top accent line */
@@ -2416,11 +2500,29 @@ body.theme-ca .footer-shimmer-line {
   100% { background-position: 100% 0; }
 }
 
-body.dark-mode .atlas-brand-footer {
+body.dark-mode .footer-cta-pill {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%), var(--card-bg, #18191d);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .footer-cta-text h3 {
+  color: #ffffff;
+}
+
+body.dark-mode .footer-cta-text p {
+  color: #94a3b8;
+}
+
+body.dark-mode .footer-brand-pill {
   background: var(--card-bg, #18191d);
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
   color: #ffffff;
+}
+
+body.dark-mode .footer-center-copyright {
+  color: #94a3b8;
 }
 
 body.dark-mode .footer-shimmer-line {
@@ -2431,14 +2533,14 @@ body.dark-mode.theme-ca .footer-shimmer-line {
   box-shadow: 0 2px 14px rgba(239, 68, 68, 0.7);
 }
 
-/* Desktop Only - Dynamic Ambient Color Flow Animation */
+/* Desktop Only - Dynamic Ambient Color Flow Animation for Brand Pill */
 @media (min-width: 769px) {
-  .atlas-brand-footer {
+  .footer-brand-pill {
     position: relative;
     overflow: hidden;
   }
 
-  .atlas-brand-footer::before {
+  .footer-brand-pill::before {
     content: '';
     position: absolute;
     bottom: -60%;
@@ -2446,9 +2548,9 @@ body.dark-mode.theme-ca .footer-shimmer-line {
     width: 140%;
     height: 160%;
     background: radial-gradient(circle at 50% 100%, 
-      rgba(37, 99, 235, 0.45) 0%, 
-      rgba(6, 182, 212, 0.35) 30%, 
-      rgba(99, 102, 241, 0.2) 60%, 
+      rgba(37, 99, 235, 0.4) 0%, 
+      rgba(6, 182, 212, 0.3) 30%, 
+      rgba(99, 102, 241, 0.18) 60%, 
       transparent 85%);
     filter: blur(45px);
     opacity: 0.85;
@@ -2457,7 +2559,7 @@ body.dark-mode.theme-ca .footer-shimmer-line {
     animation: footerAmbientShift 9s ease-in-out infinite alternate;
   }
 
-  .atlas-brand-footer::after {
+  .footer-brand-pill::after {
     content: '';
     position: absolute;
     bottom: -40%;
@@ -2465,9 +2567,9 @@ body.dark-mode.theme-ca .footer-shimmer-line {
     width: 70%;
     height: 140%;
     background: radial-gradient(circle at 75% 90%, 
-      rgba(59, 130, 246, 0.5) 0%, 
-      rgba(14, 165, 233, 0.35) 40%, 
-      rgba(37, 99, 235, 0.15) 70%, 
+      rgba(59, 130, 246, 0.45) 0%, 
+      rgba(14, 165, 233, 0.3) 40%, 
+      rgba(37, 99, 235, 0.12) 70%, 
       transparent 85%);
     filter: blur(55px);
     opacity: 0.8;
@@ -2476,18 +2578,18 @@ body.dark-mode.theme-ca .footer-shimmer-line {
     animation: footerAmbientPulse 12s ease-in-out infinite alternate;
   }
 
-  body.theme-ca .atlas-brand-footer::before {
+  body.theme-ca .footer-brand-pill::before {
     background: radial-gradient(circle at 50% 100%, 
-      rgba(220, 38, 38, 0.45) 0%, 
-      rgba(249, 115, 22, 0.35) 30%, 
-      rgba(239, 68, 68, 0.2) 60%, 
+      rgba(220, 38, 38, 0.4) 0%, 
+      rgba(249, 115, 22, 0.3) 30%, 
+      rgba(239, 68, 68, 0.18) 60%, 
       transparent 85%);
   }
 
-  body.theme-ca .atlas-brand-footer::after {
+  body.theme-ca .footer-brand-pill::after {
     background: radial-gradient(circle at 75% 90%, 
-      rgba(239, 68, 68, 0.5) 0%, 
-      rgba(245, 158, 11, 0.35) 40%, 
+      rgba(239, 68, 68, 0.45) 0%, 
+      rgba(245, 158, 11, 0.3) 40%, 
       transparent 85%);
   }
 }
@@ -2663,12 +2765,24 @@ body.dark-mode .footer-social-btn:hover {
 }
 
 @media (max-width: 768px) {
-  .atlas-brand-footer {
+  .atlas-split-footer {
     margin: 16px auto 110px auto !important;
-    padding: 12px 20px !important;
-    border-radius: 20px !important;
     width: calc(100% - 24px) !important;
     max-width: 100% !important;
+    gap: 12px !important;
+  }
+  .footer-cta-pill {
+    padding: 16px 20px !important;
+    border-radius: 16px !important;
+  }
+  .footer-cta-content {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+  .footer-brand-pill {
+    padding: 14px 20px !important;
+    border-radius: 16px !important;
   }
   .footer-brand-side {
     display: none !important;
@@ -2844,9 +2958,9 @@ body.dark-mode #backToTopBtn:hover {
 }
 
 @media (max-width: 600px) {
-  .atlas-brand-footer {
-    padding: 24px 20px 16px;
-    border-radius: 20px;
+  .footer-brand-pill, .footer-cta-pill {
+    padding: 16px 18px;
+    border-radius: 16px;
   }
   .footer-main-grid {
     grid-template-columns: 1fr;
