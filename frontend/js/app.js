@@ -127,8 +127,50 @@ function renderMap() {
   if (window.MapModule) {
     window.MapModule.loadMapData(() => {
       window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      initCountryToggle();
     });
   }
+}
+
+function initCountryToggle() {
+  const toggles = ['countryToggle', 'countryToggleMobile'];
+  toggles.forEach(toggleId => {
+    const toggleEl = document.getElementById(toggleId);
+    if (!toggleEl) return;
+    const btns = toggleEl.querySelectorAll('.min-btn');
+    const isMobileToggle = toggleId === 'countryToggleMobile';
+    const slider = document.getElementById(isMobileToggle ? 'minSliderMobile' : 'minSlider');
+    const sliderText = document.getElementById(isMobileToggle ? 'sliderTextMobile' : 'sliderText');
+
+    btns.forEach(btn => {
+      btn.onclick = function() {
+        const country = this.dataset.country;
+        if (country === currentCountry) return;
+        currentCountry = country;
+
+        // Sync all toggles
+        document.querySelectorAll('.minimal-toggle').forEach(t => {
+          t.querySelectorAll('.min-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.country === currentCountry);
+          });
+        });
+
+        document.querySelectorAll('.min-slider').forEach(s => {
+          s.classList.toggle('ca', currentCountry === 'ca');
+        });
+
+        const flagSvg = currentCountry === 'us'
+          ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>'
+          : '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3-4.8-2.5-4.8 2.5.9-5.3-3.8-3.7 5.3-.8z"></path></svg>';
+        
+        document.querySelectorAll('.slider-text').forEach(st => {
+          st.innerHTML = flagSvg + (currentCountry === 'us' ? ' USA' : ' Canada');
+        });
+
+        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      };
+    });
+  });
 }
 
 // ============================================================
@@ -612,6 +654,16 @@ function setupNavigation() {
     
     let html = '';
     
+    const categoryColors = {
+      usa: { back: '#2563eb', flapFrom: '#3b82f6', flapTo: '#60a5fa', shadowFrom: '#60a5fa', shadowTo: '#1d4ed8' },    // Blue (USA)
+      canada: { back: '#dc2626', flapFrom: '#ef4444', flapTo: '#f87171', shadowFrom: '#f87171', shadowTo: '#b91c1c' }, // Red (Canada)
+      quebec: { back: '#991b1b', flapFrom: '#b91c1c', flapTo: '#f87171', shadowFrom: '#f87171', shadowTo: '#7f1d1d' }, // Dark Red (Quebec, Canada)
+      uae: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Emerald Green (UAE)
+      misc: { back: '#4f46e5', flapFrom: '#6366f1', flapTo: '#818cf8', shadowFrom: '#818cf8', shadowTo: '#3730a3' }   // Indigo (Misc)
+    };
+
+    const colors = categoryColors[catKey] || categoryColors.misc;
+
     categoryData.files.forEach(file => {
       const safeFilePath = file.path.replace(/'/g, "\\'");
       const safeFileName = file.name.replace(/'/g, "\\'");
@@ -622,10 +674,17 @@ function setupNavigation() {
           <!-- Blueprint architectural grid pattern background -->
           <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:20px 20px;"></div>
           
-          <!-- 3D Folder Animation (From Uiverse.io by Cobp) -->
+          <!-- 3D Folder Animation -->
           <div class="uiverse-folder-container">
             <div class="file relative w-36 h-24 cursor-pointer origin-bottom [perspective:1000px] z-20">
-              <div class="work-5 bg-amber-600 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all ease duration-300 relative after:absolute after:content-[''] after:bottom-[99%] after:left-0 after:w-12 after:h-3 after:bg-amber-600 after:rounded-t-xl before:absolute before:content-[''] before:-top-[11px] before:left-[45px] before:w-3 before:h-3 before:bg-amber-600 before:[clip-path:polygon(0_35%,0%_100%,50%_100%);]"></div>
+              <div class="work-5 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all ease duration-300 relative" style="background:${colors.back};">
+                <style>
+                  .folder-${catKey}-back::after { background: ${colors.back} !important; }
+                  .folder-${catKey}-back::before { background: ${colors.back} !important; }
+                  .folder-${catKey}-flap { background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo}) !important; }
+                  .folder-${catKey}-flap::after, .folder-${catKey}-flap::before { background: ${colors.flapTo} !important; }
+                </style>
+              </div>
               
               <!-- Document Sheet 4 (Inner PDF Page Preview) -->
               <div class="work-4 absolute inset-1 bg-zinc-400 rounded-xl transition-all ease duration-300 origin-bottom select-none group-hover:[transform:rotateX(-20deg)] flex flex-col items-center justify-center p-2 text-center shadow-sm">
@@ -639,7 +698,7 @@ function setupNavigation() {
               <div class="work-2 absolute inset-1 bg-zinc-200 rounded-xl transition-all ease duration-300 origin-bottom group-hover:[transform:rotateX(-38deg)]"></div>
               
               <!-- Front Folder Flap (work-1) -->
-              <div class="work-1 absolute bottom-0 bg-gradient-to-t from-amber-500 to-amber-400 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:bg-amber-400 after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:bg-amber-400 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all ease duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_#fbbf24,_inset_0_-12px_24px_#d97706] group-hover:[transform:rotateX(-46deg)_translateY(1px)]"></div>
+              <div class="work-1 folder-${catKey}-flap absolute bottom-0 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all ease duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_${colors.shadowFrom},_inset_0_-12px_24px_${colors.shadowTo}] group-hover:[transform:rotateX(-46deg)_translateY(1px)]" style="background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo});"></div>
             </div>
           </div>
 

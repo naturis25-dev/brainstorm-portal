@@ -383,6 +383,27 @@
       </div>
 
       
+      <!-- Country Toggle (Desktop View: Above Map) -->
+      <div class="toggle-container-wrapper desktop-only-toggle">
+        <div class="toggle-card">
+          <span class="toggle-card-label">Region</span>
+          <div class="minimal-toggle" id="countryToggle">
+            <div class="min-slider" id="minSlider">
+              <span class="slider-text" id="sliderText">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>
+                USA
+              </span>
+            </div>
+            <button class="min-btn active" data-country="us">
+              <span class="min-btn-content">USA</span>
+            </button>
+            <button class="min-btn" data-country="ca">
+              <span class="min-btn-content">Canada</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Filters + Inline Search -->
       <div class="map-controls-bar" style="max-width: 1100px; width: 100%; margin: 0 auto 20px; box-sizing: border-box; padding: 0;">
         <!-- Category Chips + Inline Search -->
@@ -394,13 +415,13 @@
         <svg id="map" viewBox="0 0 960 600"></svg>
         <div class="tooltip" id="tooltip"></div>
 
-        <!-- Country Toggle (Premium Capsule Switch - Inside Map Card on Mobile) -->
-        <div class="toggle-container-wrapper">
+        <!-- Country Toggle (Mobile View: Inside Map Card at the bottom) -->
+        <div class="toggle-container-wrapper mobile-only-toggle">
           <div class="toggle-card">
             <span class="toggle-card-label">Region</span>
-            <div class="minimal-toggle" id="countryToggle">
-              <div class="min-slider" id="minSlider">
-                <span class="slider-text" id="sliderText">
+            <div class="minimal-toggle" id="countryToggleMobile">
+              <div class="min-slider" id="minSliderMobile">
+                <span class="slider-text" id="sliderTextMobile">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>
                   USA
                 </span>

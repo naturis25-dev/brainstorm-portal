@@ -993,7 +993,7 @@ body.dark-mode .theme-sun {
 .toggle-container-wrapper {
   display: flex;
   justify-content: center;
-  margin: 16px 0 6px 0;
+  margin-bottom: 32px;
 }
 
 .toggle-card {
@@ -6937,12 +6937,24 @@ body.dark-mode .map-note-chip {
     text-align: left !important;
     letter-spacing: -0.01em !important;
   }
-  .toggle-container-wrapper {
-    margin: 24px 0 6px 0 !important;
+.desktop-only-toggle {
+  display: flex !important;
+}
+.mobile-only-toggle {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-toggle {
+    display: none !important;
+  }
+  .mobile-only-toggle {
     display: flex !important;
+    margin: 24px 0 6px 0 !important;
     justify-content: center !important;
     width: 100% !important;
   }
+}
   .toggle-card {
     padding: 5px 6px 5px 12px !important;
     gap: 10px !important;
@@ -7620,3 +7632,30 @@ body.dark-mode .m-brochure-menu-item:active, body.dark-mode .m-brochure-menu-ite
   background: rgba(255, 255, 255, 0.1);
   color: #60a5fa;
 }
+
+/* Category Specific 3D Folder Color Schemes (Linked with Region Colors) */
+.drawing-card[data-cat="usa"] .work-5 { background: #2563eb !important; }
+.drawing-card[data-cat="usa"] .work-5::after, .drawing-card[data-cat="usa"] .work-5::before { background: #2563eb !important; }
+.drawing-card[data-cat="usa"] .work-1 { background: linear-gradient(to top, #3b82f6, #60a5fa) !important; }
+.drawing-card[data-cat="usa"] .work-1::after, .drawing-card[data-cat="usa"] .work-1::before { background: #60a5fa !important; }
+
+.drawing-card[data-cat="canada"] .work-5 { background: #dc2626 !important; }
+.drawing-card[data-cat="canada"] .work-5::after, .drawing-card[data-cat="canada"] .work-5::before { background: #dc2626 !important; }
+.drawing-card[data-cat="canada"] .work-1 { background: linear-gradient(to top, #ef4444, #f87171) !important; }
+.drawing-card[data-cat="canada"] .work-1::after, .drawing-card[data-cat="canada"] .work-1::before { background: #f87171 !important; }
+
+.drawing-card[data-cat="quebec"] .work-5 { background: #991b1b !important; }
+.drawing-card[data-cat="quebec"] .work-5::after, .drawing-card[data-cat="quebec"] .work-5::before { background: #991b1b !important; }
+.drawing-card[data-cat="quebec"] .work-1 { background: linear-gradient(to top, #b91c1c, #f87171) !important; }
+.drawing-card[data-cat="quebec"] .work-1::after, .drawing-card[data-cat="quebec"] .work-1::before { background: #f87171 !important; }
+
+.drawing-card[data-cat="uae"] .work-5 { background: #059669 !important; }
+.drawing-card[data-cat="uae"] .work-5::after, .drawing-card[data-cat="uae"] .work-5::before { background: #059669 !important; }
+.drawing-card[data-cat="uae"] .work-1 { background: linear-gradient(to top, #10b981, #34d399) !important; }
+.drawing-card[data-cat="uae"] .work-1::after, .drawing-card[data-cat="uae"] .work-1::before { background: #34d399 !important; }
+
+.drawing-card[data-cat="misc"] .work-5 { background: #4f46e5 !important; }
+.drawing-card[data-cat="misc"] .work-5::after, .drawing-card[data-cat="misc"] .work-5::before { background: #4f46e5 !important; }
+.drawing-card[data-cat="misc"] .work-1 { background: linear-gradient(to top, #6366f1, #818cf8) !important; }
+.drawing-card[data-cat="misc"] .work-1::after, .drawing-card[data-cat="misc"] .work-1::before { background: #818cf8 !important; }
+
