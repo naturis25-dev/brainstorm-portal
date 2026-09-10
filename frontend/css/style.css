@@ -993,7 +993,7 @@ body.dark-mode .theme-sun {
 .toggle-container-wrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 32px;
+  margin: 16px 0 6px 0;
 }
 
 .toggle-card {
@@ -1230,7 +1230,7 @@ body.dark-mode .uiverse-search-group .icon {
   border-radius: 24px;
   padding: 20px;
   max-width: 1100px;
-  margin: 0 auto 60px;
+  margin: 0 auto 0;
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(20,25,30,0.04);
   opacity: 0;
@@ -5520,7 +5520,11 @@ model-viewer::part(interaction-prompt),
     transform-origin: center 45% !important;
   }
   .map-card {
-    padding-bottom: 20px !important;
+    padding: 12px 12px 10px 12px !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
   }
 }
 @media (max-width: 768px) {
@@ -6837,7 +6841,7 @@ body.dark-mode .uiverse-search-group .input:focus {
 
 
 
-/* Separate Map Note Chip Box */
+/* Separate Map Note Chip Box & Equal Gap Layout */
 .map-note-chip {
   display: flex;
   align-items: center;
@@ -6850,7 +6854,8 @@ body.dark-mode .uiverse-search-group .input:focus {
   color: var(--sub);
   line-height: 1.4;
   box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  margin-top: 12px;
+  margin-top: 14px !important;
+  margin-bottom: 0 !important;
 }
 .map-note-chip svg {
   width: 14px !important;
@@ -6860,9 +6865,18 @@ body.dark-mode .map-note-chip {
   background: rgba(255,255,255,0.02);
 }
 
+.atlas-brand-footer {
+  margin-top: 14px !important;
+}
+
 @media (max-width: 768px) {
   .map-note-chip {
-    margin: 8px 0 0 !important;
+    margin-top: 14px !important;
+    margin-bottom: 0 !important;
+  }
+  .atlas-brand-footer {
+    margin-top: 14px !important;
+    margin-bottom: 0 !important;
   }
 }
 
@@ -6924,7 +6938,7 @@ body.dark-mode .map-note-chip {
     letter-spacing: -0.01em !important;
   }
   .toggle-container-wrapper {
-    margin: 28px 0 28px 0 !important;
+    margin: 24px 0 6px 0 !important;
     display: flex !important;
     justify-content: center !important;
     width: 100% !important;

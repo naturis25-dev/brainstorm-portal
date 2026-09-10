@@ -34,8 +34,11 @@ function initCustomCursor() {
 // THEME TOGGLE
 // ============================================================
 function initThemeToggle() {
-  if (localStorage.getItem('steeltrack_theme') === 'dark') {
+  const savedTheme = localStorage.getItem('steeltrack_theme');
+  if (savedTheme === 'dark') {
     document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
   }
   const toggleTheme = () => {
     document.body.classList.toggle('dark-mode');
@@ -610,8 +613,10 @@ function setupNavigation() {
     let html = '';
     
     categoryData.files.forEach(file => {
+      const safeFilePath = file.path.replace(/'/g, "\\'");
+      const safeFileName = file.name.replace(/'/g, "\\'");
       html += `
-      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.open('/${file.path}', '_blank')">
+      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}')">
         <div class="dc-cover uiverse-folder-wrapper" style="position:relative;height:165px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
           
           <!-- Blueprint architectural grid pattern background -->
@@ -2677,9 +2682,59 @@ function initBrochureHandlers() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initBrochureHandlers);
+function initDrawingPdfViewerModal() {
+  const modal = document.getElementById('drawingPdfViewerModal');
+  const closeModalBtn = document.getElementById('closeDrawingPdfModal');
+  const iframe = document.getElementById('drawingPdfIframe');
+  const pdfObj = document.getElementById('drawingPdfObject');
+  const titleEl = document.getElementById('drawingPdfModalTitle');
+  const downloadBtn = document.getElementById('drawingPdfDownloadBtn');
+
+  window.openDrawingPdf = function(pdfUrl, title) {
+    if (!modal) {
+      window.open(pdfUrl, '_blank');
+      return;
+    }
+    const rawPath = (pdfUrl.startsWith('/') ? pdfUrl.slice(1) : pdfUrl);
+    const cleanUrl = encodeURI(rawPath);
+    if (titleEl) titleEl.textContent = title || 'Drawing Document';
+    if (downloadBtn) {
+      downloadBtn.href = cleanUrl;
+      downloadBtn.download = (title || 'Drawing').replace(/\s+/g, '_') + '.pdf';
+    }
+    if (pdfObj) pdfObj.data = cleanUrl;
+    if (iframe) iframe.src = cleanUrl;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeDrawingModal = () => {
+    if (modal) {
+      modal.classList.remove('active');
+      if (pdfObj) pdfObj.data = '';
+      if (iframe) iframe.src = '';
+      document.body.style.overflow = '';
+    }
+  };
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeDrawingModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeDrawingModal();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) closeDrawingModal();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initBrochureHandlers();
+  initDrawingPdfViewerModal();
+});
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   initBrochureHandlers();
+  initDrawingPdfViewerModal();
 }
 
 
