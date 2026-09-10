@@ -6937,6 +6937,7 @@ body.dark-mode .map-note-chip {
     text-align: left !important;
     letter-spacing: -0.01em !important;
   }
+/* Desktop/Mobile Toggle Visibility Controls */
 .desktop-only-toggle {
   display: flex !important;
 }
