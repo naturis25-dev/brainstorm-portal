@@ -63,16 +63,24 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var path = d3.geoPath(projection);
 
-  // Sort features geographically (left-to-right sweep) for a cinematic wave entrance
+  // Sort features vertically:
+  // USA = top-to-bottom (states drop down), Canada = bottom-to-top (provinces rise up)
   var sorted = feats.slice().sort(function(a, b) {
     var ca = path.centroid(a);
     var cb = path.centroid(b);
     if (!ca || isNaN(ca[0])) return 1;
     if (!cb || isNaN(cb[0])) return -1;
-    return ca[0] - cb[0];
+    if (country === 'ca') {
+      return cb[1] - ca[1]; // bottom-to-top for Canada (rise up)
+    } else {
+      return ca[1] - cb[1]; // top-to-bottom for USA (drop down)
+    }
   });
 
   var g = svg.append('g');
+
+  // Slide offset direction: USA drops from above, Canada rises from below
+  var slideOffset = country === 'ca' ? 60 : -60;
 
   var paths = g.selectAll('path')
     .data(sorted)
@@ -84,37 +92,31 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
     })
     .attr('d', path)
     .style('opacity', 0)
-    .style('stroke-width', '0')
-    .attr('transform', function(d) {
-      var centroid = path.centroid(d);
-      if (!centroid || isNaN(centroid[0])) return '';
-      return 'translate(' + centroid[0] + ',' + centroid[1] + ') scale(0.6) translate(' + (-centroid[0]) + ',' + (-centroid[1]) + ')';
-    });
+    .attr('transform', 'translate(0,' + slideOffset + ')');
 
-  // Phase 1: States sweep in left-to-right with elastic bounce
+  // Phase 1: States slide into position with smooth easing
   paths.transition()
-    .duration(700)
-    .delay(function(d, i) { return 80 + i * 25; })
-    .ease(d3.easeBackOut.overshoot(0.8))
+    .duration(800)
+    .delay(function(d, i) { return 60 + i * 40; })
+    .ease(d3.easeCubicOut)
     .style('opacity', 1)
-    .style('stroke-width', null)
-    .attr('transform', '');
+    .attr('transform', 'translate(0,0)');
 
-  // Phase 2: After landing, flash stroke highlight on states with projects
+  // Phase 2: After landing, gently pulse the stroke on states with projects
   paths.filter('.has-projects')
     .transition()
-    .delay(function(d, i) { return 600 + i * 25; })
-    .duration(400)
+    .delay(function(d, i) { return 800 + i * 40; })
+    .duration(500)
     .ease(d3.easeCubicOut)
     .style('stroke-width', '2.5')
-    .style('stroke', country === 'ca' ? 'rgba(220, 38, 38, 0.6)' : 'rgba(37, 99, 235, 0.6)')
+    .style('stroke', country === 'ca' ? 'rgba(220, 38, 38, 0.5)' : 'rgba(37, 99, 235, 0.5)')
     .transition()
-    .duration(600)
+    .duration(700)
     .ease(d3.easeCubicInOut)
     .style('stroke-width', null)
     .style('stroke', null);
 
-  // Attach event listeners immediately (works even during transitions)
+  // Attach event listeners immediately
   paths
     .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
     .on('mousemove',  handleMove)
