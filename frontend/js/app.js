@@ -137,6 +137,8 @@ window.updateCountryToggleUI = function(country) {
   const isCa = currentCountry === 'ca' || currentCountry === 'Canada';
   const targetCountry = isCa ? 'ca' : 'us';
 
+  document.body.classList.toggle('theme-ca', isCa);
+
   // 1. Sync active class on all buttons across all country toggles
   document.querySelectorAll('.minimal-toggle').forEach(t => {
     t.querySelectorAll('.min-btn').forEach(b => {
