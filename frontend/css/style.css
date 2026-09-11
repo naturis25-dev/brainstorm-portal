@@ -5300,23 +5300,6 @@ body.dark-mode .inline-search-wrap .kbd-key {
   min-width: 280px !important;
 }
 
-/* Orange Circle Accent for UAE & Miscellaneous Folder Cards (Last 2 Boxes) */
-.smooky-card[data-cat="uae"] .smooky-icon-box,
-.smooky-card[data-cat="misc"] .smooky-icon-box {
-  border: 2px solid #f97316 !important;
-  box-shadow: 0 0 16px rgba(249, 115, 22, 0.35), inset 0 0 0 1px rgba(249, 115, 22, 0.2) !important;
-}
-
-body:not(.theme-ca) .smooky-card[data-cat="uae"]::after,
-body:not(.theme-ca) .smooky-card[data-cat="misc"]::after {
-  background: linear-gradient(135deg, #f97316, #fb923c) !important;
-}
-
-.smooky-card[data-cat="uae"] .smooky-card-img,
-.smooky-card[data-cat="misc"] .smooky-card-img {
-  filter: drop-shadow(0 2px 6px rgba(249, 115, 22, 0.4)) !important;
-}
-
 
 @media (max-width: 768px) {
   /* Reduce map-note text size */
