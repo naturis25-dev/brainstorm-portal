@@ -63,8 +63,11 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var path = d3.geoPath(projection);
 
+  // Shuffle features for a randomized entrance order
+  var shuffled = feats.slice().sort(function() { return Math.random() - 0.5; });
+
   svg.append('g').selectAll('path')
-    .data(feats)
+    .data(shuffled)
     .join('path')
     .attr('class', function(d) {
       var name = d.properties.name;
@@ -72,6 +75,38 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
       return 'state ' + (c ? 'band-' + bandFor(c) + ' has-projects' : 'nodata');
     })
     .attr('d', path)
+    .style('opacity', 0)
+    .attr('transform', function(d) {
+      var centroid = path.centroid(d);
+      if (!centroid || isNaN(centroid[0])) return '';
+      return 'translate(' + centroid[0] + ',' + centroid[1] + ') scale(0.85) translate(' + (-centroid[0]) + ',' + (-centroid[1]) + ')';
+    })
+    .transition()
+    .duration(500)
+    .delay(function(d, i) { return i * 30; })
+    .ease(d3.easeCubicOut)
+    .style('opacity', 1)
+    .attr('transform', '')
+    .end()
+    .then(function() {
+      // Re-attach event listeners after transitions complete
+      svg.selectAll('.state')
+        .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
+        .on('mousemove',  handleMove)
+        .on('mouseleave', handleLeave)
+        .on('click',      function(event, d) { handleClick(event, d, projectsList, category); });
+    })
+    .catch(function() {
+      // Fallback: attach listeners even if transition interrupted
+      svg.selectAll('.state')
+        .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
+        .on('mousemove',  handleMove)
+        .on('mouseleave', handleLeave)
+        .on('click',      function(event, d) { handleClick(event, d, projectsList, category); });
+    });
+
+  // Immediately attach listeners too (for early interactions)
+  svg.selectAll('.state')
     .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
     .on('mousemove',  handleMove)
     .on('mouseleave', handleLeave)
