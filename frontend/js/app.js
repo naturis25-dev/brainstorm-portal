@@ -408,7 +408,7 @@ function renderCategoryChips() {
             filtered.forEach((p, idx) => {
                 let imgUrl = (p.images && p.images.length > 0) ? (p.images[0].startsWith('http') ? p.images[0] : `/uploads/${p.images[0]}`) : 'assets/logo.png';
                 let animDelay = idx * 0.05;
-                resultsHtml += `<div onclick="document.getElementById('searchResultsPopup').remove(); openDetail('${p.id}')" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:${rowBg}; border:1px solid ${borderColor}; border-radius:16px; cursor:pointer; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: viewFadeIn 0.4s ease backwards ${animDelay}s;" onmouseover="this.style.background='${rowHoverBg}'; this.style.transform='translateY(-2px) scale(1.01)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.background='${rowBg}'; this.style.transform='none'; this.style.boxShadow='none'">
+                resultsHtml += `<div onclick="document.getElementById('searchResultsPopup').remove(); openDetail('${p.id}')" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:${rowBg}; border:1px solid ${borderColor}; border-radius:16px; cursor:pointer; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: viewFadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) backwards ${animDelay}s;" onmouseover="this.style.background='${rowHoverBg}'; this.style.transform='translateY(-2px) scale(1.01)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.background='${rowBg}'; this.style.transform='none'; this.style.boxShadow='none'">
                     <div style="display:flex; align-items:center; gap:16px;">
                         <div style="width:72px; height:72px; border-radius:14px; overflow:hidden; background:var(--bg-alt); flex-shrink:0; border:1px solid ${borderColor};">
                           <img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'; this.style.objectFit='contain'; this.style.padding='8px';">
@@ -709,7 +709,7 @@ function setupNavigation() {
           <!-- 3D Folder Animation -->
           <div class="uiverse-folder-container">
             <div class="file relative w-36 h-24 cursor-pointer origin-bottom [perspective:1000px] z-20">
-              <div class="work-5 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all ease duration-300 relative" style="background:${colors.back};">
+              <div class="work-5 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 relative" style="background:${colors.back};">
                 <style>
                   .folder-${catKey}-back::after { background: ${colors.back} !important; }
                   .folder-${catKey}-back::before { background: ${colors.back} !important; }
@@ -719,23 +719,23 @@ function setupNavigation() {
               </div>
               
               <!-- Document Sheet 4 (Inner PDF Page Preview) -->
-              <div class="work-4 absolute inset-1 bg-zinc-400 rounded-xl transition-all ease duration-300 origin-bottom select-none group-hover:[transform:rotateX(-20deg)] flex flex-col items-center justify-center p-2 text-center shadow-sm">
+              <div class="work-4 absolute inset-1 bg-zinc-400 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom select-none group-hover:[transform:rotateX(-20deg)] flex flex-col items-center justify-center p-2 text-center shadow-sm">
                 <span class="text-[9px] font-bold text-zinc-700 leading-tight truncate w-full px-1">${file.name}</span>
               </div>
               
               <!-- Document Sheet 3 -->
-              <div class="work-3 absolute inset-1 bg-zinc-300 rounded-xl transition-all ease duration-300 origin-bottom group-hover:[transform:rotateX(-30deg)]"></div>
+              <div class="work-3 absolute inset-1 bg-zinc-300 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom group-hover:[transform:rotateX(-30deg)]"></div>
               
               <!-- Document Sheet 2 -->
-              <div class="work-2 absolute inset-1 bg-zinc-200 rounded-xl transition-all ease duration-300 origin-bottom group-hover:[transform:rotateX(-38deg)]"></div>
+              <div class="work-2 absolute inset-1 bg-zinc-200 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom group-hover:[transform:rotateX(-38deg)]"></div>
               
               <!-- Front Folder Flap (work-1) -->
-              <div class="work-1 folder-${catKey}-flap absolute bottom-0 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all ease duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_${colors.shadowFrom},_inset_0_-12px_24px_${colors.shadowTo}] group-hover:[transform:rotateX(-46deg)_translateY(1px)]" style="background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo});"></div>
+              <div class="work-1 folder-${catKey}-flap absolute bottom-0 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_${colors.shadowFrom},_inset_0_-12px_24px_${colors.shadowTo}] group-hover:[transform:rotateX(-46deg)_translateY(1px)]" style="background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo});"></div>
             </div>
           </div>
 
           <!-- Hover action overlay -->
-          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.2);opacity:0;transition:opacity 0.25s ease;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);z-index:30;">
+          <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.2);opacity:0;transition:opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);z-index:30;">
             <div style="display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:100px;font-weight:800;font-size:12px;letter-spacing:0.5px;box-shadow:0 8px 16px rgba(0,0,0,0.25);">
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                OPEN DRAWING
@@ -1147,7 +1147,7 @@ window.openDetail = function(id) {
               <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; z-index: 9;">
                 <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 15px; color: white;">Loading 3D Structural Model...</div>
                 <div style="width: 250px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative;">
-                  <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease;"></div>
+                  <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);"></div>
                 </div>
               </div>
 
@@ -1459,8 +1459,8 @@ function renderAdmin() {
         const step = (ts) => {
           if (!startTS) startTS = ts;
           const p = Math.min((ts - startTS) / 1200, 1);
-          const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-          if (el) el.innerHTML = Math.floor(ease * end).toLocaleString();
+          const cubic-bezier(0.25, 1, 0.5, 1) = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+          if (el) el.innerHTML = Math.floor(cubic-bezier(0.25, 1, 0.5, 1) * end).toLocaleString();
           if (p < 1) window.requestAnimationFrame(step);
         };
         window.requestAnimationFrame(step);
@@ -1496,7 +1496,7 @@ window.currentAdminPage = 1;
     const iconStroke = isCanada ? "#ef4444" : "#0284c7";
 
     return `
-      <tr class="admin-interactive-tr" style="transition: all 0.3s ease;">
+      <tr class="admin-interactive-tr" style="transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);">
         <td style="font-weight: 700; color: var(--ink); font-size: 14px;">${p.title}</td>
         <td><div style="display:flex; align-items:center; gap:8px; font-weight:600;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${iconFill}" stroke="${iconStroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${p.state}</div></td>
         <td><span style="font-weight:700; padding: 4px 8px; border-radius: 6px; ${countryStyle}">${p.country}</span></td>
@@ -2201,7 +2201,7 @@ window.openLightbox = function(src) {
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
   overlay.style.cursor = 'zoom-out';
-  overlay.style.animation = 'viewFadeIn 0.3s ease';
+  overlay.style.animation = 'viewFadeIn 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
   
   const img = document.createElement('img');
   img.src = src;

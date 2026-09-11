@@ -23,7 +23,7 @@
   --line: #EAEAEE;
   --bg: #ffffff;
   --card-bg: #FAFAFA;
-  --transition-theme: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+  --transition-theme: background 0.4s cubic-bezier(0.25, 1, 0.5, 1), color 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.dark-mode {
@@ -111,10 +111,10 @@ body {
 /* Fluid Hover & Micro-Interactions */
 button, .btn, .nav-btn, .chip, .m-dock-btn, .footer-social-btn {
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              box-shadow 0.25s ease, 
-              background-color 0.25s ease, 
-              color 0.25s ease, 
-              border-color 0.25s ease;
+              box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              color 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+              border-color 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 button:active, .btn:active, .nav-btn:active, .m-dock-btn:active, .footer-social-btn:active {
@@ -142,7 +142,7 @@ input:focus-visible,
 select:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  transition: outline-offset 0.15s ease;
+  transition: outline-offset 0.15s cubic-bezier(0.25, 1, 0.5, 1);
 }
 a:focus-visible,
 input:focus-visible,
@@ -217,7 +217,7 @@ body.dark-mode #loader { background: #0b0f19; }
   height: 110px;
   object-fit: contain;
   opacity: 0;
-  animation: eliteLogoReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, eliteLogoBreathe 1.5s ease-in-out infinite 0.5s;
+  animation: eliteLogoReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, eliteLogoBreathe 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite 0.5s;
 }
 
 @keyframes eliteLogoReveal {
@@ -237,7 +237,7 @@ body.dark-mode #loader { background: #0b0f19; }
   gap: 15px;
   width: 240px;
   opacity: 0;
-  animation: eliteFadeUp 0.5s ease-out forwards 0.2s;
+  animation: eliteFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
 }
 
 .elite-progress-track {
@@ -287,7 +287,7 @@ body.dark-mode .elite-progress-track { background: rgba(255,255,255,0.05); }
 .elite-loading-label {
   color: var(--primary); /* Red */
   font-weight: 700;
-  animation: pulseOpacity 1.5s ease-in-out infinite;
+  animation: pulseOpacity 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 .elite-loader-percentage {
@@ -355,7 +355,7 @@ body.dark-mode .topbar {
   border-radius: 9px;
   font-weight: 700;
   font-size: 13px;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s cubic-bezier(0.25, 1, 0.5, 1), color 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .icon-btn svg {
@@ -461,7 +461,7 @@ body.dark-mode.theme-ca .icon-btn.active {
   font-size: 14.5px;
   padding: 6px 10px 6px 6px;
   border-radius: 10px;
-  transition: background 0.25s ease;
+  transition: background 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .brand:hover {
@@ -478,7 +478,7 @@ body.dark-mode.theme-ca .icon-btn.active {
   justify-content: center;
   overflow: hidden;
   border: 1.5px solid var(--line);
-  transition: transform 0.3s cubic-bezier(.2,.9,.25,1), border-color 0.3s ease;
+  transition: transform 0.3s cubic-bezier(.2,.9,.25,1), border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .brand:hover .logo-box {
@@ -557,7 +557,7 @@ body.dark-mode .nav-pill {
   cursor: pointer;
   overflow: hidden;
   background: linear-gradient(90deg, #8FCBFF, #D7ECFF);
-  transition: background 0.5s ease, border-color 0.5s ease;
+  transition: background 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   flex-shrink: 0;
 }
 
@@ -570,7 +570,7 @@ body.dark-mode .nav-pill {
   position: absolute;
   inset: 0;
   opacity: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .dnt-clouds::before, .dnt-clouds::after {
@@ -601,7 +601,7 @@ body.dark-mode .nav-pill {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .dnt-stars span {
@@ -610,7 +610,7 @@ body.dark-mode .nav-pill {
   height: 2.5px;
   background: #fff;
   border-radius: 50%;
-  animation: starTwinkle 2.4s ease-in-out infinite;
+  animation: starTwinkle 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 /* Minimal Theme Toggle */
@@ -628,7 +628,7 @@ body.dark-mode .nav-pill {
   outline: none;
   border-radius: 50%;
   color: var(--ink);
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
   -webkit-tap-highlight-color: transparent;
 }
@@ -645,7 +645,7 @@ body.dark-mode .nav-pill {
 .minimal-theme-toggle svg {
   position: absolute;
   /* Super bouncy spring effect */
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Click squish effect */
@@ -702,7 +702,7 @@ body.dark-mode .theme-sun {
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.15s ease;
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .cursor-ring {
@@ -716,7 +716,7 @@ body.dark-mode .theme-sun {
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: width 0.25s cubic-bezier(.2,.9,.25,1), height 0.25s cubic-bezier(.2,.9,.25,1), border-color 0.25s ease, background 0.25s ease, opacity 0.2s ease;
+  transition: width 0.25s cubic-bezier(.2,.9,.25,1), height 0.25s cubic-bezier(.2,.9,.25,1), border-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), background 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   opacity: 0.55;
 }
 
@@ -787,7 +787,7 @@ body.dark-mode .theme-sun {
 .view { display: none; }
 .view.active { 
   display: block; 
-  animation: viewFadeIn 0.35s ease-out;
+  animation: viewFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes viewFadeIn {
@@ -837,7 +837,7 @@ body.dark-mode .theme-sun {
   font-size: 10.5px;
   letter-spacing: 0.05em;
   margin-bottom: 24px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-pill.usa {
@@ -870,12 +870,12 @@ body.dark-mode .theme-sun {
 
 .highlight-usa {
   color: var(--usa);
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .highlight-ca {
   color: var(--can);
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .map-hero .hero-desc {
@@ -931,7 +931,7 @@ body.dark-mode .theme-sun {
   font-weight: 600;
   line-height: 1.5;
   opacity: 0;
-  animation: fadeUp 0.7s ease forwards 0.2s;
+  animation: fadeUp 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s;
 }
 
 .key-note-icon {
@@ -960,8 +960,8 @@ body.dark-mode .theme-sun {
   padding: 18px;
   opacity: 0;
   transform: translateY(10px);
-  animation: statIn 0.5s ease forwards;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: statIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .stat:hover {
@@ -1004,7 +1004,7 @@ body.dark-mode .theme-sun {
   padding: 6px 8px 6px 14px;
   border-radius: 100px;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.dark-mode .toggle-card {
@@ -1043,7 +1043,7 @@ body.dark-mode .minimal-toggle {
   background: #2563eb;
   border-radius: 100px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18), 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.35s ease;
+  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.35s cubic-bezier(0.25, 1, 0.5, 1);
   z-index: 2;
   display: flex;
   align-items: center;
@@ -1091,7 +1091,7 @@ body.dark-mode .minimal-toggle {
   justify-content: center;
   border-radius: 100px;
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.15s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
   text-align: center;
   user-select: none;
 }
@@ -1153,7 +1153,7 @@ body.dark-mode .min-btn:hover {
   font-size: 13px;
   font-weight: 600;
   box-shadow: 0 0 5px #C1D9BF, 0 0 0 6px #f5f5f5eb;
-  transition: all .3s ease;
+  transition: all .3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .uiverse-search-group .input::placeholder {
@@ -1203,7 +1203,7 @@ body.dark-mode .uiverse-search-group .icon {
   transition: all 0.22s cubic-bezier(.2,.9,.25,1);
   opacity: 0;
   transform: translateY(6px);
-  animation: chipIn 0.4s ease forwards;
+  animation: chipIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .cat-chip:hover {
@@ -1234,7 +1234,7 @@ body.dark-mode .uiverse-search-group .icon {
   overflow: hidden;
   box-shadow: 0 12px 32px rgba(20,25,30,0.04);
   opacity: 0;
-  animation: fadeUp 0.7s ease forwards 0.1s;
+  animation: fadeUp 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.1s;
 }
 
 body.dark-mode .map-card {
@@ -1268,13 +1268,14 @@ svg#map {
   width: 100%;
   height: auto;
   display: block;
+  transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .state {
   stroke: #fff;
   stroke-width: 0.7;
   cursor: pointer;
-  transition: filter 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+  transition: filter 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
   transform-box: fill-box;
   transform-origin: center;
 }
@@ -1313,7 +1314,7 @@ svg#map {
   font-size: 12px;
   font-weight: 600;
   color: var(--sub);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .legend-item:hover {
@@ -1382,14 +1383,14 @@ svg#map {
   0% { transform: translate(-50%, -50%) scale(0.3) translateY(30px); opacity: 0; }
   100% { transform: translate(-50%, -50%) scale(1) translateY(0); opacity: 1; }
 }
-.burst-layer.dismiss .burst-pin, .burst-layer.dismiss .burst-thumb{ animation:none; opacity:0; transform:translate(-50%,-50%) scale(.6); transition:opacity .25s ease, transform .25s ease; }
-.burst-layer.dismiss .burst-line{ animation:none; opacity:0; transition:opacity .25s ease; }
+.burst-layer.dismiss .burst-pin, .burst-layer.dismiss .burst-thumb{ animation:none; opacity:0; transform:translate(-50%,-50%) scale(.6); transition:opacity .25s cubic-bezier(0.25, 1, 0.5, 1), transform .25s cubic-bezier(0.25, 1, 0.5, 1); }
+.burst-layer.dismiss .burst-line{ animation:none; opacity:0; transition:opacity .25s cubic-bezier(0.25, 1, 0.5, 1); }
 
 /* tooltip - glassmorphism */
 .tooltip{
   position:absolute; pointer-events:none; z-index:30; background:rgba(255,255,255,0.75); backdrop-filter:blur(14px) saturate(180%);
   border:1px solid rgba(255,255,255,0.6); border-radius:14px; padding:12px 16px; box-shadow:0 14px 30px rgba(20,25,40,0.18);
-  transform:translate(-50%,-120%); opacity:0; transition:opacity .15s ease; min-width:150px;
+  transform:translate(-50%,-120%); opacity:0; transition:opacity .15s cubic-bezier(0.25, 1, 0.5, 1); min-width:150px;
 }
 .tooltip.show{opacity:1;}
 .tooltip .t-name{font-family:'Manrope',sans-serif; font-weight:800; font-size:15px; margin-bottom:2px;}
@@ -1490,7 +1491,7 @@ body.dark-mode .modal-section-title::after {
   z-index: 130;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .overlay.open {
@@ -1555,7 +1556,7 @@ body.dark-mode .modal-section-title::after {
   line-height: 1;
   padding: 0;
   z-index: 200;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .panel-close:hover {
@@ -1592,7 +1593,7 @@ body.dark-mode .modal-section-title::after {
   background: var(--gray-50);
   border-radius: 14px;
   padding: 12px 14px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .summary-cell:hover {
@@ -1628,7 +1629,7 @@ body.dark-mode .modal-section-title::after {
   cursor: pointer;
   transition: all 0.25s cubic-bezier(.2,.9,.25,1);
   opacity: 0;
-  animation: cardIn 0.4s ease forwards;
+  animation: cardIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 .proj-card:hover {
@@ -1732,7 +1733,7 @@ body.dark-mode .cta-banner {
   background: radial-gradient(circle at 40% 50%, rgba(37, 99, 235, 0.07) 0%, transparent 60%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .cta-banner:hover {
@@ -1779,7 +1780,7 @@ body.dark-mode .cta-banner {
 .cta-icon svg {
   width: 22px;
   height: 22px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .cta-content {
@@ -1792,7 +1793,7 @@ body.dark-mode .cta-banner {
   margin: 0 0 4px;
   color: var(--ink, #0f172a);
   letter-spacing: -0.02em;
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.dark-mode .cta-content h2 {
@@ -1888,7 +1889,7 @@ body.dark-mode .cta-content p {
   object-fit: cover;
   display: block;
   background: var(--gray-100);
-  animation: heroZoom 10s ease-out forwards;
+  animation: heroZoom 10s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .detail-hero-gradient {
@@ -1957,7 +1958,7 @@ body.dark-mode .cta-content p {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 .detail-nav-arrow:hover {
@@ -2042,7 +2043,7 @@ body.dark-mode .cta-content p {
   align-items: center;
   gap: 20px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   overflow: hidden;
   position: relative;
 }
@@ -2178,7 +2179,7 @@ model-viewer {
   width: 0%;
   background: var(--accent);
   opacity: 0.3;
-  transition: width 0.3s ease;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .model-loading-text {
@@ -2256,7 +2257,7 @@ model-viewer::part(default-progress-bar) {
   height: 340px;
   border-radius: 24px;
   cursor: pointer;
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), filter 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -2286,7 +2287,7 @@ body.dark-mode .carousel-card-inner {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* 3D Coverflow positioning states */
@@ -2341,7 +2342,7 @@ body.dark-mode .carousel-card-inner {
   letter-spacing: 0.02em;
   opacity: 0;
   transform: translateY(6px);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   pointer-events: none;
 }
 
@@ -2367,7 +2368,7 @@ body.dark-mode .carousel-card-inner {
   cursor: pointer;
   opacity: 0;
   transform: scale(0.8);
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 5;
 }
@@ -2858,7 +2859,7 @@ body.dark-mode .footer-social-btn:hover {
   color: var(--sub);
   text-decoration: none;
   margin-bottom: 10px;
-  transition: color 0.2s ease;
+  transition: color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .footer-contact-link svg {
@@ -2891,7 +2892,7 @@ body.dark-mode .footer-social-btn:hover {
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 6px var(--accent);
-  animation: livePulse 2s infinite ease-in-out;
+  animation: livePulse 2s infinite cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 body.theme-ca .footer-badge {
@@ -3221,7 +3222,7 @@ body.dark-mode .field textarea:focus {
 
 .modal-overlay.open {
   display: flex;
-  animation: modalFadeIn 0.25s ease-out;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-overlay.open .modal-sheet {
@@ -3445,7 +3446,7 @@ body.dark-mode .drop-zone {
   background-color: var(--accent);
   width: 8px;
   height: 8px;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   border-radius: 100%;
   margin: auto;
   opacity: 0;
@@ -3457,7 +3458,7 @@ body.dark-mode .drop-zone {
 }
 
 .label-dl .title {
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .label-dl .title:last-child {
@@ -3477,7 +3478,7 @@ body.dark-mode .drop-zone {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
   box-shadow: 0 0 0 0 rgb(255, 255, 255);
   overflow: hidden;
@@ -3491,7 +3492,7 @@ body.dark-mode .drop-zone {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .label-dl .circle .square {
@@ -3505,7 +3506,7 @@ body.dark-mode .drop-zone {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .label-dl .circle::before {
@@ -3516,27 +3517,27 @@ body.dark-mode .drop-zone {
   background-color: #3333a8;
   width: 100%;
   height: 0;
-  transition: all 0.4s ease;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .label-dl:has(.input:checked) {
   width: 57px;
-  animation: installed 0.4s ease 3.5s forwards;
+  animation: installed 0.4s cubic-bezier(0.25, 1, 0.5, 1) 3.5s forwards;
 }
 
 .label-dl:has(.input:checked)::before {
-  animation: rotate 3s ease-in-out 0.4s forwards;
+  animation: rotate 3s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
 }
 
 .label-dl .input:checked + .circle {
   animation:
     pulse 1s forwards,
-    circleDelete 0.2s ease 3.5s forwards;
+    circleDelete 0.2s cubic-bezier(0.25, 1, 0.5, 1) 3.5s forwards;
   rotate: 180deg;
 }
 
 .label-dl .input:checked + .circle::before {
-  animation: installing 3s ease-in-out forwards;
+  animation: installing 3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .label-dl .input:checked + .circle .icon {
@@ -3555,7 +3556,7 @@ body.dark-mode .drop-zone {
 }
 
 .label-dl .input:checked ~ .title:last-child {
-  animation: showInstalledMessage 0.4s ease 3.5s forwards;
+  animation: showInstalledMessage 0.4s cubic-bezier(0.25, 1, 0.5, 1) 3.5s forwards;
 }
 
 @keyframes pulse {
@@ -3703,7 +3704,7 @@ body.dark-mode .smooky-card {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Base icon shadow colors matching card themes inside circle */
@@ -3736,7 +3737,7 @@ body.dark-mode .smooky-card-img {
   letter-spacing: -0.02em;
   margin: 0;
   text-align: left;
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.dark-mode .smooky-title {
@@ -3755,7 +3756,7 @@ body.dark-mode .smooky-title {
   text-align: left;
   line-height: 1.45;
   margin: 0;
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.dark-mode .smooky-subtext {
@@ -3791,7 +3792,7 @@ body.dark-mode .smooky-footer {
   font-size: 13px;
   font-weight: 800;
   color: var(--accent);
-  transition: color 0.3s ease;
+  transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body.theme-ca .smooky-files-badge {
@@ -3876,7 +3877,7 @@ body:not(.theme-ca) .smooky-action-btn {
   transform-origin: top;
   border-radius: 12px;
   border-top-left-radius: 0;
-  transition: all 300ms ease;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
 }
 
@@ -3908,7 +3909,7 @@ body:not(.theme-ca) .smooky-action-btn {
   inset: 4px;
   background-color: #a1a1aa; /* zinc-400 */
   border-radius: 12px;
-  transition: all 300ms ease;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
   user-select: none;
   display: flex;
@@ -3925,7 +3926,7 @@ body:not(.theme-ca) .smooky-action-btn {
   inset: 4px;
   background-color: #d4d4d8; /* zinc-300 */
   border-radius: 12px;
-  transition: all 300ms ease;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
 }
 
@@ -3934,7 +3935,7 @@ body:not(.theme-ca) .smooky-action-btn {
   inset: 4px;
   background-color: #e4e4e7; /* zinc-200 */
   border-radius: 12px;
-  transition: all 300ms ease;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
 }
 
@@ -3946,7 +3947,7 @@ body:not(.theme-ca) .smooky-action-btn {
   height: 92px;
   border-radius: 12px;
   border-top-right-radius: 0;
-  transition: all 300ms ease;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
   display: flex;
   align-items: flex-end;
@@ -4148,7 +4149,7 @@ body.dark-mode .uiverse-blob-card .subtext {
   transition: background-color 0.2s, transform 0.1s;
 }
 
-.drawing-folder-card .btn svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
+.drawing-folder-card .btn svg { width: 16px; height: 16px; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
 .drawing-folder-card .btn:hover { background: #b01030; }
 .drawing-folder-card .btn:hover svg { transform: translateX(4px); }
 .drawing-folder-card .btn:active { transform: scale(0.98); }
@@ -4387,7 +4388,7 @@ body.dark-mode .flip-back #bottom {
 
 /* Enhancing Card Animations */
 .proj-card {
-  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .proj-card:hover {
@@ -4416,7 +4417,7 @@ body.dark-mode .flip-back #bottom {
   opacity: 0;
 }
 .btn {
-  transition: all 0.25s ease-out !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Premium Sort Dropdown */
@@ -4454,7 +4455,7 @@ body.dark-mode .flip-back #bottom {
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--sub);
-  transition: color 0.25s ease;
+  transition: color 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .sort-select:hover + .sort-icon {
@@ -4632,7 +4633,7 @@ body.dark-mode .flip-back #bottom {
 .pc-arrow {
   margin-left: auto;
   color: #ccc;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .premium-card:hover .pc-arrow {
@@ -4790,7 +4791,7 @@ body.dark-mode .premium-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   margin-right: 4px;
 }
 
@@ -4823,7 +4824,7 @@ body.dark-mode .premium-card {
   max-width: 400px;
   font-size: 14px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .admin-search input:focus {
@@ -4906,7 +4907,7 @@ body.dark-mode.theme-ca #map {
   stroke: rgba(255, 255, 255, 0.4) !important;
   stroke-width: 0.8px !important;
   stroke-linejoin: round;
-  transition: filter 0.25s ease, stroke-width 0.25s ease, opacity 0.25s ease, transform 0.25s ease !important;
+  transition: filter 0.25s cubic-bezier(0.25, 1, 0.5, 1), stroke-width 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 .state:hover {
@@ -5116,7 +5117,7 @@ body.dark-mode .inline-search-wrap .kbd-key {
   justify-content: center !important;
   background: var(--accent-soft) !important;
   color: var(--accent) !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 .proj-card.premium-card:hover .pc-arrow {
   background: var(--accent) !important;
@@ -5451,7 +5452,7 @@ body.dark-mode .inline-search-wrap .kbd-key {
 
 
 #map {
-  transition: opacity 0.25s ease !important;
+  transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 #map.fade-out {
   opacity: 0 !important;
@@ -5964,7 +5965,7 @@ model-viewer::part(interaction-prompt),
   z-index: 1000;
   opacity: 0;
   transform: translate(-50%, -100%);
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   white-space: nowrap;
 }
 .map-tooltip.visible {
@@ -6064,7 +6065,7 @@ model-viewer::part(interaction-prompt),
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .spotlight-quick-chip:hover, .spotlight-quick-chip:active {
   background: rgba(37, 99, 235, 0.12);
@@ -6072,7 +6073,7 @@ model-viewer::part(interaction-prompt),
   color: var(--accent);
 }
 .spotlight-apple-row {
-  transition: background 0.15s ease, transform 0.15s ease !important;
+  transition: background 0.15s cubic-bezier(0.25, 1, 0.5, 1), transform 0.15s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 .spotlight-apple-row:active {
   background: rgba(255, 255, 255, 0.08) !important;
@@ -6132,7 +6133,7 @@ model-viewer::part(interaction-prompt),
   background-color: var(--bg);
   color: var(--ink);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
@@ -6161,7 +6162,7 @@ model-viewer::part(interaction-prompt),
   width: 1rem;
   height: 1rem;
   pointer-events: none;
-  transition: fill 0.3s ease;
+  transition: fill 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .uiverse-search-group .input:focus ~ .icon,
@@ -6198,7 +6199,7 @@ body.dark-mode .uiverse-search-group .input:focus {
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
 .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -6230,8 +6231,8 @@ body.dark-mode .uiverse-search-group .input:focus {
     justify-content: center !important;
     cursor: pointer !important;
     z-index: 10 !important;
-    transition: opacity 0.25s ease, transform 0.2s ease !important;
-    animation: pulseScrollHint 2s infinite ease-in-out !important;
+    transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    animation: pulseScrollHint 2s infinite cubic-bezier(0.65, 0, 0.35, 1) !important;
   }
   .chip-scroll-arrow:active {
     transform: translateY(-50%) scale(0.9) !important;
@@ -6389,7 +6390,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     width: calc((100% - 8px) / 3);
     background: var(--accent-soft, rgba(37, 99, 235, 0.12)) !important;
     border-radius: 100px !important;
-    transition: transform 250ms cubic-bezier(0.2, 0, 0, 1), width 250ms cubic-bezier(0.2, 0, 0, 1), background-color 250ms ease !important;
+    transition: transform 250ms cubic-bezier(0.2, 0, 0, 1), width 250ms cubic-bezier(0.2, 0, 0, 1), background-color 250ms cubic-bezier(0.25, 1, 0.5, 1) !important;
     pointer-events: none !important;
     z-index: 1 !important;
   }
@@ -6437,7 +6438,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     letter-spacing: -0.2px !important;
     text-decoration: none !important;
     cursor: pointer !important;
-    transition: color 200ms ease !important;
+    transition: color 200ms cubic-bezier(0.25, 1, 0.5, 1) !important;
     min-width: 44px !important;
     height: 100% !important;
     flex: 1 !important;
@@ -6454,7 +6455,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: transform 200ms ease !important;
+    transition: transform 200ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .m-dock-icon svg {
@@ -6469,7 +6470,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     display: block !important;
     line-height: 1 !important;
     letter-spacing: -0.2px !important;
-    transition: color 200ms ease !important;
+    transition: color 200ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .m-active-bar {
@@ -6481,7 +6482,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     background: var(--accent, #2563eb) !important;
     opacity: 0 !important;
     transform: scaleX(0) !important;
-    transition: transform 250ms ease, opacity 250ms ease !important;
+    transition: transform 250ms cubic-bezier(0.25, 1, 0.5, 1), opacity 250ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .m-dock-btn.active .m-active-bar {
@@ -6538,7 +6539,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     overflow: hidden !important;
     padding: 0 !important;
     flex-shrink: 0 !important;
-    transition: transform 0.2s ease, border-color 0.2s ease !important;
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     text-decoration: none !important;
     cursor: pointer !important;
     color: var(--ink) !important;
@@ -6577,7 +6578,7 @@ body.dark-mode .uiverse-search-group .input:focus {
   .m-dock-btn.is-downloading .m-brochure-icon-loading {
     display: block !important;
     color: var(--accent) !important;
-    animation: brochureBounceDown 0.6s ease-in-out infinite alternate !important;
+    animation: brochureBounceDown 0.6s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate !important;
   }
 
   .m-dock-btn.is-downloading {
@@ -6674,7 +6675,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     pointer-events: auto !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
-    transition: border-color 250ms ease, box-shadow 250ms ease !important;
+    transition: border-color 250ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 250ms cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .inline-search-wrap:focus-within {
@@ -6743,7 +6744,7 @@ body.dark-mode .uiverse-search-group .input:focus {
     flex: 0 0 auto !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
-    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.4s ease !important;
+    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
 
   .m-search-website-btn:active {
@@ -6913,7 +6914,7 @@ body.dark-mode .map-note-chip {
     background: var(--accent) !important;
     border-radius: 50% !important;
     box-shadow: 0 0 5px var(--accent) !important;
-    animation: livePulse 2s infinite ease-in-out !important;
+    animation: livePulse 2s infinite cubic-bezier(0.65, 0, 0.35, 1) !important;
   }
   @keyframes livePulse {
     0%, 100% { transform: scale(1); opacity: 1; }
@@ -6992,7 +6993,7 @@ body.dark-mode .map-note-chip {
     border-radius: 100px !important;
     color: #8c9ba5 !important;
     opacity: 1 !important;
-    transition: color 0.3s ease !important;
+    transition: color 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
   body.dark-mode .min-btn {
     color: rgba(255,255,255,0.35) !important;
@@ -7008,7 +7009,7 @@ body.dark-mode .map-note-chip {
     border-radius: 100px !important;
     background: #2563eb !important;
     box-shadow: 0 3px 12px rgba(0,0,0,0.22), inset 0 1px 1px rgba(255,255,255,0.25) !important;
-    transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.35s ease !important;
+    transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
   .min-slider.ca {
     transform: translateX(76px) !important;
@@ -7186,7 +7187,7 @@ body.dark-mode .map-note-chip {
 
   /* Global iOS 27 Glassmorphism & Spring Physics for Mobile Cards & Buttons */
   .proj-card, .drawing-card, .filter-chip, .btn, .stat, .detail-overlay, .panel, .map-card, .spotlight-box, .m-dock-btn, .inline-search-wrap, .search-action-btn, #backToTopBtn {
-    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.4s ease, opacity 0.4s ease, filter 0.4s ease !important;
+    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
     transform: translateZ(0);
     will-change: transform, opacity;
   }
@@ -7292,7 +7293,7 @@ body.dark-mode .map-note-chip {
 }
 
 .brochure-icon-wrap svg {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .icon-dl-spinner, .icon-dl-check {
@@ -7342,7 +7343,7 @@ body.dark-mode .map-note-chip {
 }
 
 .dropdown-chevron {
-  transition: transform 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
   margin-left: 2px;
 }
 
@@ -7400,7 +7401,7 @@ body.dark-mode .brochure-dropdown-menu {
   text-align: left;
   text-decoration: none;
   box-sizing: border-box;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .brochure-menu-item:hover {
@@ -7427,7 +7428,7 @@ body.dark-mode .brochure-menu-item:hover {
   padding: 24px;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .brochure-modal-overlay.active {
@@ -7490,7 +7491,7 @@ body.dark-mode .brochure-modal-container {
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 8px;
-  transition: color 0.2s ease, background 0.2s ease;
+  transition: color 0.2s cubic-bezier(0.25, 1, 0.5, 1), background 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .bm-close-btn:hover {
@@ -7621,7 +7622,7 @@ body.dark-mode .m-brochure-dropdown-menu {
   text-align: left;
   text-decoration: none;
   box-sizing: border-box;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s cubic-bezier(0.25, 1, 0.5, 1), color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .m-brochure-menu-item:active, .m-brochure-menu-item:hover {
