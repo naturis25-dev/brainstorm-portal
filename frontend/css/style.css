@@ -6871,8 +6871,7 @@ body.dark-mode .map-note-chip {
 
 @media (max-width: 768px) {
   .map-note-chip {
-    margin-top: 14px !important;
-    margin-bottom: 0 !important;
+    display: none !important;
   }
   .atlas-brand-footer {
     margin-top: 14px !important;
