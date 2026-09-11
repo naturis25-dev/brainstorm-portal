@@ -63,11 +63,19 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var path = d3.geoPath(projection);
 
-  // Shuffle features for a randomized entrance order
-  var shuffled = feats.slice().sort(function() { return Math.random() - 0.5; });
+  // Sort features geographically (left-to-right sweep) for a cinematic wave entrance
+  var sorted = feats.slice().sort(function(a, b) {
+    var ca = path.centroid(a);
+    var cb = path.centroid(b);
+    if (!ca || isNaN(ca[0])) return 1;
+    if (!cb || isNaN(cb[0])) return -1;
+    return ca[0] - cb[0];
+  });
 
-  svg.append('g').selectAll('path')
-    .data(shuffled)
+  var g = svg.append('g');
+
+  var paths = g.selectAll('path')
+    .data(sorted)
     .join('path')
     .attr('class', function(d) {
       var name = d.properties.name;
@@ -76,37 +84,38 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
     })
     .attr('d', path)
     .style('opacity', 0)
+    .style('stroke-width', '0')
     .attr('transform', function(d) {
       var centroid = path.centroid(d);
       if (!centroid || isNaN(centroid[0])) return '';
-      return 'translate(' + centroid[0] + ',' + centroid[1] + ') scale(0.85) translate(' + (-centroid[0]) + ',' + (-centroid[1]) + ')';
-    })
-    .transition()
-    .duration(500)
-    .delay(function(d, i) { return i * 30; })
-    .ease(d3.easeCubicOut)
-    .style('opacity', 1)
-    .attr('transform', '')
-    .end()
-    .then(function() {
-      // Re-attach event listeners after transitions complete
-      svg.selectAll('.state')
-        .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
-        .on('mousemove',  handleMove)
-        .on('mouseleave', handleLeave)
-        .on('click',      function(event, d) { handleClick(event, d, projectsList, category); });
-    })
-    .catch(function() {
-      // Fallback: attach listeners even if transition interrupted
-      svg.selectAll('.state')
-        .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
-        .on('mousemove',  handleMove)
-        .on('mouseleave', handleLeave)
-        .on('click',      function(event, d) { handleClick(event, d, projectsList, category); });
+      return 'translate(' + centroid[0] + ',' + centroid[1] + ') scale(0.6) translate(' + (-centroid[0]) + ',' + (-centroid[1]) + ')';
     });
 
-  // Immediately attach listeners too (for early interactions)
-  svg.selectAll('.state')
+  // Phase 1: States sweep in left-to-right with elastic bounce
+  paths.transition()
+    .duration(700)
+    .delay(function(d, i) { return 80 + i * 25; })
+    .ease(d3.easeBackOut.overshoot(0.8))
+    .style('opacity', 1)
+    .style('stroke-width', null)
+    .attr('transform', '');
+
+  // Phase 2: After landing, flash stroke highlight on states with projects
+  paths.filter('.has-projects')
+    .transition()
+    .delay(function(d, i) { return 600 + i * 25; })
+    .duration(400)
+    .ease(d3.easeCubicOut)
+    .style('stroke-width', '2.5')
+    .style('stroke', country === 'ca' ? 'rgba(220, 38, 38, 0.6)' : 'rgba(37, 99, 235, 0.6)')
+    .transition()
+    .duration(600)
+    .ease(d3.easeCubicInOut)
+    .style('stroke-width', null)
+    .style('stroke', null);
+
+  // Attach event listeners immediately (works even during transitions)
+  paths
     .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
     .on('mousemove',  handleMove)
     .on('mouseleave', handleLeave)
