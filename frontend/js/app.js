@@ -1459,8 +1459,8 @@ function renderAdmin() {
         const step = (ts) => {
           if (!startTS) startTS = ts;
           const p = Math.min((ts - startTS) / 1200, 1);
-          const cubic-bezier(0.25, 1, 0.5, 1) = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-          if (el) el.innerHTML = Math.floor(cubic-bezier(0.25, 1, 0.5, 1) * end).toLocaleString();
+          const ease = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
+          if (el) el.innerHTML = Math.floor(ease * end).toLocaleString();
           if (p < 1) window.requestAnimationFrame(step);
         };
         window.requestAnimationFrame(step);
