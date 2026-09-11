@@ -132,44 +132,76 @@ function renderMap() {
   }
 }
 
-function initCountryToggle() {
-  const toggles = ['countryToggle', 'countryToggleMobile'];
-  toggles.forEach(toggleId => {
-    const toggleEl = document.getElementById(toggleId);
-    if (!toggleEl) return;
-    const btns = toggleEl.querySelectorAll('.min-btn');
-    const isMobileToggle = toggleId === 'countryToggleMobile';
-    const slider = document.getElementById(isMobileToggle ? 'minSliderMobile' : 'minSlider');
-    const sliderText = document.getElementById(isMobileToggle ? 'sliderTextMobile' : 'sliderText');
+window.updateCountryToggleUI = function(country) {
+  currentCountry = country || 'us';
+  const isCa = currentCountry === 'ca' || currentCountry === 'Canada';
+  const targetCountry = isCa ? 'ca' : 'us';
 
-    btns.forEach(btn => {
-      btn.onclick = function() {
-        const country = this.dataset.country;
-        if (country === currentCountry) return;
-        currentCountry = country;
-
-        // Sync all toggles
-        document.querySelectorAll('.minimal-toggle').forEach(t => {
-          t.querySelectorAll('.min-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.country === currentCountry);
-          });
-        });
-
-        document.querySelectorAll('.min-slider').forEach(s => {
-          s.classList.toggle('ca', currentCountry === 'ca');
-        });
-
-        const flagSvg = currentCountry === 'us'
-          ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>'
-          : '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2l2.4 4.8 5.3.8-3.8 3.7.9 5.3-4.8-2.5-4.8 2.5.9-5.3-3.8-3.7 5.3-.8z"></path></svg>';
-        
-        document.querySelectorAll('.slider-text').forEach(st => {
-          st.innerHTML = flagSvg + (currentCountry === 'us' ? ' USA' : ' Canada');
-        });
-
-        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-      };
+  // 1. Sync active class on all buttons across all country toggles
+  document.querySelectorAll('.minimal-toggle').forEach(t => {
+    t.querySelectorAll('.min-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.country === targetCountry);
     });
+  });
+
+  // 2. Sync slider position on all sliders
+  document.querySelectorAll('.min-slider').forEach(s => {
+    s.classList.toggle('ca', isCa);
+  });
+
+  // 3. Sync slider text and SVG icons across all slider text containers
+  const usIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg>';
+  const caIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 17 L 12 17 L 13 19 L 15 18 L 17 17 L 20 16 L 22 15 L 22 11 L 19 8 L 16 10 L 13 10 L 12 6 L 6 5 L 4 5 L 4 11 L 2 14 Z"></path></svg>';
+  const textHtml = (isCa ? caIcon + ' Canada' : usIcon + ' USA');
+
+  document.querySelectorAll('.slider-text').forEach(st => {
+    st.innerHTML = textHtml;
+  });
+
+  // 4. Update Hero Pill, Highlight, and Brand Footer
+  const heroPill = document.getElementById('heroPill');
+  const heroHighlight = document.getElementById('heroCountryHighlight');
+  const brandFooter = document.getElementById('atlasBrandFooter');
+
+  if (isCa) {
+    if (brandFooter) brandFooter.classList.add('ca');
+    if (heroPill) { heroPill.classList.remove('usa'); heroPill.classList.add('ca'); }
+    if (heroHighlight) heroHighlight.className = 'highlight-ca';
+  } else {
+    if (brandFooter) brandFooter.classList.remove('ca');
+    if (heroPill) { heroPill.classList.remove('ca'); heroPill.classList.add('usa'); }
+    if (heroHighlight) heroHighlight.className = 'highlight-usa';
+  }
+};
+
+function initCountryToggle() {
+  document.querySelectorAll('.min-btn').forEach(btn => {
+    btn.onclick = function(e) {
+      const country = this.dataset.country;
+      if (country === currentCountry) return;
+
+      // Ripple burst effect
+      const rect = btn.getBoundingClientRect();
+      const circle = document.createElement('span');
+      circle.className = 'toggle-burst-dot';
+      circle.style.left = (e.clientX ? (e.clientX - rect.left) : (rect.width / 2)) + 'px';
+      circle.style.top = (e.clientY ? (e.clientY - rect.top) : (rect.height / 2)) + 'px';
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+
+      updateCountryToggleUI(country);
+
+      const mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.classList.add('fade-out');
+        setTimeout(() => {
+          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+          setTimeout(() => mapEl.classList.remove('fade-out'), 50);
+        }, 250);
+      } else {
+        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      }
+    };
   });
 }
 
@@ -850,58 +882,8 @@ function setupNavigation() {
       }
     };
 
-  // Country toggle with interactive ripple burst
-  document.querySelectorAll('.min-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.min-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCountry = btn.dataset.country;
-
-      // Ripple burst effect
-      const rect = btn.getBoundingClientRect();
-      const circle = document.createElement('span');
-      circle.className = 'toggle-burst-dot';
-      circle.style.left = (e.clientX ? (e.clientX - rect.left) : (rect.width / 2)) + 'px';
-      circle.style.top = (e.clientY ? (e.clientY - rect.top) : (rect.height / 2)) + 'px';
-      btn.appendChild(circle);
-      setTimeout(() => circle.remove(), 600);
-      
-      var minSlider = document.getElementById('minSlider');
-      var sliderText = document.getElementById('sliderText');
-      var heroPill = document.getElementById('heroPill');
-      var heroHighlight = document.getElementById('heroCountryHighlight');
-      var brandFooter = document.getElementById('atlasBrandFooter');
-      
-      if (currentCountry === 'ca' || currentCountry === 'Canada') {
-        if (minSlider) minSlider.classList.add('ca');
-        if (brandFooter) brandFooter.classList.add('ca');
-        if (sliderText) {
-          sliderText.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 17 L 12 17 L 13 19 L 15 18 L 17 17 L 20 16 L 22 15 L 22 11 L 19 8 L 16 10 L 13 10 L 12 6 L 6 5 L 4 5 L 4 11 L 2 14 Z"></path></svg> Canada';
-        }
-        if (heroPill) { heroPill.classList.remove('usa'); heroPill.classList.add('ca'); }
-        if (heroHighlight) heroHighlight.className = 'highlight-ca';
-      } else {
-        if (minSlider) minSlider.classList.remove('ca');
-        if (brandFooter) brandFooter.classList.remove('ca');
-        if (sliderText) {
-          sliderText.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M 4 7 L 12 7 L 13 9 L 15 8 L 17 7 L 20 6 L 21 9 L 19 13 L 19 18 L 17 17 L 15 14 L 13 14 L 11 18 L 9 17 L 7 13 L 4 13 L 3 9 Z"></path></svg> USA';
-        }
-        if (heroPill) { heroPill.classList.remove('ca'); heroPill.classList.add('usa'); }
-        if (heroHighlight) heroHighlight.className = 'highlight-usa';
-      }
-  
-      const mapEl = document.getElementById('map');
-      if (mapEl) {
-        mapEl.classList.add('fade-out');
-        setTimeout(() => {
-          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-          setTimeout(() => mapEl.classList.remove('fade-out'), 50);
-        }, 250);
-      } else {
-        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-      }
-    });
-  });
+  // Initialize Country Toggle
+  initCountryToggle();
 
   // Panel & detail overlay close
   document.getElementById('panelClose')?.addEventListener('click', closePanel);

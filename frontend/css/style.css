@@ -6937,6 +6937,8 @@ body.dark-mode .map-note-chip {
     text-align: left !important;
     letter-spacing: -0.01em !important;
   }
+}
+
 /* Desktop/Mobile Toggle Visibility Controls */
 .desktop-only-toggle {
   display: flex !important;
@@ -6955,7 +6957,6 @@ body.dark-mode .map-note-chip {
     justify-content: center !important;
     width: 100% !important;
   }
-}
   .toggle-card {
     padding: 5px 6px 5px 12px !important;
     gap: 10px !important;
