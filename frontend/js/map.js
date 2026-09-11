@@ -63,27 +63,8 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var path = d3.geoPath(projection);
 
-  // Sort features vertically:
-  // USA = top-to-bottom (states drop down), Canada = bottom-to-top (provinces rise up)
-  var sorted = feats.slice().sort(function(a, b) {
-    var ca = path.centroid(a);
-    var cb = path.centroid(b);
-    if (!ca || isNaN(ca[0])) return 1;
-    if (!cb || isNaN(cb[0])) return -1;
-    if (country === 'ca') {
-      return cb[1] - ca[1]; // bottom-to-top for Canada (rise up)
-    } else {
-      return ca[1] - cb[1]; // top-to-bottom for USA (drop down)
-    }
-  });
-
-  var g = svg.append('g');
-
-  // Slide offset direction: USA drops from above, Canada rises from below
-  var slideOffset = country === 'ca' ? 60 : -60;
-
-  var paths = g.selectAll('path')
-    .data(sorted)
+  svg.append('g').selectAll('path')
+    .data(feats)
     .join('path')
     .attr('class', function(d) {
       var name = d.properties.name;
@@ -91,33 +72,6 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
       return 'state ' + (c ? 'band-' + bandFor(c) + ' has-projects' : 'nodata');
     })
     .attr('d', path)
-    .style('opacity', 0)
-    .attr('transform', 'translate(0,' + slideOffset + ')');
-
-  // Phase 1: States slide into position with smooth easing
-  paths.transition()
-    .duration(800)
-    .delay(function(d, i) { return 60 + i * 40; })
-    .ease(d3.easeCubicOut)
-    .style('opacity', 1)
-    .attr('transform', 'translate(0,0)');
-
-  // Phase 2: After landing, gently pulse the stroke on states with projects
-  paths.filter('.has-projects')
-    .transition()
-    .delay(function(d, i) { return 800 + i * 40; })
-    .duration(500)
-    .ease(d3.easeCubicOut)
-    .style('stroke-width', '2.5')
-    .style('stroke', country === 'ca' ? 'rgba(220, 38, 38, 0.5)' : 'rgba(37, 99, 235, 0.5)')
-    .transition()
-    .duration(700)
-    .ease(d3.easeCubicInOut)
-    .style('stroke-width', null)
-    .style('stroke', null);
-
-  // Attach event listeners immediately
-  paths
     .on('mouseenter', function(event, d) { handleHover(event, d, projectsList, category); })
     .on('mousemove',  handleMove)
     .on('mouseleave', handleLeave)
