@@ -415,6 +415,43 @@
         <svg id="map" viewBox="0 0 960 600"></svg>
         <div class="tooltip" id="tooltip"></div>
 
+        <!-- Contextual First-Time User Intro Popup (<AtlasMapIntro />) -->
+        <div class="atlas-map-intro-backdrop" id="atlasIntroBackdrop" aria-hidden="true"></div>
+        <div class="atlas-map-intro-popup" id="atlasIntroPopup" role="dialog" aria-modal="false" aria-labelledby="atlasIntroTitle" aria-describedby="atlasIntroDesc" aria-hidden="true">
+          <div class="atlas-intro-header">
+            <div class="atlas-intro-title-wrap">
+              <div class="atlas-intro-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <h3 class="atlas-intro-title" id="atlasIntroTitle">Explore Our Project Experience</h3>
+            </div>
+            <button class="atlas-intro-close" id="atlasIntroCloseBtn" aria-label="Close intro">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <p class="atlas-intro-body" id="atlasIntroDesc">
+            This map shows where we’ve delivered structural steel detailing projects across North America.
+          </p>
+          <div class="atlas-intro-guide">
+            <div class="atlas-intro-legend-item">
+              <span class="atlas-intro-dot"></span>
+              <span>Blue regions = Project experience</span>
+            </div>
+            <div style="margin-top: 2px;">
+              Tap a highlighted region to explore projects.
+            </div>
+          </div>
+          <div class="atlas-intro-footer">
+            <button class="atlas-intro-btn" id="atlasIntroGotItBtn">Got it</button>
+          </div>
+        </div>
+
         <!-- Country Toggle (Mobile View: Inside Map Card at the bottom) -->
         <div class="toggle-container-wrapper mobile-only-toggle">
           <div class="toggle-card">
@@ -950,6 +987,7 @@
 
 
   <script src="js/map.js?v=20260904001" defer></script>
+  <script src="js/atlas-intro.js?v=20260915001" defer></script>
   <script src="js/app.js?v=20260904001" defer></script>
 
   <!-- Mobile Bottom Floating Navigation Dock (Zepto/Blinkit Style) -->

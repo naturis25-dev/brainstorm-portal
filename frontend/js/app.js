@@ -128,6 +128,9 @@ function renderMap() {
     window.MapModule.loadMapData(() => {
       window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
       initCountryToggle();
+      if (window.AtlasMapIntro && typeof window.AtlasMapIntro.init === 'function') {
+        window.AtlasMapIntro.init();
+      }
     });
   }
 }
