@@ -8783,10 +8783,19 @@ body.theme-ca .atlas-intro-btn:hover {
 
 @media (max-width: 600px) {
   .atlas-map-intro-popup {
-    width: calc(100% - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
     padding: 20px 18px !important;
     border-radius: 20px !important;
     box-sizing: border-box !important;
+    transform: translateY(-44%) scale(0.95) !important;
+  }
+  .atlas-map-intro-popup.show {
+    transform: translateY(-50%) scale(1) !important;
+  }
+  .atlas-map-intro-popup.hiding {
+    transform: translateY(-46%) scale(0.96) !important;
   }
   .atlas-intro-title {
     font-size: 16px !important;
