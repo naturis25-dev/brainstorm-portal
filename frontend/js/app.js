@@ -1253,7 +1253,7 @@ window.openDetail = function(id) {
                   ${p.images.map((img, i) => `
                     <div class="carousel-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.selectCarouselSlide('${p.id}', ${i})">
                       <div class="carousel-card-inner">
-                        <img loading="lazy" decoding="async" src="${img}" alt="Project View ${i + 1}" onerror="this.src='assets/logo.png'">
+                        <img loading="lazy" decoding="async" src="${img}" alt="${p.title} - View ${i + 1}" onerror="this.src='assets/logo.png'">
                         <div class="carousel-card-badge">View ${i + 1} of ${p.images.length}</div>
                         <button class="carousel-zoom-btn" title="View Fullscreen" onclick="event.stopPropagation(); window.openLightbox('${img}')">
                           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
@@ -1262,6 +1262,16 @@ window.openDetail = function(id) {
                     </div>
                   `).join('')}
                 </div>
+
+                <!-- Active Slide Caption & Sub-Metadata -->
+                <div class="carousel-caption-box" id="carouselCaption-${p.id}">
+                  <div class="carousel-caption-title" id="carouselTitle-${p.id}">${p.title} &mdash; View 1</div>
+                  <div class="carousel-caption-meta" id="carouselMeta-${p.id}">
+                    <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> High Resolution</span>
+                    <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path></svg> View 1 of ${p.images.length}</span>
+                  </div>
+                </div>
+
                 ${p.images.length > 1 ? `
                   <button class="carousel-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" aria-label="Previous image">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -1269,8 +1279,16 @@ window.openDetail = function(id) {
                   <button class="carousel-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" aria-label="Next image">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
-                  <div class="carousel-dots" id="projCarouselDots-${p.id}">
-                    ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
+
+                  <!-- Bottom Dock Control Pill -->
+                  <div class="carousel-dock-pill" id="projCarouselDots-${p.id}">
+                    <div class="carousel-dots-group">
+                      ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
+                    </div>
+                    <button class="carousel-play-btn paused" id="projCarouselPlay-${p.id}" onclick="window.toggleCarouselAutoplay('${p.id}')" title="Play Slideshow" aria-label="Toggle slideshow">
+                      <svg class="icon-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+                      <svg class="icon-play" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="6 4 18 12 6 20 6 4"></polygon></svg>
+                    </button>
                   </div>
                 ` : ''}
               </div>
@@ -1467,6 +1485,7 @@ window.openDetail = function(id) {
 };
 
 window.currentCarouselIndexes = window.currentCarouselIndexes || {};
+window.carouselIntervals = window.carouselIntervals || {};
 
 window.selectCarouselSlide = function(projId, targetIdx) {
   const track = document.getElementById(`projCarouselTrack-${projId}`);
@@ -1475,8 +1494,9 @@ window.selectCarouselSlide = function(projId, targetIdx) {
   const dotsWrap = document.getElementById(`projCarouselDots-${projId}`);
   const dots = dotsWrap ? dotsWrap.querySelectorAll('.c-dot') : [];
   
-  if (targetIdx < 0) targetIdx = 0;
-  if (targetIdx >= cards.length) targetIdx = cards.length - 1;
+  if (cards.length === 0) return;
+  if (targetIdx < 0) targetIdx = cards.length - 1;
+  if (targetIdx >= cards.length) targetIdx = 0;
   window.currentCarouselIndexes[projId] = targetIdx;
 
   cards.forEach((c, idx) => {
@@ -1499,11 +1519,51 @@ window.selectCarouselSlide = function(projId, targetIdx) {
     if (idx === targetIdx) d.classList.add('active');
     else d.classList.remove('active');
   });
+
+  // Update caption title & meta under active card
+  const proj = typeof PROJECTS !== 'undefined' ? PROJECTS.find(x => x.id === projId) : null;
+  const titleEl = document.getElementById(`carouselTitle-${projId}`);
+  const metaEl = document.getElementById(`carouselMeta-${projId}`);
+  if (titleEl && proj) {
+    titleEl.textContent = `${proj.title} — View ${targetIdx + 1}`;
+  }
+  if (metaEl && proj && proj.images) {
+    metaEl.innerHTML = `
+      <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> View ${targetIdx + 1} of ${proj.images.length}</span>
+      <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 17 22 12"></polyline></svg> ${proj.category || 'Steel Detailing'}</span>
+    `;
+  }
 };
 
 window.stepCarouselSlide = function(projId, step) {
   const cur = window.currentCarouselIndexes[projId] || 0;
   window.selectCarouselSlide(projId, cur + step);
+};
+
+window.toggleCarouselAutoplay = function(projId) {
+  const btn = document.getElementById(`projCarouselPlay-${projId}`);
+  if (!btn) return;
+  const pauseIcon = btn.querySelector('.icon-pause');
+  const playIcon = btn.querySelector('.icon-play');
+
+  if (window.carouselIntervals[projId]) {
+    // Stop autoplay
+    clearInterval(window.carouselIntervals[projId]);
+    delete window.carouselIntervals[projId];
+    btn.classList.add('paused');
+    if (pauseIcon) pauseIcon.style.display = 'none';
+    if (playIcon) playIcon.style.display = 'block';
+    btn.title = 'Play Slideshow';
+  } else {
+    // Start autoplay
+    window.carouselIntervals[projId] = setInterval(() => {
+      window.stepCarouselSlide(projId, 1);
+    }, 3500);
+    btn.classList.remove('paused');
+    if (pauseIcon) pauseIcon.style.display = 'block';
+    if (playIcon) playIcon.style.display = 'none';
+    btn.title = 'Pause Slideshow';
+  }
 };
 
 document.getElementById('detailClose')?.addEventListener('click', () => {
