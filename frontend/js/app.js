@@ -220,7 +220,7 @@ function renderCategoryChips() {
   const oldSearch = document.getElementById('globalProjectSearch');
   const oldVal = oldSearch ? oldSearch.value : '';
   const isMobile = window.innerWidth <= 768;
-  const searchPlaceholder = isMobile ? 'Search projects...' : 'Search projects... (Ctrl+K)';
+  const searchPlaceholder = 'Search projects...';
   const chipsHTML = cats.map(c =>
     `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
   ).join('');
@@ -231,32 +231,36 @@ function renderCategoryChips() {
       <div class="filter-chip-container" style="display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; align-items: center; padding-bottom: 4px; width: 100%;">
         ${chipsHTML}
       </div>
-      <div class="m-floating-search-row">
-        <div class="inline-search-wrap">
+      <button class="chip-scroll-arrow right" id="chipScrollRightBtn" title="Scroll right for more categories" aria-label="Scroll right">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>`;
+
+    // Inject floating row directly into body to avoid position:fixed containing block issues from transformed parents
+    let floatingRow = document.getElementById('mFloatingSearchRowObj');
+    if (!floatingRow) {
+      floatingRow = document.createElement('div');
+      floatingRow.id = 'mFloatingSearchRowObj';
+      floatingRow.className = 'm-floating-search-row';
+      document.body.appendChild(floatingRow);
+    }
+
+    floatingRow.innerHTML = `
+        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="inline-search-wrap" style="flex:1;">
           <div class="search-badge-icon">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
           </div>
-          <input type="text" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" autocomplete="off" spellcheck="false">
-        </div>
+          <input type="search" id="globalProjectSearch" name="search_atlas_projects_m" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
+        </form>
         <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="m-search-website-btn" title="Visit Website">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
           <span>Website</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
-        </a>
-      </div>
-      <button class="chip-scroll-arrow right" id="chipScrollRightBtn" title="Scroll right for more categories" aria-label="Scroll right">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-      </button>
     </div>`;
   } else {
     // 2-Row Grid layout on desktop so Row 1 ends with Data Center and Row 2 ends with Search Bar aligned with map box edge
@@ -282,14 +286,14 @@ function renderCategoryChips() {
         <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
           ${row2HTML}
         </div>
-        <div class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
-          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24">
-            <g>
-              <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
-            </g>
+        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
+          <svg class="search-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="search" id="globalProjectSearch" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="input" autocomplete="off" spellcheck="false">
-        </div>
+          <input type="search" id="globalProjectSearch" name="search_atlas_projects" placeholder="${searchPlaceholder}" value="${oldVal.replace(/"/g, '&quot;')}" class="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
+          <div class="search-kbd-tag">Ctrl+K</div>
+        </form>
       </div>
     </div>`;
   }
@@ -329,112 +333,177 @@ function renderCategoryChips() {
         if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
         closePanel();
       };
-    }
-
-    const searchInput = document.getElementById('globalProjectSearch');
+    }    const searchInput = document.getElementById('globalProjectSearch');
     const searchBtn = document.getElementById('globalSearchBtn');
     
-    function executeSearch() {
-        const q = searchInput.value.trim();
-        if (!q) {
-          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
-          const existingPopup = document.getElementById('searchResultsPopup');
-          if (existingPopup) existingPopup.remove();
-          return;
-        }
-        
-        const filtered = (window.PROJECT_STATS || PROJECTS).filter(p => projectMatchesQuery(p, q));
-        
-        if (window.MapModule) {
-          window.MapModule.drawMap(filtered, currentCategory, currentCountry);
-        }
+    // Cosmos-style Dropdown Search Popup
+    function renderCosmosPopup(query) {
+      let popup = document.getElementById('cosmosSearchDropdown');
+      const searchGroup = document.querySelector('.uiverse-search-group');
+      if (!searchGroup) return;
 
-        // --- NEW: Search Results Popup ---
-        let popup = document.getElementById('searchResultsPopup');
-        if (!popup) {
-          popup = document.createElement('div');
-          popup.id = 'searchResultsPopup';
-          popup.style.position = 'fixed';
-          popup.style.top = '50%';
-          popup.style.left = '50%';
-          popup.style.transform = 'translate(-50%, -50%)';
-          popup.style.width = '85%';
-          popup.style.maxWidth = '800px';
-          popup.style.maxHeight = '70vh';
-          // Glassmorphism styling
-          popup.style.background = 'rgba(255, 255, 255, 0.7)';
-          popup.style.backdropFilter = 'blur(24px)';
-          popup.style.WebkitBackdropFilter = 'blur(24px)';
-          popup.style.border = '1px solid rgba(255, 255, 255, 0.4)';
-          popup.style.borderRadius = '24px';
-          popup.style.boxShadow = '0 30px 60px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.05)';
-          if (document.body.classList.contains('dark-mode')) {
-            popup.style.background = 'rgba(15, 15, 17, 0.75)';
-            popup.style.border = '1px solid rgba(255,255,255,0.1)';
-            popup.style.boxShadow = '0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)';
-          }
-          popup.style.zIndex = '9999';
-          popup.style.display = 'flex';
-          popup.style.flexDirection = 'column';
-          popup.style.overflow = 'hidden';
-          popup.style.animation = 'popupFadeScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-          document.body.appendChild(popup);
-        }
+      if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'cosmosSearchDropdown';
+        popup.className = 'cosmos-search-popup';
+        searchGroup.appendChild(popup);
+      }
 
-        let isDark = document.body.classList.contains('dark-mode');
-        let headerBg = isDark ? 'linear-gradient(135deg, rgba(37,99,235,0.2), rgba(0,0,0,0))' : 'linear-gradient(135deg, rgba(37,99,235,0.1), rgba(255,255,255,0))';
-        let rowBg = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.6)';
-        let rowHoverBg = isDark ? 'rgba(37,99,235,0.15)' : 'rgba(255,255,255,1)';
-        let borderColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+      const q = (query || '').trim().toLowerCase();
+      const allProjects = window.PROJECT_STATS || PROJECTS || [];
 
-        let resultsHtml = `<div style="padding: 20px 24px; border-bottom: 1px solid ${borderColor}; display: flex; justify-content: space-between; align-items: center; background: ${headerBg};">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div style="background:var(--accent); color:#fff; width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(37,99,235,0.4);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              </div>
-              <div>
-                <h3 style="margin:0; font-size:18px; font-weight:800; color:var(--ink); letter-spacing:-0.3px;">Search Results</h3>
-                <div style="font-size:12px; color:var(--sub); font-weight:500; margin-top:2px;">Found ${filtered.length} matches for "${q}"</div>
-              </div>
-            </div>
-            <button onclick="document.getElementById('searchResultsPopup').remove()" style="background:var(--bg-alt); border:1px solid var(--line); border-radius:50%; cursor:pointer; color:var(--sub); width:32px; height:32px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.05);" onmouseover="this.style.background='var(--accent)'; this.style.color='#fff'; this.style.transform='rotate(90deg)'" onmouseout="this.style.background='var(--bg-alt)'; this.style.color='var(--sub)'; this.style.transform='none'">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div style="overflow-y:auto; padding: 16px; display:flex; flex-direction:column; gap:12px;">`;
+      if (q.length > 0) {
+        // Query Results Mode
+        const matches = allProjects.filter(p => projectMatchesQuery(p, q));
+        let resultsHtml = `
+          <div class="cosmos-section">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4 class="cosmos-title">Results</h4>
+              <span style="font-size:11.5px; color:#9ca3af;">${matches.length} found</span>
+            </div>`;
 
-        if (filtered.length === 0) {
-            resultsHtml += `<div style="padding: 40px; text-align: center; color: var(--sub);">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.3; margin-bottom:16px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <div style="font-size:16px; font-weight:600;">No projects found</div>
-              <div style="font-size:13px; margin-top:4px;">Try adjusting your search terms</div>
+        if (matches.length === 0) {
+          resultsHtml += `
+            <div style="padding: 24px 0; text-align: center; color: #9ca3af; font-size: 13px;">
+              No projects found for "${query}"
             </div>`;
         } else {
-            filtered.forEach((p, idx) => {
-                let imgUrl = (p.images && p.images.length > 0) ? (p.images[0].startsWith('http') ? p.images[0] : `/uploads/${p.images[0]}`) : 'assets/logo.png';
-                let animDelay = idx * 0.05;
-                resultsHtml += `<div onclick="document.getElementById('searchResultsPopup').remove(); openDetail('${p.id}')" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:${rowBg}; border:1px solid ${borderColor}; border-radius:16px; cursor:pointer; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); animation: viewFadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) backwards ${animDelay}s;" onmouseover="this.style.background='${rowHoverBg}'; this.style.transform='translateY(-2px) scale(1.01)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)'" onmouseout="this.style.background='${rowBg}'; this.style.transform='none'; this.style.boxShadow='none'">
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <div style="width:72px; height:72px; border-radius:14px; overflow:hidden; background:var(--bg-alt); flex-shrink:0; border:1px solid ${borderColor};">
-                          <img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='assets/logo.png'; this.style.objectFit='contain'; this.style.padding='8px';">
-                        </div>
-                        <div>
-                            <div style="font-weight:800; color:var(--ink); font-size:18px; margin-bottom:8px; letter-spacing:-0.2px;">${p.title}</div>
-                            <div style="font-size:14px; color:var(--sub); display:flex; align-items:center; gap:16px; font-weight:500;">
-                                <span style="display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${p.state}</span>
-                                <span style="background:var(--bg-alt); padding:4px 10px; border-radius:100px; border:1px solid var(--line); font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">${p.category}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align:right; padding-right:8px;">
-                      <div style="font-weight:800; color:var(--accent); font-size:22px; letter-spacing:-0.5px;">${(p.tons || 0).toLocaleString()} <span style="font-size:11px; opacity:0.7;">TONS</span></div>
-                    </div>
-                </div>`;
-            });
+          resultsHtml += `<div class="cosmos-results-list">`;
+          matches.slice(0, 8).forEach(p => {
+            const imgUrl = (p.images && p.images.length > 0) 
+              ? (p.images[0].startsWith('http') ? p.images[0] : `/uploads/${p.images[0]}`) 
+              : 'assets/logo.png';
+            resultsHtml += `
+              <div class="cosmos-result-item" data-id="${p.id}">
+                <div class="cosmos-res-left">
+                  <img class="cosmos-res-thumb" src="${imgUrl}" onerror="this.src='assets/logo.png'">
+                  <div>
+                    <div class="cosmos-res-title">${p.title}</div>
+                    <div class="cosmos-res-sub">${p.state || ''} · ${p.category || ''}</div>
+                  </div>
+                </div>
+                ${p.tons ? `<div class="cosmos-res-tons">${Math.round(p.tons).toLocaleString()} T</div>` : ''}
+              </div>`;
+          });
+          resultsHtml += `</div>`;
         }
         resultsHtml += `</div>`;
         popup.innerHTML = resultsHtml;
-    
+      } else {
+        // Default Explore Mode (Trending & Categories)
+        popup.innerHTML = `
+          <div class="cosmos-section">
+            <h4 class="cosmos-title">Trending</h4>
+            <div class="cosmos-pills-row">
+              <button type="button" class="cosmos-pill" data-trend="Industrial">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                <span>Industrial</span>
+              </button>
+              <button type="button" class="cosmos-pill" data-trend="Data Center">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                <span>Data Center</span>
+              </button>
+              <button type="button" class="cosmos-pill" data-trend="Healthcare">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                <span>Healthcare</span>
+              </button>
+              <button type="button" class="cosmos-pill" data-trend="Commercial">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                <span>Commercial</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="cosmos-section">
+            <h4 class="cosmos-title">Categories</h4>
+            <div class="cosmos-cards-grid">
+              <div class="cosmos-card" data-cat="Industrial">
+                <img class="cosmos-card-thumb" src="assets/map_icons/map_misc.png" onerror="this.src='assets/logo.png'">
+                <span class="cosmos-card-label">Industrial</span>
+              </div>
+              <div class="cosmos-card" data-cat="Commercial">
+                <img class="cosmos-card-thumb" src="assets/map_icons/map_usa.png" onerror="this.src='assets/logo.png'">
+                <span class="cosmos-card-label">Commercial</span>
+              </div>
+              <div class="cosmos-card" data-cat="Stadium">
+                <img class="cosmos-card-thumb" src="assets/map_icons/map_canada.png" onerror="this.src='assets/logo.png'">
+                <span class="cosmos-card-label">Stadium</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Attach interaction listeners inside dropdown
+      popup.querySelectorAll('.cosmos-pill').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const trend = btn.dataset.trend;
+          searchInput.value = trend;
+          renderCosmosPopup(trend);
+          const matches = allProjects.filter(p => projectMatchesQuery(p, trend));
+          if (window.MapModule) window.MapModule.drawMap(matches, currentCategory, currentCountry);
+        };
+      });
+
+      popup.querySelectorAll('.cosmos-color-pill').forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const filter = btn.dataset.filter;
+          if (filter === 'us' || filter === 'ca') {
+            updateCountryToggleUI(filter);
+            if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
+          }
+          closeCosmosPopup();
+        };
+      });
+
+      popup.querySelectorAll('.cosmos-card').forEach(card => {
+        card.onclick = (e) => {
+          e.stopPropagation();
+          const cat = card.dataset.cat;
+          currentCategory = cat;
+          renderCategoryChips();
+          if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
+          closeCosmosPopup();
+        };
+      });
+
+      popup.querySelectorAll('.cosmos-result-item').forEach(item => {
+        item.onclick = (e) => {
+          e.stopPropagation();
+          closeCosmosPopup();
+          if (window.openDetail) window.openDetail(item.dataset.id);
+        };
+      });
+
+      popup.classList.add('active');
+    }
+
+    function closeCosmosPopup() {
+      const popup = document.getElementById('cosmosSearchDropdown');
+      if (popup) popup.classList.remove('active');
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      const searchGroup = document.querySelector('.uiverse-search-group');
+      if (searchGroup && !searchGroup.contains(e.target)) {
+        closeCosmosPopup();
+      }
+    });
+
+    function executeSearch() {
+      const q = searchInput ? searchInput.value.trim() : '';
+      const allProjects = window.PROJECT_STATS || PROJECTS || [];
+      if (!q) {
+        if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
+        renderCosmosPopup('');
+        return;
+      }
+      const filtered = allProjects.filter(p => projectMatchesQuery(p, q));
+      if (window.MapModule) window.MapModule.drawMap(filtered, currentCategory, currentCountry);
+      renderCosmosPopup(q);
     }
 
     if (searchBtn) {
@@ -446,20 +515,36 @@ function renderCategoryChips() {
         }
       });
     }
+
     if (searchInput) {
-      searchInput.addEventListener('click', () => {
+      searchInput.addEventListener('pointerdown', () => {
+        searchInput.removeAttribute('readonly');
+      });
+      searchInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchInput.removeAttribute('readonly');
         if (window.innerWidth <= 768) {
           openSpotlight(searchInput.value.trim());
+        } else {
+          renderCosmosPopup(searchInput.value.trim());
         }
       });
       searchInput.addEventListener('focus', () => {
+        searchInput.removeAttribute('readonly');
         if (window.innerWidth <= 768) {
           searchInput.blur();
           openSpotlight(searchInput.value.trim());
+        } else {
+          renderCosmosPopup(searchInput.value.trim());
         }
       });
+      searchInput.addEventListener('blur', () => {
+        searchInput.setAttribute('readonly', 'readonly');
+      });
       searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Escape') {
+          closeCosmosPopup();
+        } else if (e.key === 'Enter') {
           if (window.innerWidth <= 768) {
             openSpotlight(searchInput.value.trim());
           } else {
@@ -471,7 +556,7 @@ function renderCategoryChips() {
         if (window.innerWidth <= 768) {
           openSpotlight(searchInput.value.trim());
         } else {
-          if (searchInput.value.trim() === '') executeSearch();
+          executeSearch();
         }
       });
     }
@@ -974,6 +1059,7 @@ window.addEventListener('keydown', (e) => {
     } else {
       const searchInput = document.getElementById('globalProjectSearch');
       if (searchInput) {
+        searchInput.removeAttribute('readonly');
         searchInput.focus();
         searchInput.select();
       }
