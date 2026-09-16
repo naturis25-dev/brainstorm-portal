@@ -8684,6 +8684,11 @@ body.dark-mode .atlas-intro-body {
   transition: background 0.2s;
 }
 
+.atlas-intro-guide-card > div:not(.atlas-intro-dot-wrap) {
+  min-width: 0;
+  flex: 1;
+}
+
 body.dark-mode .atlas-intro-guide-card {
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(255, 255, 255, 0.08);
@@ -8786,10 +8791,19 @@ body.theme-ca .atlas-intro-btn:hover {
     left: 12px !important;
     right: 12px !important;
     width: auto !important;
-    padding: 20px 18px !important;
+    max-width: calc(100% - 24px) !important;
+    padding: 20px 16px !important;
     border-radius: 20px !important;
     box-sizing: border-box !important;
     transform: translateY(-44%) scale(0.95) !important;
+  }
+  .atlas-intro-title-wrap {
+    min-width: 0;
+    flex: 1;
+    gap: 10px !important;
+  }
+  .atlas-intro-title-wrap > div {
+    min-width: 0;
   }
   .atlas-map-intro-popup.show {
     transform: translateY(-50%) scale(1) !important;
