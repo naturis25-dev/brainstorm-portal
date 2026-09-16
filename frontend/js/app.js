@@ -112,14 +112,12 @@ async function fetchAppInitialData() {
 
     renderCategoryChips();
     renderMap();
-    if (typeof renderFeaturedProjectsSlider === 'function') renderFeaturedProjectsSlider();
     window.PROJECTS = PROJECTS;
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects
     renderCategoryChips();
     renderMap();
-    if (typeof renderFeaturedProjectsSlider === 'function') renderFeaturedProjectsSlider();
   } finally {
     if (typeof window.hideLoader === 'function') window.hideLoader();
   }
