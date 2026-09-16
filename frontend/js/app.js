@@ -132,6 +132,23 @@ function renderMap() {
         window.AtlasMapIntro.init();
       }
     });
+  } else {
+    let retries = 0;
+    const interval = setInterval(() => {
+      retries++;
+      if (window.MapModule) {
+        clearInterval(interval);
+        window.MapModule.loadMapData(() => {
+          window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+          initCountryToggle();
+          if (window.AtlasMapIntro && typeof window.AtlasMapIntro.init === 'function') {
+            window.AtlasMapIntro.init();
+          }
+        });
+      } else if (retries > 20) {
+        clearInterval(interval);
+      }
+    }, 100);
   }
 }
 
@@ -3170,15 +3187,19 @@ function initDrawingPdfViewerModal() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
+  if (window._appInitialized) return;
+  window._appInitialized = true;
+  initCustomCursor();
+  initThemeToggle();
   fetchAppInitialData();
   initBrochureHandlers();
   initDrawingPdfViewerModal();
-});
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  fetchAppInitialData();
-  initBrochureHandlers();
-  initDrawingPdfViewerModal();
+  initApp();
 }
 
 
