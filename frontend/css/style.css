@@ -8684,7 +8684,7 @@ body.dark-mode .atlas-intro-body {
   transition: background 0.2s;
 }
 
-.atlas-intro-guide-card > div:not(.atlas-intro-dot-wrap) {
+.atlas-intro-guide-card > div:last-child {
   min-width: 0;
   flex: 1;
 }
@@ -8705,12 +8705,13 @@ body.dark-mode .atlas-intro-guide-card strong {
 }
 
 .atlas-intro-dot-wrap {
-  width: 22px;
-  height: 22px;
+  width: 22px !important;
+  height: 22px !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 22px !important;
+  flex-shrink: 0 !important;
 }
 
 .atlas-intro-dot {
@@ -8728,15 +8729,16 @@ body.theme-ca .atlas-intro-dot {
 }
 
 .atlas-intro-badge-icon {
-  width: 22px;
-  height: 22px;
+  width: 22px !important;
+  height: 22px !important;
   border-radius: 6px;
   background: rgba(37, 99, 235, 0.1);
   color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex: 0 0 22px !important;
+  flex-shrink: 0 !important;
 }
 
 body.theme-ca .atlas-intro-badge-icon {
