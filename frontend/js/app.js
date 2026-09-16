@@ -1149,161 +1149,269 @@ window.openDetail = function(id) {
   const inlineBadges = `
     <div class="project-scope-block">
       <h3 style="font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">Project Scope</h3>
-      <div class="hero-badges" style="max-width: 100%; margin: 0; justify-content: flex-start; flex-wrap: wrap; gap: 8px;">
-        ${badgesHtml}
-      </div>
-    </div>
-  `;
-
-  const titleHero = document.getElementById('detailTitleHero');
-  if (titleHero) titleHero.textContent = p.title;
-
-  const locHero = document.getElementById('detailLocHero');
-  if (locHero) locHero.innerHTML = ''; 
-
-  const wrap = document.getElementById('detailWrap');
+      <div class="hero-badges" style="max-width: 100  const wrap = document.getElementById('detailWrap');
   if (wrap) {
-      const similar = PROJECTS.filter(x => x.id !== p.id && (x.category === p.category || (x.type && p.type && x.type.includes(p.type.split(',')[0])))).slice(0, 3);
-  let similarHtml = '';
-  if (similar.length > 0) {
-    similarHtml = `
-      <div style="margin-top: 64px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 32px;">
-        <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 24px; color: var(--ink); letter-spacing:-0.5px;">Similar Projects</h3>
-        <div style="display:flex; gap:20px; flex-wrap:wrap;">
-          ${similar.map(s => `
-            <div onclick="window.openDetail('${s.id}')" style="cursor:pointer; flex: 1; min-width: 260px; max-width: 320px; background:#fff; border:1px solid rgba(0,0,0,0.08); border-radius:16px; overflow:hidden; transition:all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.03);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)';">
-              <img src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" style="width:100%; height:160px; object-fit:cover;" onerror="this.src='assets/logo.png';">
-              <div style="padding:20px;">
-                <div style="font-weight:800; font-size:16px; margin-bottom:6px; color:var(--ink);">${s.title}</div>
-                <div style="font-size:13px; color:var(--sub); font-weight:600;">${s.state}, ${s.country}</div>
-              </div>
-            </div>
-          `).join('')}
+    const similar = PROJECTS.filter(x => x.id !== p.id && (x.category === p.category || (x.type && p.type && x.type.includes(p.type.split(',')[0])))).slice(0, 4);
+    let similarHtml = '';
+    if (similar.length > 0) {
+      similarHtml = similar.map(s => `
+        <div onclick="window.openDetail('${s.id}')" class="similar-card">
+          <img src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" alt="${s.title}" onerror="this.src='assets/logo.png';">
+          <div class="similar-card-body">
+            <div class="similar-card-title">${s.title}</div>
+            <div class="similar-card-loc">📍 ${s.state}, ${s.country === 'US' ? 'USA' : 'CAN'}</div>
+          </div>
         </div>
-      </div>
-    `;
-  }
+      `).join('');
+    }
+
+    const scopeBadges = [
+      'Structural Steel Detailing',
+      'Connection Design',
+      'Miscellaneous Steel Detailing',
+      'Steel Fabrication Drawings',
+      '3D Modeling (BIM)',
+      'Erection Drawings',
+      'Shop Drawings',
+      'Advance Steel Modeling',
+      'Staircase & Railing Detailing'
+    ];
+
     wrap.innerHTML = `
-      <div class="premium-kpi-grid">
-        <div class="pkpi-card">
-          <div class="pkpi-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <!-- Top Floating KPI Metric Cards (Image 1 Layout) -->
+      <div class="detail-kpi-floating-row">
+        <div class="dkpi-card">
+          <div class="dkpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2.2" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           </div>
-          <div class="pkpi-info">
-            <div class="pkpi-lbl">COMPLETION YEAR</div>
-            <div class="pkpi-val">${p.year || 'N/A'}</div>
-          </div>
-        </div>
-        <div class="pkpi-card">
-          <div class="pkpi-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-          </div>
-          <div class="pkpi-info">
-            <div class="pkpi-lbl">STEEL TONNAGE</div>
-            <div class="pkpi-val">${(p.tons || 0).toLocaleString()} <span style="font-size:14px;color:var(--sub);font-weight:600;">Tons</span></div>
+          <div class="dkpi-info">
+            <div class="dkpi-lbl">COMPLETION YEAR</div>
+            <div class="dkpi-val">${p.year || '2026'}</div>
           </div>
         </div>
-        <div class="pkpi-card">
-          <div class="pkpi-icon">
-            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <div class="dkpi-card">
+          <div class="dkpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2.2" fill="none"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 17 22 12"></polyline></svg>
           </div>
-          <div class="pkpi-info">
-            <div class="pkpi-lbl">LOCATION</div>
-            <div class="pkpi-val">${p.state}, ${p.country === 'US' ? 'USA' : 'CAN'}</div>
+          <div class="dkpi-info">
+            <div class="dkpi-lbl">STEEL TONNAGE</div>
+            <div class="dkpi-val">${(p.tons || 0).toLocaleString()} <span style="font-size:13px; color:var(--sub); font-weight:600;">Tons</span></div>
+          </div>
+        </div>
+        <div class="dkpi-card">
+          <div class="dkpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--accent)" stroke-width="2.2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </div>
+          <div class="dkpi-info">
+            <div class="dkpi-lbl">LOCATION</div>
+            <div class="dkpi-val">${p.state}, ${p.country === 'US' ? 'USA' : 'Canada'}</div>
           </div>
         </div>
       </div>
 
-      <div style="margin-top: 32px; margin-bottom: 32px;">
-        ${inlineBadges}
+      <!-- Sticky Sub-Nav Tabs Bar -->
+      <div class="detail-subnav-bar">
+        <button class="d-tab active" onclick="document.getElementById('sec-overview-${p.id}')?.scrollIntoView({behavior:'smooth'})">Overview</button>
+        <button class="d-tab" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})">3D Model</button>
+        <button class="d-tab" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})">Project Views</button>
+        ${p.video ? `<button class="d-tab" onclick="document.getElementById('sec-walkthrough-${p.id}')?.scrollIntoView({behavior:'smooth'})">Walkthrough</button>` : ''}
+        <button class="d-tab" onclick="document.getElementById('sec-similar-${p.id}')?.scrollIntoView({behavior:'smooth'})">Similar Projects</button>
       </div>
 
-      ${p.modelUrl ? `
-          <div class="detail-model-section" style="margin-top: 0;">
-            <div class="model-header">
-              <h3>Interactive 3D Structural View</h3>
-            </div>
-            <div class="model-container" id="mv-container-${p.id}" style="min-height: 500px; display: flex; align-items: center; justify-content: center; position: relative; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; border-radius: 12px; overflow: hidden;">
-              
-              <!-- Manual Trigger Overlay -->
-              <div id="mv-trigger-${p.id}" style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%); cursor: pointer; transition: opacity 0.3s;">
-                <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(10, 107, 204, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; border: 1px solid rgba(10, 107, 204, 0.3); box-shadow: 0 0 30px rgba(10, 107, 204, 0.2);">
-                  <svg viewBox="0 0 24 24" width="32" height="32" stroke="var(--accent)" stroke-width="2" fill="none" style="margin-left: 4px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                </div>
-                <div style="font-size: 15px; font-weight: 600; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Load 3D Structural Model</div>
-                <div style="font-size: 13px; color: #a1a1aa; margin-top: 6px;">(Interactive Tekla BIM Viewer)</div>
-              </div>
-
-              <!-- Loading State -->
-              <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; z-index: 9;">
-                <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 15px; color: white;">Loading 3D Structural Model...</div>
-                <div style="width: 250px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative;">
-                  <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);"></div>
+      <!-- Main 2-Column Dashboard Grid -->
+      <div class="detail-main-grid">
+        <!-- Left Column: 3D Model & Project Views Image 2 Slider -->
+        <div class="detail-grid-left">
+          ${p.modelUrl ? `
+            <div class="detail-card-block" id="sec-3d-${p.id}">
+              <div class="dcard-header">
+                <div>
+                  <h3 class="dcard-title">Interactive 3D Structural View</h3>
+                  <div class="dcard-sub">Explore the model, rotate, zoom and inspect the structure.</div>
                 </div>
               </div>
-
-              
-            </div>
-          </div>
-        ` : ''}
-          ${p.images && p.images.length > 0 ? `
-            <div class="project-carousel-section">
-              <div class="project-carousel-wrapper" id="projCarouselWrap-${p.id}">
-                <div class="project-carousel-track" id="projCarouselTrack-${p.id}">
-                  ${p.images.map((img, i) => `
-                    <div class="carousel-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.selectCarouselSlide('${p.id}', ${i})">
-                      <div class="carousel-card-inner">
-                        <img loading="lazy" decoding="async" src="${img}" alt="${p.title} - View ${i + 1}" onerror="this.src='assets/logo.png'">
-                        <div class="carousel-card-badge">View ${i + 1} of ${p.images.length}</div>
-                        <button class="carousel-zoom-btn" title="View Fullscreen" onclick="event.stopPropagation(); window.openLightbox('${img}')">
-                          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                        </button>
-                      </div>
-                    </div>
-                  `).join('')}
+              <div class="model-container" id="mv-container-${p.id}" style="min-height: 480px; display: flex; align-items: center; justify-content: center; position: relative; background-color: #0d1117; background-image: radial-gradient(circle at 50% 50%, rgba(37,99,235,0.15) 0%, transparent 70%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 100% 100%, 30px 30px, 30px 30px; background-position: center; border-radius: 16px; overflow: hidden;">
+                <div id="mv-trigger-${p.id}" style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%); cursor: pointer; transition: opacity 0.3s;">
+                  <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(10, 107, 204, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(10, 107, 204, 0.3); box-shadow: 0 0 30px rgba(10, 107, 204, 0.2);">
+                    <svg viewBox="0 0 24 24" width="30" height="30" stroke="var(--accent)" stroke-width="2" fill="none" style="margin-left: 4px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  </div>
+                  <div style="font-size: 14px; font-weight: 700; color: white; letter-spacing: 0.5px; text-transform: uppercase;">Load 3D Structural Model</div>
+                  <div style="font-size: 12.5px; color: #a1a1aa; margin-top: 4px;">(Interactive Tekla BIM Viewer)</div>
                 </div>
 
-                <!-- Active Slide Caption & Sub-Metadata -->
-                <div class="carousel-caption-box" id="carouselCaption-${p.id}">
-                  <div class="carousel-caption-title" id="carouselTitle-${p.id}">${p.title} &mdash; View 1</div>
-                  <div class="carousel-caption-meta" id="carouselMeta-${p.id}">
-                    <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> High Resolution</span>
-                    <span class="carousel-meta-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path></svg> View 1 of ${p.images.length}</span>
+                <div class="model-loading-bar" id="mv-bar-${p.id}" style="position: absolute; inset: 0; height: 100%; display: none; flex-direction: column; background-color: #0d1117; z-index: 9;">
+                  <div class="model-loading-text" id="mv-text-${p.id}" style="margin-bottom: 24px; font-size: 14px; color: white;">Loading 3D Structural Model...</div>
+                  <div style="width: 240px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative;">
+                    <div class="model-loading-fill" id="mv-fill-${p.id}" style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--accent); transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);"></div>
                   </div>
                 </div>
-
-                ${p.images.length > 1 ? `
-                  <button class="carousel-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" aria-label="Previous image">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                  </button>
-                  <button class="carousel-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" aria-label="Next image">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-
-                  <!-- Bottom Dock Control Pill -->
-                  <div class="carousel-dock-pill" id="projCarouselDots-${p.id}">
-                    <div class="carousel-dots-group">
-                      ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
-                    </div>
-                    <button class="carousel-play-btn paused" id="projCarouselPlay-${p.id}" onclick="window.toggleCarouselAutoplay('${p.id}')" title="Play Slideshow" aria-label="Toggle slideshow">
-                      <svg class="icon-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
-                      <svg class="icon-play" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="6 4 18 12 6 20 6 4"></polygon></svg>
-                    </button>
-                  </div>
-                ` : ''}
               </div>
             </div>
           ` : ''}
-          <div class="detail-section"><h3>Project Overview</h3><p style="white-space: pre-wrap;">${(p.description || 'No description provided.').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p></div>
-          
 
+          <!-- Project Views Image 2 Horizontal Slider Section -->
+          ${p.images && p.images.length > 0 ? `
+            <div class="detail-card-block" id="sec-gallery-${p.id}">
+              <div class="dcard-header" style="margin-bottom: 16px;">
+                <h3 class="dcard-title">Project Views</h3>
+                <span class="dcard-badge-count">${p.images.length} Views</span>
+              </div>
+              
+              <div class="project-carousel-section" style="margin: 0; width: 100% !important; max-width: 100% !important; left: auto !important; margin-left: 0 !important; margin-right: 0 !important;">
+                <div class="project-carousel-wrapper" id="projCarouselWrap-${p.id}">
+                  <div class="project-carousel-track" id="projCarouselTrack-${p.id}">
+                    ${p.images.map((img, i) => `
+                      <div class="carousel-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.selectCarouselSlide('${p.id}', ${i})">
+                        <div class="carousel-card-inner">
+                          <img loading="lazy" decoding="async" src="${img}" alt="${p.title} - View ${i + 1}" onerror="this.src='assets/logo.png'">
+                          <div class="carousel-card-badge">View ${i + 1} of ${p.images.length}</div>
+                          <button class="carousel-zoom-btn" title="View Fullscreen" onclick="event.stopPropagation(); window.openLightbox('${img}')">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
 
-      ${p.video ? `<div class="detail-video">${renderVideo(p.video)}</div>` : ''}
-        ${similarHtml}
-      `;
-    }
-    
-    // Attach 3D Model Manual Trigger Logic
+                  <!-- Active Slide Caption & Sub-Metadata -->
+                  <div class="carousel-caption-box" id="carouselCaption-${p.id}">
+                    <div class="carousel-caption-title" id="carouselTitle-${p.id}">${p.title} &mdash; View 1</div>
+                    <div class="carousel-caption-meta" id="carouselMeta-${p.id}">
+                      <span class="carousel-meta-pill">📐 View 1 of ${p.images.length}</span>
+                      <span class="carousel-meta-pill">🏗️ ${p.category || 'Industrial'}</span>
+                    </div>
+                  </div>
+
+                  ${p.images.length > 1 ? `
+                    <button class="carousel-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" aria-label="Previous image">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button class="carousel-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" aria-label="Next image">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+
+                    <!-- Bottom Dock Control Pill -->
+                    <div class="carousel-dock-pill" id="projCarouselDots-${p.id}">
+                      <div class="carousel-dots-group">
+                        ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
+                      </div>
+                      <button class="carousel-play-btn paused" id="projCarouselPlay-${p.id}" onclick="window.toggleCarouselAutoplay('${p.id}')" title="Play Slideshow" aria-label="Toggle slideshow">
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+                        <svg class="icon-play" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="6 4 18 12 6 20 6 4"></polygon></svg>
+                      </button>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Right Column: Project Details Specs Table & Scope Badges -->
+        <div class="detail-grid-right">
+          <!-- Specs Table Card -->
+          <div class="detail-card-block">
+            <h3 class="dcard-title" style="margin-bottom: 16px;">Project Details</h3>
+            <div class="p-specs-table">
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">📅 Completion Year</span>
+                <span class="p-spec-val">${p.year || '2026'}</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">📍 Location</span>
+                <span class="p-spec-val">${p.state}, ${p.country === 'US' ? 'USA' : 'Canada'}</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">⚖️ Steel Tonnage</span>
+                <span class="p-spec-val">${(p.tons || 0).toLocaleString()} Tons</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">🏢 Project Type</span>
+                <span class="p-spec-val">${p.category || 'Industrial'}</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">🏗️ Structural System</span>
+                <span class="p-spec-val">Steel Structure</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">💻 Modeling</span>
+                <span class="p-spec-val">3D BIM (Tekla)</span>
+              </div>
+              <div class="p-spec-row">
+                <span class="p-spec-lbl">⏱️ Duration</span>
+                <span class="p-spec-val">8 Weeks</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Scope Card -->
+          <div class="detail-card-block">
+            <h3 class="dcard-title" style="margin-bottom: 16px;">Project Scope</h3>
+            <div class="p-scope-badge-grid">
+              ${scopeBadges.map(b => `<span class="p-scope-badge">${b}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-Width Section 1: Project Overview & High Precision Highlights -->
+      <div class="detail-full-block" id="sec-overview-${p.id}">
+        <div class="detail-overview-flex">
+          <div class="detail-overview-text">
+            <h3 class="dcard-title" style="margin-bottom: 12px;">Project Overview</h3>
+            <p style="white-space: pre-wrap; font-size: 14.5px; line-height: 1.6; color: var(--sub);">${p.description || 'No description provided.'}</p>
+          </div>
+          <div class="detail-overview-highlights">
+            <div class="d-highlight-card">
+              <div class="dh-icon">🎯</div>
+              <div>
+                <div class="dh-title">High Precision</div>
+                <div class="dh-sub">Detailed modeling</div>
+              </div>
+            </div>
+            <div class="d-highlight-card">
+              <div class="dh-icon">⚡</div>
+              <div>
+                <div class="dh-title">Efficient Delivery</div>
+                <div class="dh-sub">On-time execution</div>
+              </div>
+            </div>
+            <div class="d-highlight-card">
+              <div class="dh-icon">📈</div>
+              <div>
+                <div class="dh-title">Engineering Value</div>
+                <div class="dh-sub">Built for the future</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full-Width Section 2: Project Walkthrough Video -->
+      ${p.video ? `
+        <div class="detail-full-block" id="sec-walkthrough-${p.id}">
+          <h3 class="dcard-title" style="margin-bottom: 6px;">Project Walkthrough</h3>
+          <div style="font-size: 13px; color: var(--sub); margin-bottom: 16px;">Watch the model walkthrough and detailed views of ${p.title}.</div>
+          <div class="detail-video-wrap">${renderVideo(p.video)}</div>
+        </div>
+      ` : ''}
+
+      <!-- Full-Width Section 3: Similar Projects Row -->
+      ${similarHtml ? `
+        <div class="detail-full-block" id="sec-similar-${p.id}">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <h3 class="dcard-title">Similar Projects</h3>
+            <button class="btn-sec" onclick="document.getElementById('detailClose')?.click()" style="font-size: 13px;">View All Projects &rarr;</button>
+          </div>
+          <div class="similar-projects-row">
+            ${similarHtml}
+          </div>
+        </div>
+      ` : ''}
+    `;
+  }
+  
+  // Attach 3D Model Manual Trigger Logic
     setTimeout(() => {
       const container = document.getElementById(`mv-container-${p.id}`);
       const trigger = document.getElementById(`mv-trigger-${p.id}`);
