@@ -112,12 +112,14 @@ async function fetchAppInitialData() {
 
     renderCategoryChips();
     renderMap();
+    if (typeof renderFeaturedProjectsSlider === 'function') renderFeaturedProjectsSlider();
     window.PROJECTS = PROJECTS;
   } catch (e) {
     console.error('Init error:', e);
     // Still render chips and try map with empty projects
     renderCategoryChips();
     renderMap();
+    if (typeof renderFeaturedProjectsSlider === 'function') renderFeaturedProjectsSlider();
   } finally {
     if (typeof window.hideLoader === 'function') window.hideLoader();
   }
@@ -1563,6 +1565,146 @@ window.toggleCarouselAutoplay = function(projId) {
     if (pauseIcon) pauseIcon.style.display = 'block';
     if (playIcon) playIcon.style.display = 'none';
     btn.title = 'Pause Slideshow';
+  }
+};
+
+// ============================================================
+// FEATURED PROJECTS SHOWCASE SLIDER
+// ============================================================
+window.featuredSlideIndex = 0;
+window.featuredAutoplayTimer = null;
+window.featuredProjectList = [];
+
+function renderFeaturedProjectsSlider() {
+  const container = document.getElementById('featuredProjectsSection');
+  const track = document.getElementById('featuredCarouselTrack');
+  const dotsGroup = document.getElementById('featuredDotsGroup');
+  if (!container || !track) return;
+
+  const allProj = (typeof window.PROJECT_STATS !== 'undefined' && window.PROJECT_STATS.length > 0) ? window.PROJECT_STATS : (PROJECTS || []);
+  const list = allProj.filter(p => {
+    const title = (p.title || '').toLowerCase();
+    return !title.includes('test') && !title.includes('concurrency') && !title.includes('manager b');
+  }).slice(0, 10);
+
+  if (list.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  window.featuredProjectList = list;
+
+  track.innerHTML = list.map((p, i) => {
+    const imgSrc = (p.images && p.images[0]) ? (p.images[0].startsWith('http') ? p.images[0] : 'uploads/' + p.images[0]) : 'assets/logo.png';
+    return `
+      <div class="featured-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.openDetail('${p.id}')">
+        <div class="featured-card-inner">
+          <img src="${imgSrc}" alt="${p.title}" onerror="this.src='assets/logo.png'" loading="lazy" decoding="async">
+          <div class="featured-card-badge">${p.state || ''}, ${p.country === 'US' ? 'USA' : 'CAN'}</div>
+          <button class="featured-zoom-btn" title="View Details" onclick="event.stopPropagation(); window.openDetail('${p.id}')">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (dotsGroup) {
+    dotsGroup.innerHTML = list.map((_, i) => `<span class="f-dot ${i === 0 ? 'active' : ''}" onclick="window.selectFeaturedSlide(${i})"></span>`).join('');
+  }
+
+  window.selectFeaturedSlide(0);
+
+  // Auto-start slideshow
+  if (!window.featuredAutoplayTimer) {
+    window.toggleFeaturedAutoplay();
+  }
+
+  // Touch Swipe Gesture for Featured Slider
+  const containerEl = document.getElementById('featuredCarouselContainer');
+  if (containerEl && !containerEl._swipeInit) {
+    containerEl._swipeInit = true;
+    let startX = 0;
+    let endX = 0;
+    containerEl.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    containerEl.addEventListener('touchend', (e) => {
+      endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) window.stepFeaturedSlide(1);
+        else window.stepFeaturedSlide(-1);
+      }
+    }, { passive: true });
+  }
+}
+window.renderFeaturedProjectsSlider = renderFeaturedProjectsSlider;
+
+window.selectFeaturedSlide = function(idx) {
+  const list = window.featuredProjectList || [];
+  if (!list || list.length === 0) return;
+  if (idx < 0) idx = list.length - 1;
+  if (idx >= list.length) idx = 0;
+  window.featuredSlideIndex = idx;
+
+  const track = document.getElementById('featuredCarouselTrack');
+  if (!track) return;
+  const cards = track.querySelectorAll('.featured-card');
+  const dots = document.querySelectorAll('.f-dot');
+
+  cards.forEach((card, i) => {
+    card.classList.remove('active', 'prev-1', 'next-1', 'far-left', 'far-right');
+    const diff = i - idx;
+    if (diff === 0) card.classList.add('active');
+    else if (diff === -1) card.classList.add('prev-1');
+    else if (diff === 1) card.classList.add('next-1');
+    else if (diff < -1) card.classList.add('far-left');
+    else if (diff > 1) card.classList.add('far-right');
+  });
+
+  dots.forEach((dot, i) => {
+    if (i === idx) dot.classList.add('active');
+    else dot.classList.remove('active');
+  });
+
+  const activeProj = list[idx];
+  const captionTitle = document.getElementById('featuredCaptionTitle');
+  const captionMeta = document.getElementById('featuredCaptionMeta');
+  if (captionTitle && activeProj) {
+    captionTitle.textContent = activeProj.title;
+  }
+  if (captionMeta && activeProj) {
+    captionMeta.innerHTML = `
+      <span class="featured-meta-pill">📍 ${activeProj.state || ''}, ${activeProj.country === 'US' ? 'USA' : 'CAN'}</span>
+      <span class="featured-meta-pill">🏗️ ${activeProj.category || 'Structural Steel'}</span>
+      ${activeProj.tons ? `<span class="featured-meta-pill">⚖️ ${activeProj.tons.toLocaleString()} Tons</span>` : ''}
+    `;
+  }
+};
+
+window.stepFeaturedSlide = function(step) {
+  const cur = window.featuredSlideIndex || 0;
+  window.selectFeaturedSlide(cur + step);
+};
+
+window.toggleFeaturedAutoplay = function() {
+  const btn = document.getElementById('featuredPlayBtn');
+  const pauseIcon = btn?.querySelector('.icon-pause');
+  const playIcon = btn?.querySelector('.icon-play');
+
+  if (window.featuredAutoplayTimer) {
+    clearInterval(window.featuredAutoplayTimer);
+    window.featuredAutoplayTimer = null;
+    if (btn) btn.title = 'Play Slideshow';
+    if (pauseIcon) pauseIcon.style.display = 'none';
+    if (playIcon) playIcon.style.display = 'block';
+  } else {
+    window.featuredAutoplayTimer = setInterval(() => {
+      window.stepFeaturedSlide(1);
+    }, 3500);
+    if (btn) btn.title = 'Pause Slideshow';
+    if (pauseIcon) pauseIcon.style.display = 'block';
+    if (playIcon) playIcon.style.display = 'none';
   }
 };
 
