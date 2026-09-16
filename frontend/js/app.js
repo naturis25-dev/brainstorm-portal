@@ -3171,10 +3171,12 @@ function initDrawingPdfViewerModal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  fetchAppInitialData();
   initBrochureHandlers();
   initDrawingPdfViewerModal();
 });
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  fetchAppInitialData();
   initBrochureHandlers();
   initDrawingPdfViewerModal();
 }
