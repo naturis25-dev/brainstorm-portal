@@ -7553,7 +7553,8 @@ body.dark-mode .uiverse-search-group .input:focus {
   }
 
   .atlas-brand-footer .footer-brand-side {
-    max-width: 75% !important;
+    max-width: 100% !important;
+    margin-bottom: 16px !important;
   }
 
   .atlas-brand-footer .tagline-static {
@@ -7576,6 +7577,8 @@ body.dark-mode .uiverse-search-group .input:focus {
 
   .atlas-brand-footer .footer-right-side {
     width: 100% !important;
+    padding-right: 148px !important; /* Ensure copyright text doesn't hide under the cutout */
+    box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
   }
