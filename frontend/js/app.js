@@ -1502,19 +1502,17 @@ window.selectCarouselSlide = function(projId, targetIdx) {
   window.currentCarouselIndexes[projId] = targetIdx;
 
   cards.forEach((c, idx) => {
-    c.classList.remove('active', 'prev-1', 'next-1', 'far-left', 'far-right');
+    c.classList.remove('active', 'prev-1', 'prev-2', 'prev-3', 'next-1', 'next-2', 'next-3', 'far-left', 'far-right');
     const diff = idx - targetIdx;
-    if (diff === 0) {
-      c.classList.add('active');
-    } else if (diff === -1) {
-      c.classList.add('prev-1');
-    } else if (diff === 1) {
-      c.classList.add('next-1');
-    } else if (diff < -1) {
-      c.classList.add('far-left');
-    } else if (diff > 1) {
-      c.classList.add('far-right');
-    }
+    if (diff === 0) c.classList.add('active');
+    else if (diff === -1) c.classList.add('prev-1');
+    else if (diff === -2) c.classList.add('prev-2');
+    else if (diff === -3) c.classList.add('prev-3');
+    else if (diff === 1) c.classList.add('next-1');
+    else if (diff === 2) c.classList.add('next-2');
+    else if (diff === 3) c.classList.add('next-3');
+    else if (diff < -3) c.classList.add('far-left');
+    else if (diff > 3) c.classList.add('far-right');
   });
 
   dots.forEach((d, idx) => {
@@ -1653,13 +1651,17 @@ window.selectFeaturedSlide = function(idx) {
   const dots = document.querySelectorAll('.f-dot');
 
   cards.forEach((card, i) => {
-    card.classList.remove('active', 'prev-1', 'next-1', 'far-left', 'far-right');
+    card.classList.remove('active', 'prev-1', 'prev-2', 'prev-3', 'next-1', 'next-2', 'next-3', 'far-left', 'far-right');
     const diff = i - idx;
     if (diff === 0) card.classList.add('active');
     else if (diff === -1) card.classList.add('prev-1');
+    else if (diff === -2) card.classList.add('prev-2');
+    else if (diff === -3) card.classList.add('prev-3');
     else if (diff === 1) card.classList.add('next-1');
-    else if (diff < -1) card.classList.add('far-left');
-    else if (diff > 1) card.classList.add('far-right');
+    else if (diff === 2) card.classList.add('next-2');
+    else if (diff === 3) card.classList.add('next-3');
+    else if (diff < -3) card.classList.add('far-left');
+    else if (diff > 3) card.classList.add('far-right');
   });
 
   dots.forEach((dot, i) => {
