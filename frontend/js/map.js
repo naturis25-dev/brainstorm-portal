@@ -24,10 +24,26 @@ function loadMapData(onReady) {
     if (onReady) onReady();
     return;
   }
+  
+  if (window.US_MAP_DATA && window.CA_MAP_DATA) {
+    try {
+      if (window.US_MAP_DATA.objects) {
+        usFeatures = topojson.feature(window.US_MAP_DATA, window.US_MAP_DATA.objects.states).features;
+      }
+      if (window.CA_MAP_DATA.features) {
+        caFeatures = window.CA_MAP_DATA.features;
+      }
+      if (onReady) onReady();
+      return;
+    } catch (e) {
+      console.warn('Error parsing global map data, falling back to fetch', e);
+    }
+  }
+
   var tryLoad = function(path) {
-    return d3.json(path).catch(function() {
-      return d3.json('/' + path);
-    });
+    return d3.json(path)
+      .catch(function() { return d3.json('./' + path); })
+      .catch(function() { return d3.json('/' + path); });
   };
 
   Promise.all([
@@ -47,6 +63,13 @@ function loadMapData(onReady) {
     console.error('Map data load failed:', err);
   });
 }
+
+// Auto-trigger map feature loading immediately
+loadMapData(function() {
+  if (window.MapModule && window.drawMap) {
+    window.MapModule.drawMap(window.PROJECTS || [], window.currentCategory || 'All', window.currentCountry || 'us');
+  }
+});
 
 function drawMap(projectsList, categoryFilter, countryFilter) {
   var country  = countryFilter  || window.currentCountry || 'us';
@@ -190,122 +213,120 @@ function openPanel(name, list) {
   var body = document.getElementById('panelBody');
   if (!body) return;
 
-  if (!list.length) {
-    window.currentRegionProjects = [];
-    body.innerHTML =
-      '<div class="panel-hero">' +
-        '<div class="panel-hero-bg"></div>' +
-        '<div class="sd-head" style="position:relative; z-index:2;">' +
-          '<div class="p-eyebrow">REGION</div>' +
-          '<h2 class="p-title" style="margin:0; font-size:36px; font-weight:900; letter-spacing:-1px;">' + name + '</h2>' +
-        '</div>' +
-      '</div>' +
-      '<div class="panel-content">' +
-        '<div class="no-data">No projects delivered here yet.<br>Open for new engagements.</div>' +
-      '</div>';
-  } else {
-    window.currentRegionProjects = list.map(function(p) { return p.id; });
-    var tons = list.reduce(function(sum, p) { return sum + (p.tons || 0); }, 0);
-    
-    // Sort logic
-    function sortList(sortMode) {
-      var sorted = list.slice();
-      if (sortMode === 'tonnage') sorted.sort(function(a, b) { return (b.tons || 0) - (a.tons || 0); });
-      else if (sortMode === 'year') sorted.sort(function(a, b) { return (parseInt(b.year) || 0) - (parseInt(a.year) || 0); });
-      else if (sortMode === 'title') sorted.sort(function(a, b) { return (a.title || '').localeCompare(b.title || ''); });
-      return sorted;
+  var tons = (list || []).reduce(function(sum, p) { return sum + (p.tons || 0); }, 0);
+  var activeCategory = 'All';
+  var activeSort = 'newest';
+
+  // Build category list and counts
+  var cats = ['All'];
+  var catCounts = { 'All': list.length };
+  (list || []).forEach(function(p) {
+    var c = p.category || 'Misc Steel';
+    if (!catCounts[c]) {
+      catCounts[c] = 0;
+      cats.push(c);
+    }
+    catCounts[c]++;
+  });
+
+  function renderPanelContent() {
+    var filtered = (list || []).filter(function(p) {
+      return activeCategory === 'All' || p.category === activeCategory;
+    });
+
+    if (activeSort === 'tonnage') filtered.sort(function(a, b) { return (b.tons || 0) - (a.tons || 0); });
+    else if (activeSort === 'year') filtered.sort(function(a, b) { return (parseInt(b.year) || 0) - (parseInt(a.year) || 0); });
+    else if (activeSort === 'newest') filtered.sort(function(a, b) { return (parseInt(b.year) || 0) - (parseInt(a.year) || 0); });
+    else if (activeSort === 'title') filtered.sort(function(a, b) { return (a.title || '').localeCompare(b.title || ''); });
+
+    var chipHTML = cats.map(function(c) {
+      var isAct = c === activeCategory ? 'active' : '';
+      return '<button class="region-filter-pill ' + isAct + '" onclick="window.setRegionCat('' + c.replace(/'/g, "\'") + '')">' + c + ' (' + catCounts[c] + ')</button>';
+    }).join('');
+
+    var cardsHTML = '';
+    if (!filtered.length) {
+      cardsHTML = '<div class="no-data" style="padding: 40px 20px; text-align: center; color: var(--sub);">No projects match this category.</div>';
+    } else {
+      cardsHTML = filtered.map(function(p) {
+        var imgSrc = (p.images && p.images[0]) ? p.images[0] : 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=300&q=80';
+        var catBadge = (p.category || 'INDUSTRIAL').toUpperCase();
+        var tonsFormatted = p.tons ? Math.round(p.tons).toLocaleString() + ' T' : 'N/A';
+        var yearFormatted = p.year || '2026';
+        var locFormatted = p.state ? (p.state + ', ' + (p.country || 'USA')) : 'North America';
+
+        return '<div class="region-proj-card" onclick="window.openDetail('' + p.id + '')">' +
+          '<img class="region-card-img" src="' + imgSrc + '" alt="' + p.title + '">' +
+          '<div class="region-card-body">' +
+            '<span class="region-card-badge">' + catBadge + '</span>' +
+            '<h4 class="region-card-title">' + p.title + '</h4>' +
+            '<div class="region-card-specs">' +
+              '<span>📦 ' + tonsFormatted + '</span>' +
+              '<span class="spec-dot">•</span>' +
+              '<span>📅 ' + yearFormatted + '</span>' +
+              '<span class="spec-dot">•</span>' +
+              '<span>📍 ' + locFormatted + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="region-card-arrow">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
+          '</div>' +
+        '</div>';
+      }).join('');
     }
 
     body.innerHTML =
-      '<div class="panel-hero">' +
-        '<div class="panel-hero-bg"></div>' +
-        '<div class="sd-head" style="position:relative; z-index:2;">' +
-          '<div class="p-eyebrow">REGION</div>' +
-          '<h2 class="p-title" style="margin:0; font-size:38px; font-weight:900; letter-spacing:-1.2px;">' + name + '</h2>' +
+      '<div class="region-modal-header">' +
+        '<div class="region-header-left">' +
+          '<span class="region-eyebrow">REGION</span>' +
+          '<h2 class="region-name-title">' + name + '</h2>' +
+          '<div class="region-stats-sub">' +
+            '<span>🏢 ' + list.length + ' projects</span>' +
+            '<span class="stats-sep">•</span>' +
+            '<span>📦 ' + Math.round(tons).toLocaleString() + ' tons detailed</span>' +
+          '</div>' +
         '</div>' +
-        '<div class="sd-summary" style="display:flex; gap:16px; margin-top:24px; position:relative; z-index:2;">' +
-          '<div class="summary-cell premium-cell">' +
-            '<div class="cell-icon"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg></div>' +
-            '<div><div class="n" style="font-size:24px; font-weight:900;">' + list.length + '</div><div class="l" style="font-size:11px; font-weight:700; color:var(--sub);">PROJECTS</div></div>' +
-          '</div>' +
-          '<div class="summary-cell premium-cell">' +
-            '<div class="cell-icon"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>' +
-            '<div><div class="n" style="font-size:24px; font-weight:900;">' + Math.round(tons).toLocaleString() + '</div><div class="l" style="font-size:11px; font-weight:700; color:var(--sub);">TONS DETAILED</div></div>' +
-          '</div>' +
+        '<div class="region-header-watermark">' +
+          '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(37,99,235,0.18)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
         '</div>' +
       '</div>' +
-      '<div class="panel-content">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">' +
-          '<div style="font-weight:800;font-size:13px; color:var(--sub); letter-spacing:0.5px;">PROJECT LIST</div>' +
-          '<div class="custom-select-wrap" id="projectSortWrap">' +
-              '<div class="custom-select-trigger" id="projectSortTrigger" onclick="event.stopPropagation(); document.getElementById(\'projectSortWrap\').classList.toggle(\'open\');">' +
-                '<span id="projectSortLabel">Sort: Default</span>' +
-                '<svg class="sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
-              '</div>' +
-              '<div class="custom-select-menu" id="projectSortMenu">' +
-                '<div class="custom-select-option" onclick="window.selectSort(\'default\', \'Sort: Default\')">Sort: Default</div>' +
-                '<div class="custom-select-option" onclick="window.selectSort(\'tonnage\', \'Largest Tonnage\')">Largest Tonnage</div>' +
-                '<div class="custom-select-option" onclick="window.selectSort(\'year\', \'Newest First\')">Newest First</div>' +
-                '<div class="custom-select-option" onclick="window.selectSort(\'title\', \'Alphabetical (A-Z)\')">Alphabetical (A-Z)</div>' +
-              '</div>' +
-            '</div>' +
-            '</div>' +
-        '</div>' +
-        '<div id="projectListContainer"></div>' +
-      '</div>';
-
-    function renderCards(sortMode) {
-      var sortedList = sortList(sortMode);
-      window.currentRegionProjects = sortedList.map(function(p) { return p.id; });
-      var container = document.getElementById('projectListContainer');
-      if (container) {
-        container.innerHTML = sortedList.map(function(p, index) {
-          var delay = 0.15 + (index * 0.05); // staggered delay starting after the summary
-          var imgSrc = (p.images && p.images[0]) ? '<img class="pc-img" loading="lazy" decoding="async" src="' + p.images[0] + '">' : '<div class="pc-img-placeholder"></div>';
-          var catLabel = (p.category || 'MISC STEEL').toUpperCase();
-          
-          var imgThumb = (p.images && p.images[0]) ? '<img class="prow-img" loading="lazy" src="' + p.images[0] + '">' : '<div class="prow-img prow-img-ph"></div>';
-            return '<div class="proj-row" data-id="' + p.id + '" style="animation-delay:' + delay + 's;">' +
-              imgThumb +
-              '<div class="prow-body">' +
-                '<div class="prow-eyebrow">' + catLabel + '</div>' +
-                '<div class="prow-title">' + p.title + '</div>' +
-                '<div class="prow-meta">' +
-                  (p.tons ? '<span class="prow-badge">' + Math.round(p.tons).toLocaleString() + ' T</span>' : '') +
-                  (p.year ? '<span class="prow-year">' + p.year + '</span>' : '') +
-                '</div>' +
-              '</div>' +
-              '<div class="prow-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
-            '</div>';
-        }).join('');
-
-        container.querySelectorAll('.proj-row').forEach(function(card) {
-          card.addEventListener('click', function() {
-            if (window.openDetail) window.openDetail(card.dataset.id);
-          });
-        });
-      }
-    }
-
-    renderCards('default');
-
-    
-      window.selectSort = function(val, text) {
-        var wrap = document.getElementById('projectSortWrap');
-        var label = document.getElementById('projectSortLabel');
-        if (label) label.textContent = text;
-        if (wrap) wrap.classList.remove('open');
-        renderCards(val);
-      };
       
-      document.addEventListener('click', function(e) {
-        var wrap = document.getElementById('projectSortWrap');
-        if (wrap && !e.target.closest('#projectSortWrap')) {
-          wrap.classList.remove('open');
-        }
-      });
+      '<div class="region-toolbar-row">' +
+        '<div class="region-chips-wrapper">' + chipHTML + '</div>' +
+        '<div class="region-sort-wrap">' +
+          '<select class="region-sort-select" onchange="window.setRegionSort(this.value)">' +
+            '<option value="newest"' + (activeSort === 'newest' ? ' selected' : '') + '>Sort by: Newest</option>' +
+            '<option value="tonnage"' + (activeSort === 'tonnage' ? ' selected' : '') + '>Sort by: Tonnage</option>' +
+            '<option value="title"' + (activeSort === 'title' ? ' selected' : '') + '>Sort by: Title</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
 
+      '<div class="region-cards-list">' + cardsHTML + '</div>' +
+
+      '<div class="region-modal-footer">' +
+        '<div class="region-footer-left">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>' +
+          '<span>View all ' + name + ' projects</span>' +
+        '</div>' +
+        '<button class="region-explore-btn" onclick="window.closePanel && window.closePanel()">' +
+          '<span>Explore on map</span>' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
+        '</button>' +
+      '</div>';
   }
+
+  window.setRegionCat = function(c) {
+    activeCategory = c;
+    renderPanelContent();
+  };
+
+  window.setRegionSort = function(s) {
+    activeSort = s;
+    renderPanelContent();
+  };
+
+  renderPanelContent();
 
   document.getElementById('overlay').classList.add('open');
   document.getElementById('panel').classList.add('open');

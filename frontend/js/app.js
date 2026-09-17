@@ -196,13 +196,35 @@ async function fetchAppInitialData() {
 
       const proj = await apiFetch('/projects');
 
-      PROJECTS = proj.data || proj.projects || proj || [];
+      const loadedProj = proj.data || proj.projects || (Array.isArray(proj) ? proj : []);
+
+      if (loadedProj && loadedProj.length > 0) {
+
+        PROJECTS = loadedProj;
+
+      } else {
+
+        throw new Error('Empty projects from API');
+
+      }
 
     } catch(e) {
 
-      console.error('Projects failed', e);
+      console.warn('Backend API not available, loading fallback 100 projects data...', e);
 
-      PROJECTS = [];
+      try {
+
+        const fallbackRes = await fetch('assets/data/projects_100.json');
+
+        PROJECTS = await fallbackRes.json();
+
+      } catch(err) {
+
+        console.error('Failed to load fallback projects_100.json:', err);
+
+        PROJECTS = [];
+
+      }
 
     }
 
@@ -2658,10 +2680,11 @@ window.openDetail = function(id) {
         <!-- Overview card — left column -->
         <div class="bento-card bento-overview-card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <h3 class="dcard-title" style="margin:0;">Project Overview</h3>
+            <h3 class="dcard-title" style="margin:0; font-size: 17px; font-weight: 800;">Project Overview</h3>
             <span class="bento-pill-tag">${p.category || 'Structural Steel'}</span>
           </div>
-          <p style="white-space: pre-wrap; font-size: 14.5px; line-height: 1.75; color: var(--sub); margin-bottom: 0;">${p.description || 'No detailed description provided for this project.'}</p>
+          <h4 style="font-size: 22px; font-weight: 800; color: var(--ink); margin: 0 0 12px 0; letter-spacing: -0.3px;">${p.title}</h4>
+          <p style="white-space: pre-wrap; font-size: 16px; line-height: 1.8; color: var(--ink); opacity: 0.95; margin: 0;">${p.description || 'No detailed description provided for this project.'}</p>
         </div>
 
         <!-- Right column stack — Details on top, Scope directly below (NO GAP) -->
