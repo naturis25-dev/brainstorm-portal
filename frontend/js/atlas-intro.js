@@ -1,11 +1,14 @@
 /**
  * atlas-intro.js - Contextual Map Introduction Component (<AtlasMapIntro />)
  * Shows a contextual intro popup for the Project Coverage Map on page load.
+ * Frequency capped to 2 views maximum per device/browser.
  */
 (function(window) {
   'use strict';
 
   const DELAY_AFTER_VISIBLE_MS = 600;
+  const STORAGE_KEY = 'atlas_intro_view_count';
+  const MAX_INTRO_SHOW_COUNT = 2;
 
   function init() {
     const popup = document.getElementById('atlasIntroPopup');
@@ -16,11 +19,32 @@
 
     if (!popup || !backdrop || !mapCard) return;
 
+    // Check frequency count from localStorage
+    let currentCount = 0;
+    try {
+      currentCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      if (isNaN(currentCount)) currentCount = 0;
+    } catch (e) {
+      currentCount = 0;
+    }
+
+    // If already shown 2 times or user closed it, do not show again
+    if (currentCount >= MAX_INTRO_SHOW_COUNT) {
+      popup.style.display = 'none';
+      backdrop.style.display = 'none';
+      return;
+    }
+
     let isClosed = false;
 
     function closePopup() {
       if (isClosed) return;
       isClosed = true;
+
+      // Upon explicit close / click, mark count as max so it won't pop up again
+      try {
+        localStorage.setItem(STORAGE_KEY, MAX_INTRO_SHOW_COUNT.toString());
+      } catch (e) {}
 
       popup.classList.remove('show');
       popup.classList.add('hiding');
@@ -33,6 +57,11 @@
         backdrop.style.display = 'none';
       }, 350);
     }
+
+    // Record view count for this session
+    try {
+      localStorage.setItem(STORAGE_KEY, (currentCount + 1).toString());
+    } catch (e) {}
 
     // Reveal popup shortly after page/map loads
     setTimeout(() => {

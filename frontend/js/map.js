@@ -20,27 +20,38 @@ function projectsForState(name, projectsList, categoryFilter) {
 }
 
 function loadMapData(onReady) {
+  if (usFeatures && usFeatures.length && caFeatures && caFeatures.length) {
+    if (onReady) onReady();
+    return;
+  }
+  var tryLoad = function(path) {
+    return d3.json(path).catch(function() {
+      return d3.json('/' + path);
+    });
+  };
+
   Promise.all([
-    d3.json('assets/vendor/us-states.json'),
-    d3.json('assets/vendor/canada.geojson')
+    tryLoad('assets/vendor/us-states.json'),
+    tryLoad('assets/vendor/canada.geojson')
   ]).then(function(results) {
     var usTopo = results[0];
     var caGeo  = results[1];
-    usFeatures = topojson.feature(usTopo, usTopo.objects.states).features;
-    caFeatures = caGeo.features;
+    if (usTopo && usTopo.objects) {
+      usFeatures = topojson.feature(usTopo, usTopo.objects.states).features;
+    }
+    if (caGeo && caGeo.features) {
+      caFeatures = caGeo.features;
+    }
     if (onReady) onReady();
   }).catch(function(err) {
     console.error('Map data load failed:', err);
-    var mapCard = document.querySelector('.map-card');
-    if (mapCard) {
-      mapCard.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#666;font-weight:600;">Map failed to load. Please refresh.</div>';
-    }
   });
 }
 
 function drawMap(projectsList, categoryFilter, countryFilter) {
-  var country  = countryFilter  || 'us';
-  var category = categoryFilter || 'All';
+  var country  = countryFilter  || window.currentCountry || 'us';
+  var category = categoryFilter || window.currentCategory || 'All';
+  var list     = projectsList   || window.PROJECTS || [];
 
   var svg = d3.select('#map');
   if (svg.empty()) return;
@@ -50,10 +61,12 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
 
   var feats = country === 'us' ? usFeatures : caFeatures;
   if (!feats || !feats.length) {
-    console.warn('No map features loaded yet for country:', country);
+    console.warn('No map features loaded yet for country:', country, '— Triggering loadMapData fallback');
+    loadMapData(function() {
+      drawMap(list, category, country);
+    });
     return;
   }
-
   var isMobile = window.innerWidth <= 768;
   var projection = country === 'us'
     ? d3.geoAlbersUsa().translate([480, 300]).scale(1150)
@@ -285,10 +298,12 @@ function openPanel(name, list) {
         renderCards(val);
       };
       
-      document.onclick = function() {
+      document.addEventListener('click', function(e) {
         var wrap = document.getElementById('projectSortWrap');
-        if (wrap) wrap.classList.remove('open');
-      };
+        if (wrap && !e.target.closest('#projectSortWrap')) {
+          wrap.classList.remove('open');
+        }
+      });
 
   }
 

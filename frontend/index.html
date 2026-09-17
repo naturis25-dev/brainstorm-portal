@@ -8,14 +8,14 @@
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   
-  <!-- D3.js & TopoJSON — served locally, no CDN needed -->
+  <!-- D3.js & TopoJSON &mdash; served locally, no CDN needed -->
   <script src="assets/vendor/d3.min.js"></script>
   <script src="assets/vendor/topojson.min.js"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20260903002">
+  <link rel="stylesheet" href="css/style.css?v=20260917018">
 
   <style>
   /* ================= LOADER ================= */
@@ -516,6 +516,8 @@
         </svg>
       </button>
 
+
+
       <button class="icon-btn" id="navAdminBtn" style="display:none;" title="Admin Dashboard">
         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
         <span class="icon-btn-label">Dashboard</span>
@@ -536,26 +538,26 @@
       
       <!-- Dynamic Public Hero -->
       <div class="map-hero left-align">
-        <div class="hero-pill usa" id="heroPill">
-          <span class="hp-dot"></span> LIVE PROJECT MAP · 2026
-        </div>
         <h1 class="page-title">
           Project Experience<br>Across <span id="heroCountryHighlight" class="highlight-usa">North America</span>
         </h1>
         <p class="hero-desc">
-          Explore our structural steel detailing experience through an immersive, interactive project map — built the way we build everything, region by region.
+          Explore our structural steel detailing experience through an immersive, interactive project map &mdash; built the way we build everything, region by region.
         </p>
       </div>
 
       
-      <!-- Filters + Inline Search -->
-      <div class="map-controls-bar ui-stagger-item ui-stagger-2" style="max-width: 1100px; width: 100%; margin: 0 auto 20px; box-sizing: border-box; padding: 0;">
+      <!-- Desktop Filters + Inline Search (Outside Map Card) -->
+      <div class="map-controls-bar desktop-controls-container ui-stagger-item ui-stagger-2" id="desktopControlsContainer" style="max-width: 1100px; width: 100%; margin: 0 auto 20px; box-sizing: border-box; padding: 0;">
         <!-- Category Chips + Inline Search -->
         <div id="categoryChipRow" style="width: 100%;"></div>
       </div>
 
       <!-- Interactive Map Card -->
-      <div class="map-card ui-stagger-item ui-stagger-3" style="margin-bottom: 0; position: relative;">
+      <div class="map-card ui-stagger-item ui-stagger-3" id="mapCard" style="margin-bottom: 0; position: relative;">
+        <!-- Mobile Embedded Filters (Target inside Map Card for Mobile) -->
+        <div class="map-controls-bar mobile-controls-container" id="mobileControlsContainer" style="width: 100%; box-sizing: border-box;"></div>
+
         <!-- Region Toggle (Desktop View: Inside Map Card at Top-Left) -->
         <div class="toggle-container-wrapper desktop-only-toggle">
           <div class="toggle-card">
@@ -636,6 +638,8 @@
           </div>
         </div>
 
+
+
         <!-- Country Toggle (Mobile View: Inside Map Card at the bottom) -->
         <div class="toggle-container-wrapper mobile-only-toggle">
           <div class="toggle-card">
@@ -665,23 +669,30 @@
       </div>
 
       <!-- Premium Elegant Brand Footer -->
+      <!-- Premium Brand Footer -->
       <footer class="atlas-brand-footer ui-stagger-item ui-stagger-4" id="atlasBrandFooter" style="margin-top: 16px;">
         <div class="footer-shimmer-line"></div>
         
         <div class="footer-card-content">
           <!-- Left side: Brand Tagline -->
           <div class="footer-brand-side footer-tagline-container">
-            <span class="tagline-static">Looking for someone who can <br class="mobile-br">handle your</span>
-            <div class="tagline-animated-words">
-              <span class="tagline-word word-1">Ideas.</span>
-              <span class="tagline-word word-2">Ambition.</span>
-              <span class="tagline-word word-3">Chaos?</span>
+            <div class="tagline-headline-wrap">
+              <span class="tagline-static">Looking for someone who<br>can handle your</span>
+              <div class="tagline-animated-words">
+                <span class="tagline-word word-1">Ideas.</span>
+                <span class="tagline-word word-2">Ambition.</span>
+                <span class="tagline-word word-3">Chaos?</span>
+              </div>
             </div>
+            <svg class="tagline-swoosh-line" viewBox="0 0 170 10" width="170" height="10">
+              <path d="M 2 7 Q 85 1, 168 7" stroke="#93c5fd" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <p class="tagline-subtext">Partner with a team that understands steel, scale and timelines.</p>
           </div>
 
-          <!-- Right side: Copyright -->
+          <!-- Right side: Social Icons + Copyright -->
           <div class="footer-right-side">
-            <div class="footer-social-row footer-social-row-desktop">
+            <div class="footer-social-row">
               <a href="https://www.linkedin.com/company/brainstorminfotech/" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn" aria-label="LinkedIn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.69 1.69 0 0 0 1.69-1.69 1.69 1.69 0 0 0-1.69-1.69 1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.69 1.69 1.69m1.39 9.94v-8.37H5.07v8.37h2.78z"/>
@@ -698,31 +709,11 @@
                 </svg>
               </a>
             </div>
-            <div class="mobile-footer-divider"></div>
 
             <div class="footer-info-text">
               <div class="footer-copyright">&copy; 2026 Brainstorm Infotech. All rights reserved.</div>
             </div>
           </div>
-        </div>
-
-        <!-- Mobile-only: Social icons pill placed OUTSIDE clip-path container -->
-        <div class="footer-social-row footer-social-row-mobile">
-          <a href="https://www.linkedin.com/company/brainstorminfotech/" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn" aria-label="LinkedIn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.69 1.69 0 0 0 1.69-1.69 1.69 1.69 0 0 0-1.69-1.69 1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.69 1.69 1.69m1.39 9.94v-8.37H5.07v8.37h2.78z"/>
-            </svg>
-          </a>
-          <a href="https://www.youtube.com/@Brainstorminfotech" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="YouTube" aria-label="YouTube">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-          </a>
-          <a href="https://www.facebook.com/BrainstormInfotechIndia" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Facebook" aria-label="Facebook">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-          </a>
         </div>
       </footer>
 
@@ -730,15 +721,15 @@
   </div>
 
   <!-- Region Side Drawer Panel -->
-  <div class="overlay" id="overlay"></div>
+  <div class="overlay" id="overlay" onclick="window.closePanel && window.closePanel()"></div>
   <div class="panel" id="panel">
-    <div class="panel-close" id="panelClose">✕</div>
+    <div class="panel-close" id="panelClose" onclick="window.closePanel && window.closePanel()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
     <div class="panel-body" id="panelBody"></div>
   </div>
 
   <!-- Project Detail Fullscreen Overlay -->
   <div class="detail-overlay" id="detailOverlay">
-    <div class="detail-close" id="detailClose">×</div>
+    <div class="detail-close" id="detailClose" onclick="document.getElementById('detailOverlay')?.classList.remove('open')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
     
     <div class="detail-hero-section">
       <div class="detail-hero-img-wrap">
@@ -760,13 +751,13 @@
   <!-- Admin Login View -->
   <div class="view" id="view-login">
     <div class="login-wrap">
-        <div class="login-card">
-          <div class="login-logo" id="loginLogo">
-            <img src="assets/logo.png" alt="Brainstorm Infotech Logo">
+        <div class="login-card" style="max-width: 380px; margin: 60px auto; padding: 40px 30px; background: var(--card-bg, #ffffff); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;">
+          <div class="login-logo" id="loginLogo" style="margin-bottom: 24px;">
+            <img src="assets/logo.png" alt="Brainstorm Infotech Logo" style="max-height: 52px;">
           </div>
-          <h2>Admin Authentication</h2>
-          <div class="sub" style="margin-bottom:30px;">Sign in with your @brainstorminfotech.co.in account</div>
-          
+          <h2 style="font-size: 22px; font-weight: 700; color: var(--fg, #111827); margin-bottom: 6px;">Admin Authentication</h2>
+          <div class="sub" style="margin-bottom:32px; font-size: 13.5px; color: var(--sub, #6b7280);">Sign in with your @brainstorminfotech.co.in account</div>
+
           <div id="g_id_onload"
                data-client_id="81048370509-mpbp06oepjsvl54na8124pnvvja3ipcv.apps.googleusercontent.com"
                data-context="signin"
@@ -774,19 +765,24 @@
                data-callback="handleGoogleLogin"
                data-auto_prompt="false">
           </div>
+
+          <div id="gsiButtonContainer" style="display:flex; justify-content:center; width:100%; margin-bottom:12px;"></div>
+
+          <!-- Custom Google Sign-In Button (Instant Execution) -->
           <div style="display:flex; justify-content:center; width:100%;">
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="outline"
-                 data-text="signin_with"
-                 data-size="large"
-                 data-logo_alignment="left">
-            </div>
+            <button type="button" class="google-signin-custom-btn" id="googleSignInBtn" style="width:100%; height:46px; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; border:1px solid #dadce0; border-radius:8px; font-family:inherit; font-weight:600; color:#3c4043; cursor:pointer; font-size:14.5px; box-shadow:0 2px 4px rgba(0,0,0,0.08); transition: background-color 0.2s;" onclick="if(window.handleCustomGoogleSignIn) window.handleCustomGoogleSignIn(event);">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Sign in with Google</span>
+            </button>
           </div>
           
-          <div class="login-error" id="loginError" style="display:none; margin-top:20px; text-align:center;"></div>
-          <span class="back-home" id="backHome" style="margin-top:30px;">← Back to Map View</span>
+          <div class="login-error" id="loginError" style="display:none; margin-top:16px; text-align:center; color:#ef4444; font-weight:600; font-size:13.5px;"></div>
+          <span class="back-home" id="backHome" style="margin-top:28px; cursor:pointer; display:inline-block; font-size:13px; color:var(--sub, #6b7280);" onclick="if(window.goToMap){window.goToMap();}else if(window.showView){window.showView('map');}">&larr; Back to Map View</span>
         </div>
       </div>
   </div>
@@ -846,7 +842,7 @@
           <div class="page-sub">Add or remove secondary admin accounts</div>
         </div>
         <div style="display: flex; gap: 10px;">
-          <button class="btn" id="backToAdminBtn">← Back to Dashboard</button>
+          <button class="btn" id="backToAdminBtn">&larr; Back to Dashboard</button>
           <button class="btn primary" id="openAddAdminModal">+ Add New Admin</button>
         </div>
       </div>
@@ -869,7 +865,7 @@
   <!-- Add New Admin Modal Sheet -->
   <div class="modal-overlay" id="addAdminModal">
     <div class="modal-sheet" style="max-width: 400px;">
-      <div class="modal-close" id="adminModalClose">✕</div>
+      <div class="modal-close" id="adminModalClose">&times;</div>
       <h3>Add New Admin</h3>
       
       <form id="addAdminForm" autocomplete="off" onsubmit="return false;">
@@ -893,9 +889,9 @@
   </div>
 
   <!-- Add/Edit Project Modal Sheet -->
-  <div class="modal-overlay" id="projectModal">
+  <div class="modal-overlay" id="projectModal" onclick="if(event.target===this){if(window.closeModal){window.closeModal();}else{this.classList.remove('open');}}">
     <div class="modal-sheet">
-      <div class="modal-close" id="modalClose">✕</div>
+      <div class="modal-close" id="modalClose" onclick="if(window.closeModal){window.closeModal();}else{document.getElementById('projectModal')?.classList.remove('open');}">&times;</div>
       <h3 id="modalTitle">Add New Project</h3>
       
       <div class="modal-section-title">Basic Information</div>
@@ -956,7 +952,7 @@
         <label>Images (Drag to rearrange, click X to delete)</label>
         <input type="file" id="f-images" multiple accept="image/*" style="display:none;">
         <div class="drop-zone" id="dz-images" onclick="document.getElementById('f-images').click()">
-          <div class="drop-text">📁 Drag & Drop Images here or click to browse</div>
+          <div class="drop-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Drag &amp; Drop Images here or click to browse</div>
         </div>
         <div class="media-preview-list" id="imgPreviews"></div>
       </div>
@@ -966,7 +962,7 @@
           <label>Video</label>
           <input type="file" id="f-video" accept="video/*" style="display:none;">
           <div class="drop-zone" id="dz-video" onclick="document.getElementById('f-video').click()">
-            <div class="drop-text">🎬 Drag & Drop Video or click</div>
+            <div class="drop-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Drag &amp; Drop Video or click</div>
           </div>
           <div class="media-preview-list" id="vidPreview"></div>
         </div>
@@ -974,30 +970,30 @@
           <label>3D Model (.glb)</label>
           <input type="file" id="f-model" accept="*/*" style="display:none;">
           <div class="drop-zone" id="dz-model" onclick="document.getElementById('f-model').click()">
-            <div class="drop-text">📐 Drag & Drop .glb or click</div>
+            <div class="drop-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Drag &amp; Drop .glb or click</div>
           </div>
           <div class="media-preview-list" id="modelPreview"></div>
         </div>
       </div>
 
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
-        <button class="btn" id="modalCancel">Cancel</button>
-        <button class="btn primary" id="modalSave">Save Project</button>
+        <button class="btn" id="modalCancel" onclick="if(window.closeModal){window.closeModal();}else{document.getElementById('projectModal')?.classList.remove('open');}">Cancel</button>
+        <button class="btn primary" id="modalSave" onclick="if(window.handleSaveProjectClick) window.handleSaveProjectClick(event);">Save Project</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ============================================================ -->
   <!--  BROCHURE VIEW                                  -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ============================================================ -->
   <div class="view" id="view-brochure">
     <div class="wrap">
       <div class="admin-header">
         <div>
           <h1 class="page-title">Company Brochure</h1>
-          <div class="page-sub">Brainstorm Infotech — Structural &amp; Architectural Steel Detailing</div>
+          <div class="page-sub">Brainstorm Infotech &mdash; Structural &amp; Architectural Steel Detailing</div>
         </div>
-        <a href="/assets/brainstorm-brochure.pdf" download class="btn primary" id="brochureDownloadBtn">⬇ Download PDF</a>
+        <a href="/assets/brainstorm-brochure.pdf" download class="btn primary" id="brochureDownloadBtn">&#11015; Download PDF</a>
       </div>
 
       <!-- Service Cards -->
@@ -1066,14 +1062,14 @@
       <div class="map-hero" style="max-width:100%;text-align:center;background:var(--accent);border:none;color:#fff;">
         <h2 style="font-weight:800;font-size:20px;margin:0 0 10px;color:#fff;">Get In Touch</h2>
         <p style="margin:0 0 18px;opacity:.9;font-size:14px;">Ready to start your next steel detailing project? Contact us today.</p>
-        <a href="https://www.brainstorminfotech.com/contact" target="_blank" rel="noopener noreferrer" class="btn" style="background:#fff;color:var(--accent);border-color:#fff;font-weight:800;">Contact Us →</a>
+        <a href="https://www.brainstorminfotech.com/contact" target="_blank" rel="noopener noreferrer" class="btn" style="background:#fff;color:var(--accent);border-color:#fff;font-weight:800;">Contact Us &rarr;</a>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ============================================================ -->
   <!--  SAMPLE DRAWINGS VIEW                           -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ============================================================ -->
   <div class="view" id="view-drawings">
     <div class="wrap">
       <div class="admin-header">
@@ -1085,7 +1081,7 @@
 
       <!-- Breadcrumbs / Navigation -->
       <div class="toggle-row" style="justify-content:flex-start;margin-bottom:12px;display:none;" id="drawingsBreadcrumbRow">
-        <button class="btn nav-pill" id="btnBackToFolders" style="margin-right:8px;">← Back to Folders</button>
+        <button class="btn nav-pill" id="btnBackToFolders" style="margin-right:8px;">&larr; Back to Folders</button>
         <div id="currentFolderName" style="font-weight:800;font-size:18px;align-self:center;">Folder Name</div>
       </div>
 
@@ -1124,9 +1120,9 @@
 
   <!-- Application Script Modules -->
   <script src="js/config.js?v=20260903001" defer></script>
-  <div class="secret-admin-trigger">
-    <button class="secret-admin-btn" id="navLoginBtn" title="Admin Login">
-      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <div class="secret-admin-trigger" onclick="if(window.handleAdminLoginClick)window.handleAdminLoginClick(event);else if(window.showView)window.showView('login');">
+    <button class="secret-admin-btn" id="navLoginBtn" title="Admin Login" onclick="if(window.handleAdminLoginClick)window.handleAdminLoginClick(event);else if(window.showView)window.showView('login');">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
@@ -1136,7 +1132,7 @@
   <!-- Manage Drawings Modal -->
   <div class="modal-overlay" id="manageDrawingsModal">
     <div class="modal-sheet" style="max-width: 800px; max-height: 85vh;">
-      <div class="modal-close" id="manageDrawingsClose">×</div>
+      <div class="modal-close" id="manageDrawingsClose">&times;</div>
       <h3>Manage Sample Drawings</h3>
       
       <div class="field" style="display:flex; justify-content:space-between; align-items:center;">
@@ -1153,7 +1149,7 @@
   <!-- Add Drawing Modal -->
   <div class="modal-overlay" id="addDrawingModal">
     <div class="modal-sheet">
-      <div class="modal-close" id="addDrawingClose">×</div>
+      <div class="modal-close" id="addDrawingClose">&times;</div>
       <h3>Add Sample Drawing</h3>
       
       <div class="field">
@@ -1193,7 +1189,7 @@
 
   <script src="js/map.js?v=20260904001" defer></script>
   <script src="js/atlas-intro.js?v=20260915001" defer></script>
-  <script src="js/app.js?v=20260904001" defer></script>
+  <script src="js/app.js?v=20260917020" defer></script>
 
   <!-- Mobile Bottom Floating Navigation Dock (Zepto/Blinkit Style) -->
   <nav class="mobile-bottom-dock-wrapper ui-stagger-item ui-stagger-5" id="mobileBottomDock">
@@ -1353,3 +1349,5 @@
 
 </body>
 </html>
+
+
