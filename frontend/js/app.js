@@ -2413,6 +2413,7 @@ window.closePanel = closePanel;
 // ============================================================
 
 window.openDetail = function(id) {
+  if (typeof closePanel === 'function') closePanel();
 
   const p = PROJECTS.find(x => x.id === id);
 
