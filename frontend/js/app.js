@@ -197,11 +197,14 @@ async function fetchAppInitialData() {
       const proj = await apiFetch('/projects');
 
       const loadedProj = proj.data || proj.projects || (Array.isArray(proj) ? proj : []);
-
       if (loadedProj && loadedProj.length > 0) {
-
-        PROJECTS = loadedProj;
-
+        PROJECTS = loadedProj.map(p => {
+          if (typeof p.images === 'string') {
+            try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
+          }
+          if (!Array.isArray(p.images)) p.images = [];
+          return p;
+        });
       } else {
 
         throw new Error('Empty projects from API');
@@ -216,7 +219,14 @@ async function fetchAppInitialData() {
 
         const fallbackRes = await fetch('assets/data/projects_100.json');
 
-        PROJECTS = await fallbackRes.json();
+        const raw = await fallbackRes.json();
+        PROJECTS = (raw || []).map(p => {
+          if (typeof p.images === 'string') {
+            try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
+          }
+          if (!Array.isArray(p.images)) p.images = [];
+          return p;
+        });
 
       } catch(err) {
 

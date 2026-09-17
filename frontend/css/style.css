@@ -6153,8 +6153,11 @@ model-viewer::part(interaction-prompt),
 }
 @media (max-width: 768px) {
   svg#map {
+    min-height: 0 !important;
+    height: auto !important;
     transform: scale(1.05) !important;
-    transform-origin: center 45% !important;
+    transform-origin: center center !important;
+    margin: 12px 0 0 0 !important;
   }
   .map-card {
     padding: 12px 12px 10px 12px !important;
@@ -6162,6 +6165,7 @@ model-viewer::part(interaction-prompt),
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
+    min-height: 0 !important;
   }
 }
 
@@ -9991,11 +9995,11 @@ body.dark-mode .map-card .map-controls-bar {
 
 @media (max-width: 768px) {
   .map-card .map-controls-bar {
-    margin: 0 0 6px 0 !important;
+    margin: 0 0 16px 0 !important;
     padding: 0 !important;
   }
   .map-card #categoryChipRow {
-    margin: 0 0 6px 0 !important;
+    margin: 0 0 16px 0 !important;
     padding: 0 !important;
   }
 }

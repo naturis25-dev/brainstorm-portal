@@ -92,10 +92,10 @@ function drawMap(projectsList, categoryFilter, countryFilter) {
   }
   var isMobile = window.innerWidth <= 768;
   var projection = country === 'us'
-    ? d3.geoAlbersUsa().translate([480, 300]).scale(1150)
+    ? d3.geoAlbersUsa().translate([480, isMobile ? 300 : 300]).scale(isMobile ? 1180 : 1150)
     : d3.geoAlbers().rotate([96, 0]).center([2, 59]).parallels([50, 70])
-        .translate([480, isMobile ? 380 : 365])
-        .scale(isMobile ? 850 : 720);
+        .translate([480, isMobile ? 370 : 365])
+        .scale(isMobile ? 880 : 720);
 
   var path = d3.geoPath(projection);
 
@@ -241,7 +241,8 @@ function openPanel(name, list) {
 
     var chipHTML = cats.map(function(c) {
       var isAct = c === activeCategory ? 'active' : '';
-      return '<button class="region-filter-pill ' + isAct + '" onclick="window.setRegionCat('' + c.replace(/'/g, "\'") + '')">' + c + ' (' + catCounts[c] + ')</button>';
+      var safeCat = c.replace(/'/g, "\\'");
+      return '<button class="region-filter-pill ' + isAct + '" onclick="window.setRegionCat(\'' + safeCat + '\')">' + c + ' (' + catCounts[c] + ')</button>';
     }).join('');
 
     var cardsHTML = '';
@@ -255,7 +256,7 @@ function openPanel(name, list) {
         var yearFormatted = p.year || '2026';
         var locFormatted = p.state ? (p.state + ', ' + (p.country || 'USA')) : 'North America';
 
-        return '<div class="region-proj-card" onclick="window.openDetail('' + p.id + '')">' +
+        return '<div class="region-proj-card" onclick="window.openDetail(\'' + p.id + '\')">' +
           '<img class="region-card-img" src="' + imgSrc + '" alt="' + p.title + '">' +
           '<div class="region-card-body">' +
             '<span class="region-card-badge">' + catBadge + '</span>' +
