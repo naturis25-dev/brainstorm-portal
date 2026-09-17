@@ -107,17 +107,14 @@ function initThemeToggle() {
 // ============================================================
 
 function getApiBase() {
-
-  const host = window.location.hostname || 'localhost';
-
-  const protocol = window.location.protocol.startsWith('http') ? window.location.protocol : 'http:';
-
-  return (window.location.port === '5050' || window.location.origin.includes('5050')) 
-
-    ? '/api' 
-
-    : `${protocol}//${host}:5050/api`;
-
+  const origin = window.location.origin || '';
+  const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+  if (isLocal && window.location.port !== '5050') {
+    const protocol = window.location.protocol.startsWith('http') ? window.location.protocol : 'http:';
+    const host = window.location.hostname || 'localhost';
+    return `${protocol}//${host}:5050/api`;
+  }
+  return '/api';
 }
 
 window.getApiBase = getApiBase;
