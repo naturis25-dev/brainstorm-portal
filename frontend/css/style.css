@@ -10337,12 +10337,12 @@ body.dark-mode .brand .logo-box {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -45%) scale(0.96) !important;
-  width: min(580px, calc(100vw - 32px)) !important;
+  width: min(620px, calc(100vw - 32px)) !important;
   height: auto !important;
-  max-height: min(720px, calc(100vh - 60px)) !important;
+  max-height: min(740px, calc(100vh - 50px)) !important;
   background: #ffffff !important;
-  border-radius: 24px !important;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.16) !important;
   border: 1px solid rgba(226, 232, 240, 0.9) !important;
   z-index: 1000 !important;
   opacity: 0 !important;
@@ -10362,7 +10362,7 @@ body.dark-mode .brand .logo-box {
 body.dark-mode .panel {
   background: #0f172a !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.5) !important;
 }
 
 /* State Illustration Header Component */
@@ -10371,7 +10371,7 @@ body.dark-mode .panel {
   flex-direction: column !important;
   align-items: center !important;
   position: relative !important;
-  margin-top: -6px !important;
+  margin-top: -8px !important;
   margin-right: -4px !important;
 }
 
@@ -10382,18 +10382,21 @@ body.dark-mode .panel {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .state-illustration-path {
-  fill: rgba(191, 219, 254, 0.75) !important;
-  stroke: rgba(147, 197, 253, 0.9) !important;
+  fill: rgba(219, 234, 254, 0.55) !important;
+  stroke: #60a5fa !important;
   stroke-width: 1.5px !important;
   stroke-linejoin: round !important;
-  filter: drop-shadow(0 4px 12px rgba(37, 99, 235, 0.08)) !important;
+  filter: drop-shadow(0 4px 10px rgba(37, 99, 235, 0.06)) !important;
 }
 
 body.dark-mode .state-illustration-path {
-  fill: rgba(30, 58, 138, 0.45) !important;
+  fill: rgba(30, 58, 138, 0.35) !important;
   stroke: rgba(96, 165, 250, 0.6) !important;
 }
 
@@ -10427,10 +10430,10 @@ body.dark-mode .state-badge-abbr {
 
 .state-script-name {
   font-family: 'Dancing Script', 'Caveat', cursive !important;
-  font-size: 22px !important;
+  font-size: 24px !important;
   font-weight: 700 !important;
   color: #60a5fa !important;
-  margin-top: -10px !important;
+  margin-top: -8px !important;
   letter-spacing: 0.5px !important;
   text-shadow: 0 1px 3px rgba(37, 99, 235, 0.12) !important;
 }
@@ -10438,7 +10441,7 @@ body.dark-mode .state-badge-abbr {
 .spec-divider {
   color: #cbd5e1 !important;
   font-weight: 300 !important;
-  margin: 0 3px !important;
+  margin: 0 5px !important;
 }
 
 body.dark-mode .spec-divider {
@@ -10447,7 +10450,7 @@ body.dark-mode .spec-divider {
 
 /* Region Header */
 .region-modal-header {
-  padding: 24px 28px 16px !important;
+  padding: 32px 36px 20px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: flex-start !important;
@@ -10455,22 +10458,22 @@ body.dark-mode .spec-divider {
 }
 
 .region-eyebrow {
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   font-weight: 800 !important;
-  letter-spacing: 1.2px !important;
+  letter-spacing: 1.4px !important;
   color: #94a3b8 !important;
   text-transform: uppercase !important;
   display: block !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 6px !important;
 }
 
 .region-name-title {
-  font-size: 32px !important;
+  font-size: 34px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
   line-height: 1.15 !important;
-  margin: 0 0 6px 0 !important;
-  letter-spacing: -0.5px !important;
+  margin: 0 0 8px 0 !important;
+  letter-spacing: -0.6px !important;
 }
 
 body.dark-mode .region-name-title {
@@ -10478,12 +10481,13 @@ body.dark-mode .region-name-title {
 }
 
 .region-stats-sub {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   font-weight: 600 !important;
   color: #64748b !important;
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 10px !important;
+  margin-top: 4px !important;
 }
 
 .stats-sep {
@@ -10492,24 +10496,24 @@ body.dark-mode .region-name-title {
 
 /* Region Toolbar */
 .region-toolbar-row {
-  padding: 0 28px 14px !important;
+  padding: 0 36px 20px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  gap: 12px !important;
+  gap: 16px !important;
 }
 
 .region-chips-wrapper {
   display: flex !important;
-  gap: 8px !important;
+  gap: 10px !important;
   overflow-x: auto !important;
   scrollbar-width: none !important;
 }
 
 .region-filter-pill {
-  padding: 6px 14px !important;
+  padding: 7px 16px !important;
   border-radius: 100px !important;
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   background: #f1f5f9 !important;
   color: #475569 !important;
@@ -10525,9 +10529,9 @@ body.dark-mode .region-name-title {
 }
 
 .region-sort-select {
-  padding: 6px 12px !important;
+  padding: 7px 14px !important;
   border-radius: 100px !important;
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff !important;
@@ -10539,28 +10543,28 @@ body.dark-mode .region-name-title {
 .region-cards-list {
   flex: 1 1 auto !important;
   overflow-y: auto !important;
-  padding: 0 28px 16px !important;
+  padding: 0 36px 20px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 16px !important;
 }
 
 .region-proj-card {
   display: flex !important;
   align-items: center !important;
-  gap: 16px !important;
-  padding: 12px !important;
+  gap: 20px !important;
+  padding: 16px 20px !important;
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 16px !important;
+  border-radius: 20px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03) !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03) !important;
 }
 
 .region-proj-card:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08) !important;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.09) !important;
   border-color: rgba(37, 99, 235, 0.3) !important;
 }
 
@@ -10570,9 +10574,9 @@ body.dark-mode .region-proj-card {
 }
 
 .region-card-img {
-  width: 105px !important;
-  height: 75px !important;
-  border-radius: 12px !important;
+  width: 115px !important;
+  height: 82px !important;
+  border-radius: 14px !important;
   object-fit: cover !important;
   flex-shrink: 0 !important;
   background: #f1f5f9 !important;
@@ -10582,26 +10586,26 @@ body.dark-mode .region-proj-card {
   flex: 1 1 auto !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 6px !important;
 }
 
 .region-card-badge {
-  font-size: 10px !important;
+  font-size: 10.5px !important;
   font-weight: 800 !important;
   color: #2563eb !important;
   background: rgba(37, 99, 235, 0.08) !important;
-  padding: 3px 8px !important;
+  padding: 4px 10px !important;
   border-radius: 100px !important;
   align-self: flex-start !important;
   letter-spacing: 0.5px !important;
 }
 
 .region-card-title {
-  font-size: 14.5px !important;
+  font-size: 15.5px !important;
   font-weight: 700 !important;
   color: #0f172a !important;
-  margin: 0 !important;
-  line-height: 1.3 !important;
+  margin: 2px 0 2px 0 !important;
+  line-height: 1.35 !important;
 }
 
 body.dark-mode .region-card-title {
@@ -10609,12 +10613,12 @@ body.dark-mode .region-card-title {
 }
 
 .region-card-specs {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
   color: #64748b !important;
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 8px !important;
 }
 
 .spec-dot {
@@ -10622,8 +10626,8 @@ body.dark-mode .region-card-title {
 }
 
 .region-card-arrow {
-  width: 32px !important;
-  height: 32px !important;
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 50% !important;
   background: #f1f5f9 !important;
   color: #475569 !important;
@@ -10641,12 +10645,18 @@ body.dark-mode .region-card-title {
 
 /* Region Modal Footer */
 .region-modal-footer {
-  padding: 16px 28px !important;
+  padding: 20px 36px 24px !important;
   border-top: 1px solid #e2e8f0 !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   background: #f8fafc !important;
+  border-radius: 0 0 28px 28px !important;
+}
+
+body.dark-mode .region-modal-footer {
+  background: #0f172a !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 body.dark-mode .region-modal-footer {
