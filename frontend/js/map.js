@@ -66,8 +66,8 @@ function loadMapData(onReady) {
 
 // Auto-trigger map feature loading immediately
 loadMapData(function() {
-  if (window.MapModule && window.drawMap) {
-    window.MapModule.drawMap(window.PROJECTS || [], window.currentCategory || 'All', window.currentCountry || 'us');
+  if (typeof drawMap === 'function') {
+    drawMap(window.PROJECTS || [], window.currentCategory || 'All', window.currentCountry || 'us');
   }
 });
 
