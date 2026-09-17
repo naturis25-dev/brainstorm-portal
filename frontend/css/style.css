@@ -10338,8 +10338,8 @@ body.dark-mode .brand .logo-box {
   left: 50% !important;
   transform: translate(-50%, -45%) scale(0.96) !important;
   width: min(580px, calc(100vw - 32px)) !important;
-  height: min(760px, calc(100vh - 40px)) !important;
-  max-height: calc(100vh - 40px) !important;
+  height: auto !important;
+  max-height: min(720px, calc(100vh - 60px)) !important;
   background: #ffffff !important;
   border-radius: 24px !important;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18) !important;
@@ -10363,6 +10363,86 @@ body.dark-mode .panel {
   background: #0f172a !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* State Illustration Header Component */
+.state-illustration-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  margin-top: -6px !important;
+  margin-right: -4px !important;
+}
+
+.state-svg-wrapper {
+  position: relative !important;
+  width: 100px !important;
+  height: 90px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.state-illustration-path {
+  fill: rgba(191, 219, 254, 0.75) !important;
+  stroke: rgba(147, 197, 253, 0.9) !important;
+  stroke-width: 1.5px !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 4px 12px rgba(37, 99, 235, 0.08)) !important;
+}
+
+body.dark-mode .state-illustration-path {
+  fill: rgba(30, 58, 138, 0.45) !important;
+  stroke: rgba(96, 165, 250, 0.6) !important;
+}
+
+.state-illustration-badge {
+  position: absolute !important;
+  top: 45% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  pointer-events: none !important;
+}
+
+.state-badge-pin {
+  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.35)) !important;
+}
+
+.state-badge-abbr {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #1e40af !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
+}
+
+body.dark-mode .state-badge-abbr {
+  color: #93c5fd !important;
+}
+
+.state-script-name {
+  font-family: 'Dancing Script', 'Caveat', cursive !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #60a5fa !important;
+  margin-top: -10px !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 1px 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+.spec-divider {
+  color: #cbd5e1 !important;
+  font-weight: 300 !important;
+  margin: 0 3px !important;
+}
+
+body.dark-mode .spec-divider {
+  color: #475569 !important;
 }
 
 /* Region Header */

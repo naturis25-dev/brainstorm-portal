@@ -209,6 +209,59 @@ function handleClick(event, d, projectsList, category) {
   }, 1400); // Cinematic delay
 }
 
+var STATE_ABBRS = {
+  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+  'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+  'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+  'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+  'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+  'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+  'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+  'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+  'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY',
+  'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB', 'New Brunswick': 'NB',
+  'Newfoundland and Labrador': 'NL', 'Nova Scotia': 'NS', 'Ontario': 'ON', 'Prince Edward Island': 'PE',
+  'Quebec': 'QC', 'Saskatchewan': 'SK', 'Northwest Territories': 'NT', 'Nunavut': 'NU', 'Yukon': 'YT'
+};
+
+function getStateAbbr(name) {
+  return STATE_ABBRS[name] || (name ? name.substring(0, 2).toUpperCase() : '');
+}
+
+function renderStateIllustration(name) {
+  var allFeats = (usFeatures || []).concat(caFeatures || []);
+  var feat = allFeats.find(function(f) { return f && f.properties && f.properties.name === name; });
+  var abbr = getStateAbbr(name);
+  
+  var pathD = '';
+  if (feat) {
+    try {
+      var projection = d3.geoIdentity().reflectY(true).fitSize([90, 80], feat);
+      pathD = d3.geoPath(projection)(feat);
+    } catch(e) {}
+  }
+  
+  if (!pathD) {
+    return '<div class="region-header-watermark">' +
+      '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(37,99,235,0.18)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+    '</div>';
+  }
+
+  return '<div class="state-illustration-container">' +
+    '<div class="state-svg-wrapper">' +
+      '<svg width="100" height="90" viewBox="-5 -5 100 90">' +
+        '<path d="' + pathD + '" class="state-illustration-path" />' +
+      '</svg>' +
+      '<div class="state-illustration-badge">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="#2563eb" class="state-badge-pin"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
+        '<span class="state-badge-abbr">' + abbr + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="state-script-name">' + name + '</div>' +
+  '</div>';
+}
+
 function openPanel(name, list) {
   var body = document.getElementById('panelBody');
   if (!body) return;
@@ -262,11 +315,11 @@ function openPanel(name, list) {
             '<span class="region-card-badge">' + catBadge + '</span>' +
             '<h4 class="region-card-title">' + p.title + '</h4>' +
             '<div class="region-card-specs">' +
-              '<span>📦 ' + tonsFormatted + '</span>' +
-              '<span class="spec-dot">•</span>' +
-              '<span>📅 ' + yearFormatted + '</span>' +
-              '<span class="spec-dot">•</span>' +
-              '<span>📍 ' + locFormatted + '</span>' +
+              '<span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px; opacity:0.75;"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>' + tonsFormatted + '</span>' +
+              '<span class="spec-divider">|</span>' +
+              '<span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px; opacity:0.75;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>' + yearFormatted + '</span>' +
+              '<span class="spec-divider">|</span>' +
+              '<span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px; opacity:0.75;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' + locFormatted + '</span>' +
             '</div>' +
           '</div>' +
           '<div class="region-card-arrow">' +
@@ -282,14 +335,12 @@ function openPanel(name, list) {
           '<span class="region-eyebrow">REGION</span>' +
           '<h2 class="region-name-title">' + name + '</h2>' +
           '<div class="region-stats-sub">' +
-            '<span>🏢 ' + list.length + ' projects</span>' +
+            '<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12h12"/><path d="M6 7h12"/><path d="M6 17h12"/></svg>' + list.length + ' projects</span>' +
             '<span class="stats-sep">•</span>' +
-            '<span>📦 ' + Math.round(tons).toLocaleString() + ' tons detailed</span>' +
+            '<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>' + Math.round(tons).toLocaleString() + ' tons detailed</span>' +
           '</div>' +
         '</div>' +
-        '<div class="region-header-watermark">' +
-          '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(37,99,235,0.18)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
-        '</div>' +
+        renderStateIllustration(name) +
       '</div>' +
       
       '<div class="region-toolbar-row">' +
