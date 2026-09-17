@@ -1250,74 +1250,50 @@ function setupNavigation() {
 
 
 
-  // ── Back to Top Button ────────────────────────────
+  // ── Topbar Morph Button (Website ↔ Back to Top) ──
+  const navWebsiteBtn = document.getElementById('navWebsiteBtn');
 
-  const bttBtn = document.getElementById('backToTopBtn');
-
-  if (bttBtn) {
-
+  if (navWebsiteBtn) {
     const checkScroll = (val, isPanel = false) => {
-
       const isMap = document.getElementById('view-map')?.classList.contains('active');
 
-      // If user is on the main map view and no panel is open, do not show back to top button
-
+      // Do not morph on main map if no panel is open
       if (isMap && !isPanel) {
-
-        bttBtn.style.opacity = '0';
-
-        bttBtn.style.pointerEvents = 'none';
-
+        navWebsiteBtn.classList.remove('is-scrolled');
         return;
-
       }
 
       if (val > 120) {
-
-        bttBtn.style.opacity = '1';
-
-        bttBtn.style.pointerEvents = 'auto';
-
+        navWebsiteBtn.classList.add('is-scrolled');
       } else {
-
-        bttBtn.style.opacity = '0';
-
-        bttBtn.style.pointerEvents = 'none';
-
+        navWebsiteBtn.classList.remove('is-scrolled');
       }
-
     };
 
     document.querySelectorAll('.view').forEach(container => {
-
       container.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, false));
-
     });
 
     const panel = document.getElementById('panel');
-
     const panelBody = document.getElementById('panelBody');
 
     if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
-
     if (panelBody) panelBody.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
-
     window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
 
-
-
-    bttBtn.addEventListener('click', () => {
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
-
-      if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
-
-      if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
-
+    navWebsiteBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (navWebsiteBtn.classList.contains('is-scrolled')) {
+        // Scroll to top behavior
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
+        if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
+        if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // Website behavior
+        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+      }
     });
-
   }
 
 

@@ -494,10 +494,14 @@
         </div>
       </div>
 
-      <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="icon-btn" id="navWebsiteBtn">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        <span class="icon-btn-label">Website</span>
-      </a>
+      <button class="icon-btn topbar-morph-btn" id="navWebsiteBtn" title="Visit Website">
+        <div class="morph-icon-wrap">
+          <svg class="morph-icon morph-icon-website" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <svg class="morph-icon morph-icon-top" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </div>
+        <span class="icon-btn-label morph-label morph-label-website">Website</span>
+        <span class="icon-btn-label morph-label morph-label-top">Top</span>
+      </button>
 
       <!-- Minimal Theme Toggle -->
       <button class="minimal-theme-toggle" id="dntToggle" aria-label="Toggle Theme" title="Toggle Theme">
@@ -1114,10 +1118,6 @@
     </div>
   </div>
 
-  <!-- Back to Top Button -->
-  <button id="backToTopBtn" class="icon-btn primary" title="Back to Top" style="position:fixed; bottom:20px; right:20px; z-index:900; opacity:0; pointer-events:none; transition:opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1); box-shadow:0 8px 20px rgba(91,91,240,0.4);">
-    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-  </button>
 
   <!-- Application Script Modules -->
   <script src="js/config.js?v=20260903001" defer></script>
@@ -1269,12 +1269,6 @@
     </button>
   </nav>
 
-  <!-- Floating Circular Back to Top Button -->
-  <button id="backToTopBtn" aria-label="Back to Top" title="Back to Top">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="18 15 12 9 6 15"></polyline>
-    </svg>
-  </button>
 
   <!-- Spotlight Search -->
   <div id="spotlightSearch">

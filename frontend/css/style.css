@@ -479,6 +479,134 @@ body.dark-mode .topbar::after {
   transform: translateY(2px) scale(1.15);
 }
 
+/* ── Topbar Morph Button (Website ↔ Back to Top) ── */
+.topbar-morph-btn {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.morph-icon-wrap {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.morph-icon {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.morph-icon-website {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.morph-icon-top {
+  opacity: 0;
+  transform: scale(0.3) rotate(-90deg) translateY(6px);
+}
+
+/* Labels crossfade */
+.morph-label {
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.morph-label-website {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.morph-label-top {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* ── Scrolled State: .is-scrolled ── */
+.topbar-morph-btn.is-scrolled .morph-icon-website {
+  opacity: 0;
+  transform: scale(0.3) rotate(90deg) translateY(-6px);
+}
+
+.topbar-morph-btn.is-scrolled .morph-icon-top {
+  opacity: 1;
+  transform: scale(1) rotate(0deg) translateY(0);
+}
+
+.topbar-morph-btn.is-scrolled .morph-label-website {
+  display: none;
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.topbar-morph-btn.is-scrolled .morph-label-top {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Accent glow pulse on morphed state */
+.topbar-morph-btn.is-scrolled {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  animation: morphPulseIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes morphPulseIn {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5);
+    transform: scale(0.85);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+    transform: scale(1.1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
+  }
+}
+
+/* Un-morph animation back to Website */
+.topbar-morph-btn:not(.is-scrolled) {
+  animation: morphPulseOut 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes morphPulseOut {
+  0% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.topbar-morph-btn.is-scrolled:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+  transform: translateY(-2px) scale(1.08) !important;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35) !important;
+}
+
+.topbar-morph-btn.is-scrolled:hover .morph-icon-top {
+  transform: scale(1.15) translateY(-2px);
+}
+
+body.dark-mode .topbar-morph-btn.is-scrolled {
+  background: rgba(42, 109, 244, 0.2) !important;
+  color: #60a5fa !important;
+}
+
+body.dark-mode .topbar-morph-btn.is-scrolled:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
 #navWebsiteBtn:hover svg {
   transform: rotate(180deg) scale(1.18);
 }
