@@ -1261,12 +1261,13 @@ function setupNavigation() {
 
   const checkScroll = (val, isPanel = false) => {
     const isMap = document.getElementById('view-map')?.classList.contains('active');
+    const isDetailOpen = document.getElementById('detailOverlay')?.classList.contains('open');
     const mBtn = document.getElementById('mNavWebsiteBtn');
     const mBackBtn = document.getElementById('mNavBackBtn');
     const mWrap = document.getElementById('mMorphCloneWrap');
 
-    // Do not morph on main map if no panel is open
-    if (isMap && !isPanel) {
+    // Do not morph on main map if no panel or detail overlay is open
+    if (isMap && !isPanel && !isDetailOpen) {
       if (navWebsiteBtn) navWebsiteBtn.classList.remove('is-scrolled');
       if (mBtn) mBtn.classList.remove('is-scrolled');
       if (mBackBtn) mBackBtn.classList.remove('is-scrolled');
@@ -1293,9 +1294,11 @@ function setupNavigation() {
 
   const panel = document.getElementById('panel');
   const panelBody = document.getElementById('panelBody');
+  const detailOverlay = document.getElementById('detailOverlay');
 
   if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
   if (panelBody) panelBody.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
+  if (detailOverlay) detailOverlay.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
   window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
 
   // Handle Desktop Button Click
@@ -1307,6 +1310,7 @@ function setupNavigation() {
         document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
         if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
         if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
+        if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
       }
@@ -1330,6 +1334,7 @@ function setupNavigation() {
         document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
         if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
         if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
+        if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
       }
@@ -2761,6 +2766,11 @@ window.openDetail = function(id) {
 
     const subNavHtml = `
       <div class="detail-subnav-bar">
+        <button class="d-tab d-tab-back" onclick="window.closeDetail()" title="Back">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span class="d-tab-full">Back</span>
+          <span class="d-tab-short">Back</span>
+        </button>
         ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Project Gallery</span><span class="d-tab-short">Gallery</span></button>` : ''}
         ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">3D Model</span><span class="d-tab-short">3D View</span></button>` : ''}
         <button class="d-tab ${overviewTabActive ? 'active' : ''}" onclick="document.getElementById('sec-overview-${p.id}')?.scrollIntoView({behavior:'smooth'})">Overview</button>
