@@ -68,34 +68,32 @@ function initCustomCursor() {
 
 // ============================================================
 
+function updateLogoForTheme() {
+  const isDark = document.body.classList.contains('dark-mode');
+  const logoSrc = isDark ? 'assets/logo-white.png' : 'assets/logo.png';
+  document.querySelectorAll('.brand .logo-box img, #loaderLogo, #loginLogo img, .login-logo img').forEach(img => {
+    img.src = logoSrc;
+  });
+}
+
 function initThemeToggle() {
-
   const savedTheme = localStorage.getItem('steeltrack_theme');
-
   if (savedTheme === 'dark') {
-
     document.body.classList.add('dark-mode');
-
   } else {
-
     document.body.classList.remove('dark-mode');
-
   }
+  updateLogoForTheme();
 
   const toggleTheme = () => {
-
     document.body.classList.toggle('dark-mode');
-
     localStorage.setItem('steeltrack_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-
+    updateLogoForTheme();
   };
 
   document.querySelectorAll('.minimal-theme-toggle').forEach(btn => {
-
     btn.addEventListener('click', toggleTheme);
-
   });
-
 }
 
 
@@ -601,7 +599,7 @@ function renderCategoryChips() {
 
     floatingRow.innerHTML = `
 
-        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="inline-search-wrap" style="flex:1;">
+        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="inline-search-wrap" style="flex:1;" onclick="if(window.innerWidth <= 768 && typeof openSpotlight === 'function') openSpotlight(document.getElementById('globalProjectSearch').value.trim());">
 
           <div class="search-badge-icon">
 
@@ -618,20 +616,28 @@ function renderCategoryChips() {
           <input type="search" id="globalProjectSearch" name="search_atlas_projects_m" placeholder="${searchPlaceholder}" value="${oldVal ? String(oldVal).replace(/"/g, '&quot;') : ''}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
 
         </form>
-
-        <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="m-search-website-btn" title="Visit Website">
-
-          <span>Website</span>
-
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-
-            <polyline points="12 5 19 12 12 19"></polyline>
-
-          </svg>
-
-        </a>`;
+        <div class="m-morph-clone-wrap" id="mMorphCloneWrap">
+          <button type="button" class="m-search-back-btn" id="mNavBackBtn" title="Back to Folders">
+            <svg class="m-morph-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span class="m-morph-text" style="font-weight: 800; font-size: 11.5px; letter-spacing: 0.5px;">BACK</span>
+          </button>
+          <button type="button" class="m-search-website-btn" id="mNavWebsiteBtn" title="Visit Website">
+            <div class="morph-face face-website">
+              <span class="m-morph-text">Website</span>
+              <svg class="m-morph-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+            <div class="morph-face face-top">
+              <svg class="m-morph-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+            </div>
+          </button>
+        </div>`;
 
   } else {
 
@@ -1253,48 +1259,82 @@ function setupNavigation() {
   // ── Topbar Morph Button (Website ↔ Back to Top) ──
   const navWebsiteBtn = document.getElementById('navWebsiteBtn');
 
+  const checkScroll = (val, isPanel = false) => {
+    const isMap = document.getElementById('view-map')?.classList.contains('active');
+    const mBtn = document.getElementById('mNavWebsiteBtn');
+    const mBackBtn = document.getElementById('mNavBackBtn');
+    const mWrap = document.getElementById('mMorphCloneWrap');
+
+    // Do not morph on main map if no panel is open
+    if (isMap && !isPanel) {
+      if (navWebsiteBtn) navWebsiteBtn.classList.remove('is-scrolled');
+      if (mBtn) mBtn.classList.remove('is-scrolled');
+      if (mBackBtn) mBackBtn.classList.remove('is-scrolled');
+      if (mWrap) mWrap.classList.remove('is-scrolled');
+      return;
+    }
+
+    if (val > 120) {
+      if (navWebsiteBtn) navWebsiteBtn.classList.add('is-scrolled');
+      if (mBtn) mBtn.classList.add('is-scrolled');
+      if (mBackBtn) mBackBtn.classList.add('is-scrolled');
+      if (mWrap) mWrap.classList.add('is-scrolled');
+    } else {
+      if (navWebsiteBtn) navWebsiteBtn.classList.remove('is-scrolled');
+      if (mBtn) mBtn.classList.remove('is-scrolled');
+      if (mBackBtn) mBackBtn.classList.remove('is-scrolled');
+      if (mWrap) mWrap.classList.remove('is-scrolled');
+    }
+  };
+
+  document.querySelectorAll('.view').forEach(container => {
+    container.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, false));
+  });
+
+  const panel = document.getElementById('panel');
+  const panelBody = document.getElementById('panelBody');
+
+  if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
+  if (panelBody) panelBody.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
+  window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
+
+  // Handle Desktop Button Click
   if (navWebsiteBtn) {
-    const checkScroll = (val, isPanel = false) => {
-      const isMap = document.getElementById('view-map')?.classList.contains('active');
-
-      // Do not morph on main map if no panel is open
-      if (isMap && !isPanel) {
-        navWebsiteBtn.classList.remove('is-scrolled');
-        return;
-      }
-
-      if (val > 120) {
-        navWebsiteBtn.classList.add('is-scrolled');
-      } else {
-        navWebsiteBtn.classList.remove('is-scrolled');
-      }
-    };
-
-    document.querySelectorAll('.view').forEach(container => {
-      container.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, false));
-    });
-
-    const panel = document.getElementById('panel');
-    const panelBody = document.getElementById('panelBody');
-
-    if (panel) panel.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
-    if (panelBody) panelBody.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
-    window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
-
     navWebsiteBtn.addEventListener('click', (e) => {
       e.preventDefault();
       if (navWebsiteBtn.classList.contains('is-scrolled')) {
-        // Scroll to top behavior
         window.scrollTo({ top: 0, behavior: 'smooth' });
         document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
         if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
         if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // Website behavior
         window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
       }
     });
   }
+
+  // Handle Mobile Button Click (Delegated since it's dynamically rendered)
+  document.body.addEventListener('click', (e) => {
+    const mBackBtnClick = e.target.closest('#mNavBackBtn');
+    if (mBackBtnClick) {
+      e.preventDefault();
+      if (window.renderFolders) window.renderFolders();
+      return;
+    }
+
+    const mBtn = e.target.closest('#mNavWebsiteBtn');
+    if (mBtn) {
+      e.preventDefault();
+      if (mBtn.classList.contains('is-scrolled')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
+        if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
+        if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+      }
+    }
+  });
 
 
 
@@ -1515,6 +1555,9 @@ function setupNavigation() {
     const gallery = document.getElementById('drawingsGallery');
 
     const breadcrumb = document.getElementById('drawingsBreadcrumbRow');
+    
+    // Hide back-to-folder floating button when not in a folder
+    document.body.classList.remove('in-folder-view');
 
     if (!gallery) return;
 
@@ -1549,45 +1592,39 @@ function setupNavigation() {
     
 
     desiredOrder.forEach(catKey => {
-
       const categoryData = cachedDrawingsData[catKey];
-
       if (!categoryData) return;
 
-      
-
       const count = categoryData.files ? categoryData.files.length : 0;
-
       const imgSrc = categoryIcons[catKey] || 'assets/map_icons/map_misc.png';
+      const isMisc = catKey === 'misc';
 
-      
+      const subtext = isMisc ? `<div class="smooky-subtext">Complex stair / framing drawing samples and standard details.</div>` : '';
 
       html += `
-
-      <div class="smooky-card group" data-cat="${catKey}" onclick="window.renderDrawingsList('${catKey}')">
-
-        <div class="smooky-icon-box">
-
-          <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
-
+      <div class="smooky-card group ${isMisc ? 'smooky-card-wide' : ''}" data-cat="${catKey}" onclick="window.renderDrawingsList('${catKey}')">
+        <div class="smooky-card-left">
+          <h3 class="smooky-title">${categoryData.title}</h3>
+          <div class="smooky-files-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>${count} Files</span>
+          </div>
+          ${subtext}
+          <div class="smooky-action-wrap">
+            <span class="smooky-action-lbl">Explore Now</span>
+            <span class="smooky-action-circle">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </span>
+          </div>
         </div>
-
-        <h3 class="smooky-title">${categoryData.title}</h3>
-
-        <p class="smooky-subtext">Explore structural detailing samples & drawing files for this category.</p>
-
-        <div class="smooky-footer">
-
-          <span class="smooky-files-badge">${count} Files</span>
-
-          <button class="smooky-action-btn">Explore Now</button>
-
+        <div class="smooky-card-right">
+          <div class="smooky-wave-bg"></div>
+          <div class="smooky-icon-box">
+            <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
+          </div>
         </div>
-
       </div>
-
       `;
-
     });
 
     
@@ -1627,14 +1664,13 @@ function setupNavigation() {
     const gallery = document.getElementById('drawingsGallery');
 
     const breadcrumb = document.getElementById('drawingsBreadcrumbRow');
+    
+    // Show back-to-folder floating button when inside a folder
+    document.body.classList.add('in-folder-view');
 
     const categoryData = cachedDrawingsData[catKey];
 
-    
-
     if (!gallery || !categoryData) return;
-
-    
 
     breadcrumb.style.display = 'flex';
 
@@ -2374,6 +2410,8 @@ function closePanel() {
 
   document.getElementById('panel')?.classList.remove('open');
 
+  document.body.classList.remove('region-modal-open');
+
   updateAdminBtnVisibility();
 
 }
@@ -2515,30 +2553,26 @@ window.openDetail = function(id) {
 
   if (wrap) {
 
-    const similar = PROJECTS.filter(x => x.id !== p.id && (x.category === p.category || (x.type && p.type && x.type.includes(p.type.split(',')[0])))).slice(0, 4);
+    let similar = PROJECTS.filter(x => x.id !== p.id && (x.category === p.category || (x.type && p.type && x.type.includes(p.type.split(',')[0]))));
+    if (similar.length < 6) {
+      const remaining = PROJECTS.filter(x => x.id !== p.id && !similar.includes(x));
+      similar = similar.concat(remaining.slice(0, 6 - similar.length));
+    } else {
+      similar = similar.slice(0, 8);
+    }
 
     let similarHtml = '';
-
     if (similar.length > 0) {
-
-      similarHtml = similar.map(s => `
-
+      const doubleSimilar = [...similar, ...similar];
+      similarHtml = doubleSimilar.map(s => `
         <div onclick="window.openDetail('${s.id}')" class="similar-card">
-
           <img src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" alt="${s.title}" onerror="this.src='assets/logo.png';">
-
           <div class="similar-card-body">
-
             <div class="similar-card-title">${s.title}</div>
-
             <div class="similar-card-loc">📍 ${s.state}, ${s.country === 'US' ? 'USA' : 'CAN'}</div>
-
           </div>
-
         </div>
-
       `).join('');
-
     }
 
 
@@ -2586,7 +2620,6 @@ window.openDetail = function(id) {
                 <div class="carousel-card ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.selectCarouselSlide('${p.id}', ${i})">
                   <div class="carousel-card-inner">
                     <img loading="lazy" decoding="async" src="${img}" alt="${p.title} - View ${i + 1}" onerror="this.src='assets/logo.png'">
-                    <div class="carousel-card-badge">View ${i + 1} of ${p.images.length}</div>
                     <button class="carousel-zoom-btn" title="View Fullscreen" onclick="event.stopPropagation(); window.openLightbox('${img}')">
                       <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                     </button>
@@ -2710,19 +2743,13 @@ window.openDetail = function(id) {
     // 5. SIMILAR PROJECTS
     const similarProjectsHtml = similarHtml ? `
       <div class="detail-full-block" id="sec-similar-${p.id}">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
           <h3 class="dcard-title">Similar Projects</h3>
-          <button class="view-all-projects-btn" onclick="document.getElementById('detailClose')?.click()" aria-label="View All Projects">
-            <span>View All Projects</span>
-            <div class="view-all-btn-icon">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </div>
-          </button>
+          <span style="font-size: 12px; color: var(--sub); font-weight: 500; opacity: 0.8;">Hover to pause</span>
         </div>
-        <div class="similar-projects-row">${similarHtml}</div>
+        <div class="similar-projects-viewport">
+          <div class="similar-projects-track">${similarHtml}</div>
+        </div>
       </div>
     ` : '';
 
@@ -2734,13 +2761,14 @@ window.openDetail = function(id) {
 
     const subNavHtml = `
       <div class="detail-subnav-bar">
-        ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})">Project Gallery</button>` : ''}
-        ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})">3D Model</button>` : ''}
+        ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Project Gallery</span><span class="d-tab-short">Gallery</span></button>` : ''}
+        ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">3D Model</span><span class="d-tab-short">3D View</span></button>` : ''}
         <button class="d-tab ${overviewTabActive ? 'active' : ''}" onclick="document.getElementById('sec-overview-${p.id}')?.scrollIntoView({behavior:'smooth'})">Overview</button>
-        ${hasVideo ? `<button class="d-tab ${videoTabActive ? 'active' : ''}" onclick="document.getElementById('sec-walkthrough-${p.id}')?.scrollIntoView({behavior:'smooth'})">Walkthrough</button>` : ''}
-        <button class="d-tab" onclick="document.getElementById('sec-similar-${p.id}')?.scrollIntoView({behavior:'smooth'})">Similar Projects</button>
+        ${hasVideo ? `<button class="d-tab ${videoTabActive ? 'active' : ''}" onclick="document.getElementById('sec-walkthrough-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Walkthrough</span><span class="d-tab-short">Video</span></button>` : ''}
+        <button class="d-tab" onclick="document.getElementById('sec-similar-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Similar Projects</span><span class="d-tab-short">Similar</span></button>
       </div>
     `;
+
 
     // Dynamic layout hierarchy (NO GAPS):
     let bodyContent = '';
@@ -5009,6 +5037,7 @@ if (document.readyState === 'loading') {
     if (window.renderFolders) {
 
       const breadcrumb = document.getElementById('drawingsBreadcrumbRow');
+    if (breadcrumb && breadcrumb.style.display !== 'none') document.body.classList.add('in-folder-view'); else document.body.classList.remove('in-folder-view');
 
       if (breadcrumb && breadcrumb.style.display !== 'none') {
 
@@ -5155,6 +5184,7 @@ if (document.readyState === 'loading') {
       if (window.renderFolders) {
 
         const breadcrumb = document.getElementById('drawingsBreadcrumbRow');
+    if (breadcrumb && breadcrumb.style.display !== 'none') document.body.classList.add('in-folder-view'); else document.body.classList.remove('in-folder-view');
 
         if (breadcrumb && breadcrumb.style.display !== 'none') {
 

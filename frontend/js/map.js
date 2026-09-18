@@ -258,7 +258,6 @@ function renderStateIllustration(name) {
         '<span class="state-badge-abbr">' + abbr + '</span>' +
       '</div>' +
     '</div>' +
-    '<div class="state-script-name">' + name + '</div>' +
   '</div>';
 }
 
@@ -341,27 +340,20 @@ function openPanel(name, list) {
       
       '<div class="region-toolbar-row">' +
         '<div class="region-chips-wrapper">' + chipHTML + '</div>' +
-        '<div class="region-sort-wrap">' +
-          '<select class="region-sort-select" onchange="window.setRegionSort(this.value)">' +
-            '<option value="newest"' + (activeSort === 'newest' ? ' selected' : '') + '>Sort by: Newest</option>' +
-            '<option value="tonnage"' + (activeSort === 'tonnage' ? ' selected' : '') + '>Sort by: Tonnage</option>' +
-            '<option value="title"' + (activeSort === 'title' ? ' selected' : '') + '>Sort by: Title</option>' +
-          '</select>' +
+        '<div class="region-sort-dropdown-container">' +
+          '<button class="region-sort-custom-btn" onclick="window.toggleRegionSortMenu(event)">' +
+            '<span>' + (activeSort === 'tonnage' ? 'Sort by: Tonnage' : activeSort === 'title' ? 'Sort by: Title' : 'Sort by: Newest') + '</span>' +
+            '<svg class="sort-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+          '</button>' +
+          '<div class="region-sort-menu" id="regionSortMenu">' +
+            '<div class="region-sort-option' + (activeSort === 'newest' ? ' active' : '') + '" onclick="window.selectRegionSort(\'newest\')">Sort by: Newest</div>' +
+            '<div class="region-sort-option' + (activeSort === 'tonnage' ? ' active' : '') + '" onclick="window.selectRegionSort(\'tonnage\')">Sort by: Tonnage</div>' +
+            '<div class="region-sort-option' + (activeSort === 'title' ? ' active' : '') + '" onclick="window.selectRegionSort(\'title\')">Sort by: Title</div>' +
+          '</div>' +
         '</div>' +
       '</div>' +
 
-      '<div class="region-cards-list">' + cardsHTML + '</div>' +
-
-      '<div class="region-modal-footer">' +
-        '<div class="region-footer-left">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>' +
-          '<span>View all ' + name + ' projects</span>' +
-        '</div>' +
-        '<button class="region-explore-btn" onclick="window.closePanel && window.closePanel()">' +
-          '<span>Explore on map</span>' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' +
-        '</button>' +
-      '</div>';
+      '<div class="region-cards-list">' + cardsHTML + '</div>';
   }
 
   window.setRegionCat = function(c) {
@@ -374,10 +366,45 @@ function openPanel(name, list) {
     renderPanelContent();
   };
 
+  window.toggleRegionSortMenu = function(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('regionSortMenu');
+    if (menu) menu.classList.toggle('open');
+  };
+
+  window.selectRegionSort = function(s) {
+    activeSort = s;
+    renderPanelContent();
+  };
+
+  if (!window._regionSortListenerAdded) {
+    window._regionSortListenerAdded = true;
+    document.addEventListener('click', function(e) {
+      const container = document.querySelector('.region-sort-dropdown-container');
+      if (container && !container.contains(e.target)) {
+        const menu = document.getElementById('regionSortMenu');
+        if (menu) menu.classList.remove('open');
+      }
+    });
+  }
+
   renderPanelContent();
 
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay')?.classList.add('open');
+  const panelEl = document.getElementById('panel');
+  if (panelEl) {
+    panelEl.classList.add('open');
+    if (!window._panelWheelListenerAdded) {
+      window._panelWheelListenerAdded = true;
+      panelEl.addEventListener('wheel', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+      panelEl.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+      }, { passive: true });
+    }
+  }
+  document.body.classList.add('region-modal-open');
   if (typeof updateAdminBtnVisibility === 'function') updateAdminBtnVisibility();
 }
 
