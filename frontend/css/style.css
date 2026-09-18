@@ -10681,13 +10681,12 @@ body.dark-mode .map-card .map-controls-bar {
   }
 
   .atlas-brand-footer .tagline-static {
-    font-family: 'Dancing Script', 'Caveat', cursive !important;
-    font-size: 14.5px !important;
+    font-family: 'Inter', -apple-system, sans-serif !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
     color: #0f172a !important;
-    line-height: 1.15 !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em !important;
   }
 
   body.dark-mode .atlas-brand-footer .tagline-static {

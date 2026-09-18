@@ -1703,151 +1703,152 @@ function setupNavigation() {
 
 
 
-    const colors = categoryColors[catKey] || categoryColors.misc;
+    let activeTag = 'ALL';
+    let searchQuery = '';
 
+    // Collect unique tags from files
+    const availableTags = ['ALL', ...new Set(categoryData.files.map(f => f.tag || 'Drawing'))];
 
+    // Render toolbar with Search input and Tag pills
+    let toolbarHtml = `
+      <div class="folder-view-toolbar" style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:12px; background:var(--card-bg); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="position:relative; flex-grow:1;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="drawingFolderSearchInput" placeholder="Search ${categoryData.title} drawings by title or tag..." style="width:100%; padding:10px 14px 10px 40px; border-radius:100px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font-size:13px; font-weight:600; outline:none; transition:border-color 0.2s;" />
+          </div>
+          <span style="font-size:12px; font-weight:700; color:var(--sub); white-space:nowrap;" id="drawingFolderCountBadge">${categoryData.files.length} drawings</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; overflow-x:auto; padding-bottom:4px;" id="drawingFolderTagPills">
+          ${availableTags.map(tag => `
+            <button class="folder-tag-pill ${tag === 'ALL' ? 'active' : ''}" data-tag="${tag}" style="padding:6px 14px; border-radius:100px; border:1px solid var(--line); background:${tag === 'ALL' ? 'var(--accent)' : 'var(--bg)'}; color:${tag === 'ALL' ? '#fff' : 'var(--ink)'}; font-size:12px; font-weight:700; cursor:pointer; whitespace:nowrap; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
+              ${tag}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      <div id="drawingFolderCardsGrid" style="grid-column: 1 / -1; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+    `;
 
     categoryData.files.forEach(file => {
-
       const safeFilePath = file.path.replace(/'/g, "\\'");
-
       const safeFileName = file.name.replace(/'/g, "\\'");
+      const fileTag = file.tag || 'Drawing';
 
-      html += `
-
-      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}')">
-
+      toolbarHtml += `
+      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" data-title="${file.name.toLowerCase()}" data-tag="${fileTag}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}')">
         <div class="dc-cover uiverse-folder-wrapper" style="position:relative;height:165px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
-
-          
-
           <!-- Blueprint architectural grid pattern background -->
-
           <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:20px 20px;"></div>
-
           
-
           <!-- 3D Folder Animation -->
-
           <div class="uiverse-folder-container">
-
             <div class="file relative w-36 h-24 cursor-pointer origin-bottom [perspective:1000px] z-20">
-
               <div class="work-5 w-full h-full origin-top rounded-xl rounded-tl-none group-hover:shadow-[0_15px_30px_rgba(0,0,0,.2)] transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 relative" style="background:${colors.back};">
-
                 <style>
-
                   .folder-${catKey}-back::after { background: ${colors.back} !important; }
-
                   .folder-${catKey}-back::before { background: ${colors.back} !important; }
-
                   .folder-${catKey}-flap { background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo}) !important; }
-
                   .folder-${catKey}-flap::after, .folder-${catKey}-flap::before { background: ${colors.flapTo} !important; }
-
                 </style>
-
               </div>
-
               
-
               <!-- Document Sheet 4 (Inner PDF Page Preview) -->
-
               <div class="work-4 absolute inset-1 bg-zinc-400 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom select-none group-hover:[transform:rotateX(-20deg)] flex flex-col items-center justify-center p-2 text-center shadow-sm">
-
                 <span class="text-[9px] font-bold text-zinc-700 leading-tight truncate w-full px-1">${file.name}</span>
-
               </div>
-
               
-
               <!-- Document Sheet 3 -->
-
               <div class="work-3 absolute inset-1 bg-zinc-300 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom group-hover:[transform:rotateX(-30deg)]"></div>
-
               
-
               <!-- Document Sheet 2 -->
-
               <div class="work-2 absolute inset-1 bg-zinc-200 rounded-xl transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom group-hover:[transform:rotateX(-38deg)]"></div>
-
               
-
               <!-- Front Folder Flap (work-1) -->
-
               <div class="work-1 folder-${catKey}-flap absolute bottom-0 w-full h-[92px] rounded-xl rounded-tr-none after:absolute after:content-[''] after:bottom-[99%] after:right-0 after:w-[86px] after:h-[10px] after:rounded-t-xl before:absolute before:content-[''] before:-top-[6px] before:right-[84px] before:size-2.5 before:[clip-path:polygon(100%_14%,50%_100%,100%_100%);] transition-all cubic-bezier(0.25, 1, 0.5, 1) duration-300 origin-bottom flex items-end group-hover:shadow-[inset_0_12px_24px_${colors.shadowFrom},_inset_0_-12px_24px_${colors.shadowTo}] group-hover:[transform:rotateX(-46deg)_translateY(1px)]" style="background: linear-gradient(to top, ${colors.flapFrom}, ${colors.flapTo});"></div>
-
             </div>
-
           </div>
-
-
 
           <!-- Hover action overlay -->
-
           <div class="dc-hover-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.2);opacity:0;transition:opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);z-index:30;">
-
             <div style="display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:100px;font-weight:800;font-size:12px;letter-spacing:0.5px;box-shadow:0 8px 16px rgba(0,0,0,0.25);">
-
                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-
                OPEN DRAWING
-
             </div>
-
           </div>
-
         </div>
-
         
-
         <div style="padding:24px;flex-grow:1;display:flex;flex-direction:column;">
-
           <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:24px;">
-
             <div class="p-eyebrow" style="color:var(--sub);font-weight:700;letter-spacing:1px;font-size:10px;">${categoryData.title.toUpperCase()}</div>
-
             <div class="pc-title" style="font-size:17px;font-weight:800;color:var(--ink);line-height:1.3;margin:0;">${file.name}</div>
-
           </div>
-
           
-
           <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:16px;">
-
             <div style="display:flex;align-items:center;gap:6px;">
-
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-
               <span style="color:var(--sub);font-size:12px;font-weight:700;">PDF Document</span>
-
             </div>
-
             <div style="display:flex;gap:6px;">
-
-              <span style="background:var(--accent-soft);color:var(--accent);padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:800;">${file.tag}</span>
-
+              <span style="background:var(--accent-soft);color:var(--accent);padding:4px 10px;border-radius:100px;font-size:10.5px;font-weight:800;">${fileTag}</span>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
       `;
-
     });
 
-    
+    toolbarHtml += `</div>`;
+    gallery.innerHTML = toolbarHtml;
 
-    gallery.innerHTML = html;
+    // Attach event listeners for folder search and tag pills
+    const searchInput = document.getElementById('drawingFolderSearchInput');
+    const tagPills = document.querySelectorAll('.folder-tag-pill');
+    const cards = document.querySelectorAll('#drawingFolderCardsGrid .drawing-card');
+    const countBadge = document.getElementById('drawingFolderCountBadge');
 
+    const filterFolderDrawings = () => {
+      const query = (searchInput?.value || '').toLowerCase().trim();
+      let visibleCount = 0;
 
+      cards.forEach(card => {
+        const title = card.dataset.title || '';
+        const tag = card.dataset.tag || '';
+        const matchesQuery = !query || title.includes(query) || tag.toLowerCase().includes(query);
+        const matchesTag = activeTag === 'ALL' || tag === activeTag;
+
+        if (matchesQuery && matchesTag) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (countBadge) countBadge.textContent = `${visibleCount} drawing${visibleCount === 1 ? '' : 's'}`;
+    };
+
+    searchInput?.addEventListener('input', filterFolderDrawings);
+
+    tagPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        tagPills.forEach(p => {
+          p.classList.remove('active');
+          p.style.background = 'var(--bg)';
+          p.style.color = 'var(--ink)';
+        });
+        pill.classList.add('active');
+        pill.style.background = 'var(--accent)';
+        pill.style.color = '#fff';
+
+        activeTag = pill.dataset.tag || 'ALL';
+        filterFolderDrawings();
+      });
+    });
 
     // Attach IntersectionObserver for mobile auto-open on scroll
-
     setupFolderIntersectionObserver();
+  }
 
   }
 
@@ -2335,34 +2336,96 @@ function showView(name) {
 
 // Global Search Shortcut (⌘K / Ctrl+K)
 
+// Global Keyboard Shortcuts (Esc, Arrow Left/Right, Slash '/', Ctrl+K)
 window.addEventListener('keydown', (e) => {
+  const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
 
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+  // 1. Esc -> Close any open modal, drawer, or overlay
+  if (e.key === 'Escape') {
+    const detailOverlay = document.getElementById('detailOverlay');
+    const panel = document.getElementById('panel');
+    const spotlight = document.getElementById('spotlightSearchOverlay');
 
-    e.preventDefault();
-
-    if (window.innerWidth <= 768) {
-
-      if (typeof openSpotlight === 'function') openSpotlight();
-
-    } else {
-
-      const searchInput = document.getElementById('globalProjectSearch');
-
-      if (searchInput) {
-
-        searchInput.removeAttribute('readonly');
-
-        searchInput.focus();
-
-        searchInput.select();
-
-      }
-
+    if (spotlight && spotlight.style.display !== 'none') {
+      if (typeof closeSpotlight === 'function') closeSpotlight();
     }
-
+    if (detailOverlay && detailOverlay.classList.contains('open')) {
+      if (typeof window.closeDetail === 'function') window.closeDetail();
+      else detailOverlay.classList.remove('open');
+      return;
+    }
+    if (panel && panel.classList.contains('open')) {
+      if (typeof window.closePanel === 'function') window.closePanel();
+      return;
+    }
+    document.querySelectorAll('.modal-overlay.open, .modal-sheet.open').forEach(m => m.classList.remove('open'));
+    return;
   }
 
+  // 2. '/' -> Focus search bar instantly
+  if (e.key === '/' && !isInput) {
+    e.preventDefault();
+    if (window.innerWidth <= 768) {
+      if (typeof openSpotlight === 'function') openSpotlight();
+    } else {
+      const searchInput = document.getElementById('globalProjectSearch');
+      if (searchInput) {
+        searchInput.removeAttribute('readonly');
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+    return;
+  }
+
+  // 3. Ctrl+K / Cmd+K -> Search shortcut
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    if (window.innerWidth <= 768) {
+      if (typeof openSpotlight === 'function') openSpotlight();
+    } else {
+      const searchInput = document.getElementById('globalProjectSearch');
+      if (searchInput) {
+        searchInput.removeAttribute('readonly');
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+    return;
+  }
+
+  // 4. ArrowLeft (←) / ArrowRight (→) -> Navigate previous / next project
+  if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !isInput) {
+    const detailOverlay = document.getElementById('detailOverlay');
+    const panel = document.getElementById('panel');
+
+    if (detailOverlay && detailOverlay.classList.contains('open')) {
+      const arrowBtn = e.key === 'ArrowLeft'
+        ? document.querySelector('.detail-nav-arrow.prev')
+        : document.querySelector('.detail-nav-arrow.next');
+      if (arrowBtn) {
+        e.preventDefault();
+        arrowBtn.click();
+      }
+      return;
+    }
+
+    if (panel && panel.classList.contains('open')) {
+      const cards = Array.from(document.querySelectorAll('.region-proj-card'));
+      if (cards.length > 1) {
+        let activeIdx = cards.findIndex(c => c.classList.contains('keyboard-active'));
+        if (activeIdx === -1) activeIdx = 0;
+        else {
+          cards[activeIdx].classList.remove('keyboard-active');
+          if (e.key === 'ArrowLeft') activeIdx = Math.max(0, activeIdx - 1);
+          else activeIdx = Math.min(cards.length - 1, activeIdx + 1);
+        }
+        e.preventDefault();
+        cards[activeIdx].classList.add('keyboard-active');
+        cards[activeIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
 });
 
 

@@ -124,14 +124,20 @@ function handleHover(event, d, projectsList, category) {
 
   if (!list || list.length === 0) {
     tooltip.html(
-      '<div class="t-name">' + name + '</div>' +
-      '<div class="t-meta">No projects yet</div>'
+      '<div style="font-weight:800; font-size:13px; color:var(--ink); margin-bottom:2px;">' + name + '</div>' +
+      '<div style="font-size:11px; font-weight:600; color:var(--sub);">No active projects</div>'
     ).classed('show', true);
   } else {
     tooltip.html(
-      '<div class="t-name">' + name + '</div>' +
-      '<div class="t-meta">' + Math.round(tons).toLocaleString() + ' Total Tons</div>' +
-      '<div class="t-cta">Click to explore &rarr;</div>'
+      '<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:4px;">' +
+        '<div style="font-weight:800; font-size:14px; color:var(--ink);">' + name + '</div>' +
+        '<span style="background:var(--accent-soft); color:var(--accent); font-size:10px; font-weight:800; padding:2px 8px; border-radius:100px;">' + list.length + ' ' + (list.length === 1 ? 'Project' : 'Projects') + '</span>' +
+      '</div>' +
+      '<div style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--sub);">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>' +
+        '<span>' + Math.round(tons).toLocaleString() + ' Total Tons</span>' +
+      '</div>' +
+      '<div style="margin-top:6px; pt-1; border-top:1px dashed var(--line); font-size:10.5px; font-weight:800; color:var(--accent); display:flex; align-items:center; gap:4px;">Click to view projects &rarr;</div>'
     ).classed('show', true);
   }
 }
