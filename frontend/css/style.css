@@ -4573,16 +4573,7 @@ body.dark-mode .smooky-subtext {
 }
 
 .smooky-files-badge {
-  font-size: 14px;
-  font-weight: 700;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding-top: 10px;
-  margin-top: 4px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: none !important;
 }
 
 body.dark-mode .smooky-files-badge {
