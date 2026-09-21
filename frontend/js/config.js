@@ -3,7 +3,7 @@
 const API_BASE = "/api";
 const AUTH_KEY = "steeltrack_admin_token";
 
-const CATEGORIES = ["All","Industrial","Commercial","Healthcare","Airport","Warehouse","Stadium","Institutional","Manufacturing","Data Center","Oil & Gas","Power Plant","Bridge","Misc Steel"];
+const CATEGORIES = ["All","Industrial","Commercial","Healthcare","Warehouse","Stadium","Institutional","Manufacturing","Data Center","Oil & Gas","Power Plant","Bridge","Misc Steel"];
 const STATUSES = ["Completed","Active","In Review"];
 
 window.CONFIG = {

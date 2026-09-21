@@ -241,7 +241,7 @@ async function fetchAppInitialData() {
 
     const catSel = document.getElementById('f-category');
 
-    if (catSel) catSel.innerHTML = ((window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || []).filter(c => c !== 'All').map(c => `<option value="${c}">${c}</option>`).join('');
+    if (catSel) catSel.innerHTML = ((window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || []).filter(c => c !== 'All').map(c => `<option value="${c}">${c}</option>`).join('');
 
     
 
@@ -541,7 +541,7 @@ function renderCategoryChips() {
 
   if (!row) return;
 
-  const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || ['All'];
+  const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']) || ['All'];
 
   const oldSearch = document.getElementById('globalProjectSearch');
 
@@ -643,7 +643,7 @@ function renderCategoryChips() {
 
     // 2-Row Grid layout on desktop so Row 1 ends with Data Center and Row 2 ends with Search Bar aligned with map box edge
 
-    const row1Cats = ['All', 'Industrial', 'Commercial', 'Healthcare', 'Airport', 'Warehouse', 'Stadium', 'Institutional', 'Manufacturing', 'Data Center'];
+    const row1Cats = ['All', 'Industrial', 'Commercial', 'Healthcare', 'Warehouse', 'Stadium', 'Institutional', 'Manufacturing', 'Data Center'];
 
     const row2Cats = cats.filter(c => !row1Cats.includes(c));
 
@@ -3017,10 +3017,31 @@ window.openDetail = function(id) {
 
 
 
-  document.getElementById('detailOverlay')?.scrollTo({ top: 0, behavior: 'instant' });
-  document.getElementById('detailScrollContent')?.scrollTo({ top: 0, behavior: 'instant' });
+  const dOverlay = document.getElementById('detailOverlay');
+  const dScrollContent = document.getElementById('detailScrollContent');
+  const dBackToTop = document.getElementById('detailBackToTopFab');
 
-  document.getElementById('detailOverlay')?.classList.add('open');
+  dOverlay?.scrollTo({ top: 0, behavior: 'instant' });
+  dScrollContent?.scrollTo({ top: 0, behavior: 'instant' });
+  if (dBackToTop) dBackToTop.style.display = 'none';
+
+  if (dScrollContent && !dScrollContent.dataset.scrollBound) {
+    dScrollContent.dataset.scrollBound = 'true';
+    dScrollContent.addEventListener('scroll', () => {
+      const fab = document.getElementById('detailBackToTopFab');
+      if (fab) fab.style.display = dScrollContent.scrollTop > 200 ? 'flex' : 'none';
+    });
+  }
+
+  if (dOverlay && !dOverlay.dataset.scrollBound) {
+    dOverlay.dataset.scrollBound = 'true';
+    dOverlay.addEventListener('scroll', () => {
+      const fab = document.getElementById('detailBackToTopFab');
+      if (fab) fab.style.display = dOverlay.scrollTop > 200 ? 'flex' : 'none';
+    });
+  }
+
+  dOverlay?.classList.add('open');
 
   updateAdminBtnVisibility();
 
@@ -4321,7 +4342,7 @@ function populateCategorySelect() {
 
   if (catSel && catSel.children.length === 0) {
 
-    const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Airport','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']).filter(c => c !== 'All');
+    const cats = (window.CONFIG?.CATEGORIES || ['Industrial','Commercial','Healthcare','Warehouse','Stadium','Institutional','Manufacturing','Data Center','Oil & Gas','Power Plant','Bridge','Misc Steel']).filter(c => c !== 'All');
 
     catSel.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
 
