@@ -1672,13 +1672,13 @@ function setupNavigation() {
       <div id="drawingFolderCardsGrid" style="grid-column: 1 / -1; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px; width:100%;">
     `;
 
-    categoryData.files.forEach(file => {
+    categoryData.files.forEach((file, index) => {
       const safeFilePath = file.path.replace(/'/g, "\\'");
       const safeFileName = file.name.replace(/'/g, "\\'");
       const fileTag = file.tag || 'Drawing';
 
       gridHtml += `
-      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" data-title="${file.name.toLowerCase()}" data-tag="${fileTag}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}')">
+      <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" data-title="${file.name.toLowerCase()}" data-tag="${fileTag}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}', '${catKey}', ${index})">
         <div class="dc-cover uiverse-folder-wrapper" style="position:relative;height:165px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
           <!-- Blueprint architectural grid pattern background -->
           <div style="position:absolute;inset:0;opacity:0.06;background-image:linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px);background-size:20px 20px;"></div>
