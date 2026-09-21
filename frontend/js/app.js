@@ -1502,6 +1502,7 @@ function setupNavigation() {
   function renderFolders() {
 
     window.renderFolders = renderFolders;
+    try { window.scrollTo(0, 0); } catch(e) {}
 
     const gallery = document.getElementById('drawingsGallery');
 
@@ -1620,6 +1621,7 @@ function setupNavigation() {
   function renderFolderContents(catKey) {
 
     window.renderFolderContents = renderFolderContents;
+    try { window.scrollTo(0, 0); } catch(e) {}
 
     const gallery = document.getElementById('drawingsGallery');
 
@@ -2142,6 +2144,7 @@ window.updateMobileDockIndicator = updateMobileDockIndicator;
 
 function showView(name) {
   window.showView = showView;
+  try { window.scrollTo(0, 0); } catch(e) {}
 
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 
