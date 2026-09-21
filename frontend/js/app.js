@@ -1572,13 +1572,13 @@ function setupNavigation() {
           ${subtext}
           <div class="smooky-action-wrap">
             <span class="smooky-action-lbl">Explore Now</span>
-            <span class="smooky-action-circle" style="background:${theme.circle};">
+            <span class="smooky-action-circle">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </span>
           </div>
         </div>
         <div class="smooky-card-right">
-          <div class="smooky-wave-bg" style="background:${theme.bg};"></div>
+          <div class="smooky-wave-bg"></div>
           <div class="smooky-icon-box">
             <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
           </div>
