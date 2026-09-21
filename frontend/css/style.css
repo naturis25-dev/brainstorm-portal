@@ -4430,7 +4430,17 @@ body.dark-mode .drop-zone {
   overflow: hidden;
   cursor: pointer;
   box-sizing: border-box;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s ease;
+  will-change: opacity, transform;
+}
+
+.smooky-card.card-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 body.dark-mode .smooky-card {
@@ -6178,7 +6188,8 @@ body.dark-mode .drawings-back-btn {
   height: 4px;
   background: #2563eb;
   border-radius: 2px;
-  margin-bottom: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 @media (min-width: 769px) {
@@ -6277,11 +6288,57 @@ body.theme-ca .smooky-card.is-in-view .smooky-action-circle {
     font-size: 12px !important;
     line-height: 1.4 !important;
   }
+  #drawingsGallery {
+    gap: 12px !important;
+  }
   #drawingsGallery .smooky-card,
   #drawingsGallery .uiverse-folder-card {
     max-width: 100% !important;
     width: 100% !important;
     min-width: 0 !important;
+    padding: 14px 16px !important;
+    border-radius: 16px !important;
+    min-height: 104px !important;
+  }
+  .smooky-card-left {
+    gap: 6px !important;
+    padding-right: 8px !important;
+  }
+  .smooky-title {
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+  }
+  .smooky-subtext {
+    font-size: 11.5px !important;
+    line-height: 1.3 !important;
+  }
+  .smooky-action-wrap {
+    margin-top: 6px !important;
+    padding-top: 6px !important;
+    gap: 8px !important;
+  }
+  .smooky-action-lbl {
+    font-size: 12.5px !important;
+  }
+  .smooky-action-circle {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .smooky-action-circle svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .smooky-wave-bg {
+    width: 135px !important;
+    height: 135px !important;
+    right: -45px !important;
+  }
+  .smooky-card-img {
+    max-height: 55px !important;
+    max-width: 75px !important;
+  }
+  .smooky-card-right {
+    min-width: 90px !important;
   }
   .smooky-files-badge {
     display: none !important;

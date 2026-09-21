@@ -1149,91 +1149,37 @@ function renderCategoryChips() {
 
 
     if (searchInput) {
+      const handleSearchTrigger = (query) => {
+        if (typeof openSpotlight === 'function') {
+          openSpotlight(query || '');
+        }
+      };
 
       searchInput.addEventListener('pointerdown', () => {
-
         searchInput.removeAttribute('readonly');
-
       });
 
       searchInput.addEventListener('click', (e) => {
-
         e.stopPropagation();
-
         searchInput.removeAttribute('readonly');
-
-        if (window.innerWidth <= 768) {
-
-          openSpotlight(searchInput.value.trim());
-
-        } else {
-
-          renderCosmosPopup(searchInput.value.trim());
-
-        }
-
+        handleSearchTrigger(searchInput.value.trim());
       });
 
       searchInput.addEventListener('focus', () => {
-
         searchInput.removeAttribute('readonly');
-
-        if (window.innerWidth <= 768) {
-
-          searchInput.blur();
-
-          openSpotlight(searchInput.value.trim());
-
-        } else {
-
-          renderCosmosPopup(searchInput.value.trim());
-
-        }
-
-      });
-
-      searchInput.addEventListener('blur', () => {
-
-        searchInput.setAttribute('readonly', 'readonly');
-
+        handleSearchTrigger(searchInput.value.trim());
       });
 
       searchInput.addEventListener('keydown', (e) => {
-
-        if (e.key === 'Escape') {
-
-          closeCosmosPopup();
-
-        } else if (e.key === 'Enter') {
-
-          if (window.innerWidth <= 768) {
-
-            openSpotlight(searchInput.value.trim());
-
-          } else {
-
-            executeSearch();
-
-          }
-
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleSearchTrigger(searchInput.value.trim());
         }
-
       });
 
       searchInput.addEventListener('input', () => {
-
-        if (window.innerWidth <= 768) {
-
-          openSpotlight(searchInput.value.trim());
-
-        } else {
-
-          executeSearch();
-
-        }
-
+        handleSearchTrigger(searchInput.value.trim());
       });
-
     }
 
   }
@@ -1719,25 +1665,9 @@ function setupNavigation() {
     // Collect unique tags from files
     const availableTags = ['ALL', ...new Set(categoryData.files.map(f => f.tag || 'Drawing'))];
 
-    // Render toolbar with Search input and Tag pills
-    let toolbarHtml = `
-      <div class="folder-view-toolbar" style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:12px; background:var(--card-bg); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="position:relative; flex-grow:1;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="drawingFolderSearchInput" placeholder="Search ${categoryData.title} drawings by title or tag..." style="width:100%; padding:10px 14px 10px 40px; border-radius:100px; border:1px solid var(--line); background:var(--bg); color:var(--ink); font-size:13px; font-weight:600; outline:none; transition:border-color 0.2s;" />
-          </div>
-          <span style="font-size:12px; font-weight:700; color:var(--sub); white-space:nowrap;" id="drawingFolderCountBadge">${categoryData.files.length} drawings</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px; overflow-x:auto; padding-bottom:4px;" id="drawingFolderTagPills">
-          ${availableTags.map(tag => `
-            <button class="folder-tag-pill ${tag === 'ALL' ? 'active' : ''}" data-tag="${tag}" style="padding:6px 14px; border-radius:100px; border:1px solid var(--line); background:${tag === 'ALL' ? 'var(--accent)' : 'var(--bg)'}; color:${tag === 'ALL' ? '#fff' : 'var(--ink)'}; font-size:12px; font-weight:700; cursor:pointer; whitespace:nowrap; transition:all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
-              ${tag}
-            </button>
-          `).join('')}
-        </div>
-      </div>
-      <div id="drawingFolderCardsGrid" style="grid-column: 1 / -1; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+    // Render drawings cards grid directly without search toolbar
+    let gridHtml = `
+      <div id="drawingFolderCardsGrid" style="grid-column: 1 / -1; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px; width:100%;">
     `;
 
     categoryData.files.forEach(file => {
@@ -1745,7 +1675,7 @@ function setupNavigation() {
       const safeFileName = file.name.replace(/'/g, "\\'");
       const fileTag = file.tag || 'Drawing';
 
-      toolbarHtml += `
+      gridHtml += `
       <div class="proj-card drawing-card uiverse-folder-card group" data-cat="${catKey}" data-title="${file.name.toLowerCase()}" data-tag="${fileTag}" style="cursor:pointer;padding:0;overflow:hidden;border:1px solid var(--line);background:var(--bg);transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);display:flex;flex-direction:column;" onclick="window.openDrawingPdf('${safeFilePath}', '${safeFileName}')">
         <div class="dc-cover uiverse-folder-wrapper" style="position:relative;height:165px;background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);">
           <!-- Blueprint architectural grid pattern background -->
@@ -1808,53 +1738,8 @@ function setupNavigation() {
       `;
     });
 
-    toolbarHtml += `</div>`;
-    gallery.innerHTML = toolbarHtml;
-
-    // Attach event listeners for folder search and tag pills
-    const searchInput = document.getElementById('drawingFolderSearchInput');
-    const tagPills = document.querySelectorAll('.folder-tag-pill');
-    const cards = document.querySelectorAll('#drawingFolderCardsGrid .drawing-card');
-    const countBadge = document.getElementById('drawingFolderCountBadge');
-
-    const filterFolderDrawings = () => {
-      const query = (searchInput?.value || '').toLowerCase().trim();
-      let visibleCount = 0;
-
-      cards.forEach(card => {
-        const title = card.dataset.title || '';
-        const tag = card.dataset.tag || '';
-        const matchesQuery = !query || title.includes(query) || tag.toLowerCase().includes(query);
-        const matchesTag = activeTag === 'ALL' || tag === activeTag;
-
-        if (matchesQuery && matchesTag) {
-          card.style.display = 'flex';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      if (countBadge) countBadge.textContent = `${visibleCount} drawing${visibleCount === 1 ? '' : 's'}`;
-    };
-
-    searchInput?.addEventListener('input', filterFolderDrawings);
-
-    tagPills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        tagPills.forEach(p => {
-          p.classList.remove('active');
-          p.style.background = 'var(--bg)';
-          p.style.color = 'var(--ink)';
-        });
-        pill.classList.add('active');
-        pill.style.background = 'var(--accent)';
-        pill.style.color = '#fff';
-
-        activeTag = pill.dataset.tag || 'ALL';
-        filterFolderDrawings();
-      });
-    });
+    gridHtml += `</div>`;
+    gallery.innerHTML = gridHtml;
 
     // Attach IntersectionObserver for mobile auto-open on scroll
     setupFolderIntersectionObserver();
@@ -1863,33 +1748,56 @@ function setupNavigation() {
 
 
   function setupFolderIntersectionObserver() {
-    if (window.innerWidth > 768) return; // Mobile focused one-by-one scroll activation
-
     const cards = Array.from(document.querySelectorAll('.smooky-card, .uiverse-folder-card'));
     if (!cards.length) return;
 
-    // Ensure Canada (first card) is active immediately when mobile view opens
-    if (cards[0]) {
-      cards[0].classList.add('is-in-view');
-    }
+    // 1. One-by-one staggered entrance animation reveal
+    cards.forEach((card, idx) => {
+      card.style.transitionDelay = `${idx * 0.12}s`;
+      setTimeout(() => {
+        card.classList.add('card-revealed');
+      }, 50 + (idx * 120));
+    });
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-15% 0px -25% 0px',
-      threshold: 0.25
-    };
+    if (window.innerWidth > 768) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-in-view');
+    // 2. Focal scroll detection: Only ONE card is active at a time as user scrolls down
+    const updateActiveCardOnScroll = () => {
+      let closestCard = cards[0];
+      let minDistance = Infinity;
+
+      // Only evaluate scroll focus after scrolling past the header area
+      if (window.scrollY > 40) {
+        const viewportCenter = window.innerHeight * 0.42;
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const cardCenter = rect.top + (rect.height / 2);
+          const distance = Math.abs(cardCenter - viewportCenter);
+
+          if (rect.bottom > 60 && rect.top < window.innerHeight - 60) {
+            if (distance < minDistance) {
+              minDistance = distance;
+              closestCard = card;
+            }
+          }
+        });
+      }
+
+      cards.forEach(card => {
+        if (card === closestCard) {
+          card.classList.add('is-in-view');
         } else {
-          entry.target.classList.remove('is-in-view');
+          card.classList.remove('is-in-view');
         }
       });
-    }, observerOptions);
+    };
 
-    cards.forEach(card => observer.observe(card));
+    if (window._folderScrollHandler) {
+      window.removeEventListener('scroll', window._folderScrollHandler);
+    }
+    window._folderScrollHandler = updateActiveCardOnScroll;
+    window.addEventListener('scroll', updateActiveCardOnScroll, { passive: true });
+    updateActiveCardOnScroll();
   }
 
 
