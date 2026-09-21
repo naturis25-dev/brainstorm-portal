@@ -687,9 +687,9 @@ function renderCategoryChips() {
 
         </div>
 
-        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="group uiverse-search-group" style="flex: 1 1 auto; margin: 0; min-width: 200px;">
+        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="desktop-interactive-search-bar" style="flex: 1 1 auto; margin: 0; min-width: 220px;">
 
-          <svg class="search-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="search-bar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 
             <circle cx="11" cy="11" r="8"></circle>
 
@@ -697,9 +697,9 @@ function renderCategoryChips() {
 
           </svg>
 
-          <input type="search" id="globalProjectSearch" name="search_atlas_projects" placeholder="${searchPlaceholder}" value="${oldVal ? String(oldVal).replace(/"/g, '&quot;') : ''}" class="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
+          <input type="search" id="globalProjectSearch" name="search_atlas_projects" placeholder="${searchPlaceholder}" value="${oldVal ? String(oldVal).replace(/"/g, '&quot;') : ''}" class="search-bar-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
 
-          <div class="search-kbd-tag">Ctrl+K</div>
+          <div class="search-shortcut-badge">Ctrl+K</div>
 
         </form>
 
@@ -1596,6 +1596,14 @@ function setupNavigation() {
 
     
 
+    const pastelThemeColors = {
+      canada: { bg: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)', circle: '#2563eb' },      // Canada (Soft Red Pastel)
+      quebec: { bg: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', circle: '#2563eb' },      // Quebec (Soft Orange/Peach Pastel)
+      usa: { bg: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', circle: '#2563eb' },         // USA (Soft Blue Pastel)
+      uae: { bg: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', circle: '#2563eb' },         // UAE (Soft Mint Green Pastel)
+      misc: { bg: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', circle: '#2563eb' }         // Misc (Soft Lavender Pastel)
+    };
+
     desiredOrder.forEach(catKey => {
       const categoryData = cachedDrawingsData[catKey];
       if (!categoryData) return;
@@ -1603,11 +1611,12 @@ function setupNavigation() {
       const count = categoryData.files ? categoryData.files.length : 0;
       const imgSrc = categoryIcons[catKey] || 'assets/map_icons/map_misc.png';
       const isMisc = catKey === 'misc';
+      const theme = pastelThemeColors[catKey] || pastelThemeColors.misc;
 
       const subtext = isMisc ? `<div class="smooky-subtext">Complex stair / framing drawing samples and standard details.</div>` : '';
 
       html += `
-      <div class="smooky-card group ${isMisc ? 'smooky-card-wide' : ''}" data-cat="${catKey}" onclick="window.renderDrawingsList('${catKey}')">
+      <div class="smooky-card group ${isMisc ? 'smooky-card-wide' : ''}" data-cat="${catKey}" onclick="window.renderFolderContents('${catKey}')">
         <div class="smooky-card-left">
           <h3 class="smooky-title">${categoryData.title}</h3>
           <div class="smooky-files-badge">
@@ -1617,13 +1626,13 @@ function setupNavigation() {
           ${subtext}
           <div class="smooky-action-wrap">
             <span class="smooky-action-lbl">Explore Now</span>
-            <span class="smooky-action-circle">
+            <span class="smooky-action-circle" style="background:${theme.circle};">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </span>
           </div>
         </div>
         <div class="smooky-card-right">
-          <div class="smooky-wave-bg"></div>
+          <div class="smooky-wave-bg" style="background:${theme.bg};"></div>
           <div class="smooky-icon-box">
             <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
           </div>
@@ -1703,6 +1712,7 @@ function setupNavigation() {
 
 
 
+    const colors = categoryColors[catKey] || categoryColors.misc;
     let activeTag = 'ALL';
     let searchQuery = '';
 
@@ -1850,106 +1860,36 @@ function setupNavigation() {
     setupFolderIntersectionObserver();
   }
 
-  }
-
 
 
   function setupFolderIntersectionObserver() {
-
     if (window.innerWidth > 768) return; // Mobile focused one-by-one scroll activation
 
+    const cards = Array.from(document.querySelectorAll('.smooky-card, .uiverse-folder-card'));
+    if (!cards.length) return;
 
+    // Ensure Canada (first card) is active immediately when mobile view opens
+    if (cards[0]) {
+      cards[0].classList.add('is-in-view');
+    }
 
-    const updateActiveCard = () => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-15% 0px -25% 0px',
+      threshold: 0.25
+    };
 
-      const cards = Array.from(document.querySelectorAll('.uiverse-folder-card, .smooky-card'));
-
-      if (!cards.length) return;
-
-
-
-      const viewportCenter = window.innerHeight / 2;
-
-      let closestCard = null;
-
-      let minDistance = Infinity;
-
-
-
-      cards.forEach(card => {
-
-        const rect = card.getBoundingClientRect();
-
-        // Check if card is visible on screen
-
-        if (rect.bottom > 0 && rect.top < window.innerHeight) {
-
-          const cardCenter = rect.top + rect.height / 2;
-
-          const distance = Math.abs(viewportCenter - cardCenter);
-
-          if (distance < minDistance) {
-
-            minDistance = distance;
-
-            closestCard = card;
-
-          }
-
-        }
-
-      });
-
-
-
-      cards.forEach(card => {
-
-        if (card === closestCard) {
-
-          card.classList.add('is-in-view');
-
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in-view');
         } else {
-
-          card.classList.remove('is-in-view');
-
+          entry.target.classList.remove('is-in-view');
         }
-
       });
+    }, observerOptions);
 
-    };
-
-
-
-    // Attach scroll and resize listeners with requestAnimationFrame for smooth 60fps performance
-
-    let ticking = false;
-
-    const onScroll = () => {
-
-      if (!ticking) {
-
-        window.requestAnimationFrame(() => {
-
-          updateActiveCard();
-
-          ticking = false;
-
-        });
-
-        ticking = true;
-
-      }
-
-    };
-
-
-
-    window.removeEventListener('scroll', onScroll);
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    updateActiveCard();
-
+    cards.forEach(card => observer.observe(card));
   }
 
 
@@ -2484,14 +2424,15 @@ function closePanel() {
 
 }
 
-window.closePanel = closePanel;
-
-
+function closeDetail() {
+  const detailOverlay = document.getElementById('detailOverlay');
+  if (detailOverlay) detailOverlay.classList.remove('open');
+  updateAdminBtnVisibility();
+}
+window.closeDetail = closeDetail;
 
 // ============================================================
-
 // PROJECT DETAIL VIEW
-
 // ============================================================
 
 window.openDetail = function(id) {
@@ -2527,46 +2468,31 @@ window.openDetail = function(id) {
 
 
 
-  let prevBtnHtml = '';
+  const projList = (window.currentRegionProjects && window.currentRegionProjects.length > 0) 
+    ? window.currentRegionProjects 
+    : (window.PROJECTS || PROJECTS || []).map(x => x.id);
 
+  let prevBtnHtml = '';
   let nextBtnHtml = '';
 
-  if (window.currentRegionProjects && window.currentRegionProjects.length > 1) {
-
-    const idx = window.currentRegionProjects.indexOf(id);
-
-    let prevId = idx > 0 ? window.currentRegionProjects[idx - 1] : null;
-
-    let nextId = (idx !== -1 && idx < window.currentRegionProjects.length - 1) ? window.currentRegionProjects[idx + 1] : null;
-
-    
+  if (projList && projList.length > 1) {
+    const idx = projList.indexOf(id);
+    let prevId = idx > 0 ? projList[idx - 1] : projList[projList.length - 1];
+    let nextId = (idx !== -1 && idx < projList.length - 1) ? projList[idx + 1] : projList[0];
 
     if (prevId) {
-
-      prevBtnHtml = `<button class="detail-nav-arrow prev" onclick="window.openDetail('${prevId}')">
-
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
-
+      prevBtnHtml = `<button class="detail-nav-arrow prev" onclick="window.openDetail('${prevId}')" title="Previous Project" aria-label="Previous Project">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>`;
-
     }
-
     if (nextId) {
-
-      nextBtnHtml = `<button class="detail-nav-arrow next" onclick="window.openDetail('${nextId}')">
-
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
-
+      nextBtnHtml = `<button class="detail-nav-arrow next" onclick="window.openDetail('${nextId}')" title="Next Project" aria-label="Next Project">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </button>`;
-
     }
-
   }
 
-  
-
   const navRow = document.getElementById('detailNavRow');
-
   if (navRow) navRow.innerHTML = prevBtnHtml + nextBtnHtml;
 
 
@@ -2829,11 +2755,6 @@ window.openDetail = function(id) {
 
     const subNavHtml = `
       <div class="detail-subnav-bar">
-        <button class="d-tab d-tab-back" onclick="window.closeDetail()" title="Back">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          <span class="d-tab-full">Back</span>
-          <span class="d-tab-short">Back</span>
-        </button>
         ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Project Gallery</span><span class="d-tab-short">Gallery</span></button>` : ''}
         ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">3D Model</span><span class="d-tab-short">3D View</span></button>` : ''}
         <button class="d-tab ${overviewTabActive ? 'active' : ''}" onclick="document.getElementById('sec-overview-${p.id}')?.scrollIntoView({behavior:'smooth'})">Overview</button>
@@ -3177,6 +3098,7 @@ window.openDetail = function(id) {
 
 
   document.getElementById('detailOverlay')?.scrollTo({ top: 0, behavior: 'instant' });
+  document.getElementById('detailScrollContent')?.scrollTo({ top: 0, behavior: 'instant' });
 
   document.getElementById('detailOverlay')?.classList.add('open');
 
@@ -6534,6 +6456,23 @@ function initApp() {
 
   initDrawingPdfViewerModal();
 
+  // Top-Left Corner Mouse Proximity Detection for Secret Admin Button (Desktop Only)
+  document.addEventListener('mousemove', (e) => {
+    if (window.innerWidth <= 768) return; // Completely disable on mobile
+    const adminBtns = document.querySelectorAll('.secret-admin-trigger, #secretAdminTriggerBtn');
+    if (!adminBtns.length) return;
+    
+    // Check if mouse is within 150px of the top-left corner (x <= 150 && y <= 150)
+    const isNearTopLeft = e.clientX <= 150 && e.clientY <= 150;
+    
+    adminBtns.forEach(btn => {
+      if (isNearTopLeft) {
+        btn.classList.add('near-top-left');
+      } else {
+        btn.classList.remove('near-top-left');
+      }
+    });
+  });
 }
 
 

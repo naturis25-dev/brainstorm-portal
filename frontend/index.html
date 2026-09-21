@@ -446,15 +446,25 @@
 
   <!-- Glassmorphism Top Bar Navigation -->
   <div class="topbar" id="topbar">
-    <a href="#" class="brand" id="navHome">
-      <div class="logo-box" id="brandLogo">
-        <img src="assets/logo.png" alt="Brainstorm Atlas Logo">
-      </div>
-      <div class="brand-text">
-        <span class="b-name">Brainstorm Atlas</span>
-        <span class="b-tag">PROJECT PORTAL</span>
-      </div>
-    </a>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <!-- Hidden Admin Access Trigger (Top-Left Corner) -->
+      <button class="secret-admin-trigger" id="secretAdminTriggerBtn" onclick="if(window.handleAdminLoginClick) window.handleAdminLoginClick(); else { window.showView('login'); }" title="Admin Sign In" aria-label="Admin Sign In">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+
+      <a href="#" class="brand" id="navHome">
+        <div class="logo-box" id="brandLogo">
+          <img src="assets/logo.png" alt="Brainstorm Atlas Logo">
+        </div>
+        <div class="brand-text">
+          <span class="b-name">Brainstorm Atlas</span>
+          <span class="b-tag">PROJECT PORTAL</span>
+        </div>
+      </a>
+    </div>
 
     <div class="top-actions">
       <button class="icon-btn active" id="navMapBtn">
@@ -737,23 +747,31 @@
 
   <!-- Project Detail Fullscreen Overlay -->
   <div class="detail-overlay" id="detailOverlay">
-    <div class="detail-close" id="detailClose" onclick="document.getElementById('detailOverlay')?.classList.remove('open')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+    <!-- Screen Fixed Floating Overlay Controls (Un-scrolled Viewport) -->
+    <div class="detail-close" id="detailClose" onclick="document.getElementById('detailOverlay')?.classList.remove('open')" title="Close Project Detail"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+    <div class="detail-nav-row" id="detailNavRow"></div>
+    <button class="detail-back-to-top-fab" id="detailBackToTopFab" onclick="document.getElementById('detailScrollContent')?.scrollTo({top:0, behavior:'smooth'}); document.getElementById('detailOverlay')?.scrollTo({top:0, behavior:'smooth'});" title="Back to Top" aria-label="Back to Top">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+      <span>Back to Top</span>
+    </button>
     
-    <div class="detail-hero-section">
-      <div class="detail-hero-img-wrap">
-        <img src="" class="detail-hero" id="detailHero" alt="Project Banner">
+    <!-- Scrollable Content Viewport -->
+    <div class="detail-scroll-content" id="detailScrollContent">
+      <div class="detail-hero-section">
+        <div class="detail-hero-img-wrap">
+          <img src="" class="detail-hero" id="detailHero" alt="Project Banner">
+        </div>
+        <div class="detail-hero-gradient"></div>
+        
+        <div class="detail-hero-content">
+          <div class="detail-eyebrow" id="detailEyebrow"></div>
+          <h1 class="detail-title-hero" id="detailTitleHero"></h1>
+          <div class="detail-loc-hero" id="detailLocHero"></div>
+        </div>
       </div>
-      <div class="detail-hero-gradient"></div>
-      
-      <div class="detail-hero-content">
-        <div class="detail-nav-row" id="detailNavRow"></div>
-        <div class="detail-eyebrow" id="detailEyebrow"></div>
-        <h1 class="detail-title-hero" id="detailTitleHero"></h1>
-        <div class="detail-loc-hero" id="detailLocHero"></div>
-      </div>
-    </div>
 
-    <div class="detail-wrap" id="detailWrap"></div>
+      <div class="detail-wrap" id="detailWrap"></div>
+    </div>
   </div>
 
   <!-- Admin Login View -->
@@ -1121,14 +1139,7 @@
 
   <!-- Application Script Modules -->
   <script src="js/config.js?v=20260903001" defer></script>
-  <div class="secret-admin-trigger" onclick="if(window.handleAdminLoginClick)window.handleAdminLoginClick(event);else if(window.showView)window.showView('login');">
-    <button class="secret-admin-btn" id="navLoginBtn" title="Admin Login" onclick="if(window.handleAdminLoginClick)window.handleAdminLoginClick(event);else if(window.showView)window.showView('login');">
-      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-    </button>
-  </div>
+
 
   <!-- Manage Drawings Modal -->
   <div class="modal-overlay" id="manageDrawingsModal">
