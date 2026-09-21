@@ -1767,7 +1767,7 @@ function setupNavigation() {
       const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
       const innerHeight = window.innerHeight || 0;
 
-      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 90);
+      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 15);
       const isAtTop = scrollY <= 40;
 
       let closestCard = cards[0];
@@ -1783,7 +1783,7 @@ function setupNavigation() {
           const cardCenter = rect.top + (rect.height / 2);
           const distance = Math.abs(cardCenter - viewportCenter);
 
-          if (rect.bottom > 40 && rect.top < innerHeight - 40) {
+          if (rect.bottom > 20 && rect.top < innerHeight - 20) {
             if (distance < minDistance) {
               minDistance = distance;
               closestCard = card;
