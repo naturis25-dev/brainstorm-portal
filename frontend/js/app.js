@@ -1763,18 +1763,27 @@ function setupNavigation() {
 
     // 2. Focal scroll detection: Only ONE card is active at a time as user scrolls down
     const updateActiveCardOnScroll = () => {
-      let closestCard = cards[0];
-      let minDistance = Infinity;
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
+      const innerHeight = window.innerHeight || 0;
 
-      // Only evaluate scroll focus after scrolling past the header area
-      if (window.scrollY > 40) {
-        const viewportCenter = window.innerHeight * 0.42;
+      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 90);
+      const isAtTop = scrollY <= 40;
+
+      let closestCard = cards[0];
+
+      if (isAtBottom) {
+        closestCard = cards[cards.length - 1];
+      } else if (!isAtTop) {
+        let minDistance = Infinity;
+        const viewportCenter = innerHeight * 0.42;
+
         cards.forEach(card => {
           const rect = card.getBoundingClientRect();
           const cardCenter = rect.top + (rect.height / 2);
           const distance = Math.abs(cardCenter - viewportCenter);
 
-          if (rect.bottom > 60 && rect.top < window.innerHeight - 60) {
+          if (rect.bottom > 40 && rect.top < innerHeight - 40) {
             if (distance < minDistance) {
               minDistance = distance;
               closestCard = card;
