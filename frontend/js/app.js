@@ -6269,85 +6269,111 @@ function initDrawingPdfViewerModal() {
   const iframe = document.getElementById('drawingPdfIframe');
 
   const pdfObj = document.getElementById('drawingPdfObject');
-
   const titleEl = document.getElementById('drawingPdfModalTitle');
-
   const downloadBtn = document.getElementById('drawingPdfDownloadBtn');
+  const prevBtn = document.getElementById('prevDrawingPdfBtn');
+  const nextBtn = document.getElementById('nextDrawingPdfBtn');
+  const counterEl = document.getElementById('drawingPdfIndexCounter');
 
+  let currentPdfCatKey = null;
+  let currentPdfIndex = 0;
 
+  function updatePdfModalContent() {
+    if (!currentPdfCatKey || !cachedDrawingsData || !cachedDrawingsData[currentPdfCatKey]) return;
+    const files = cachedDrawingsData[currentPdfCatKey].files || [];
+    if (!files.length) return;
 
-  window.openDrawingPdf = function(pdfUrl, title) {
+    if (currentPdfIndex < 0) currentPdfIndex = files.length - 1;
+    if (currentPdfIndex >= files.length) currentPdfIndex = 0;
 
-    if (!modal) {
-
-      window.open(pdfUrl, '_blank');
-
-      return;
-
-    }
-
-    const rawPath = (pdfUrl.startsWith('/') ? pdfUrl.slice(1) : pdfUrl);
-
+    const file = files[currentPdfIndex];
+    const rawPath = (file.path.startsWith('/') ? file.path.slice(1) : file.path);
     const cleanUrl = encodeURI(rawPath);
+    const title = file.name || 'Drawing Document';
 
-    if (titleEl) titleEl.textContent = title || 'Drawing Document';
-
+    if (titleEl) titleEl.textContent = title;
     if (downloadBtn) {
-
       downloadBtn.href = cleanUrl;
-
-      downloadBtn.download = (title || 'Drawing').replace(/\s+/g, '_') + '.pdf';
-
+      downloadBtn.download = title.replace(/\s+/g, '_') + '.pdf';
+    }
+    if (counterEl) {
+      counterEl.textContent = `${currentPdfIndex + 1} / ${files.length}`;
     }
 
     if (pdfObj) pdfObj.data = cleanUrl;
-
     if (iframe) iframe.src = cleanUrl;
+  }
 
-    modal.classList.add('active');
+  window.openDrawingPdf = function(pdfUrl, title, catKey, index) {
+    if (!modal) {
+      window.open(pdfUrl, '_blank');
+      return;
+    }
+    currentPdfCatKey = catKey || null;
+    currentPdfIndex = typeof index === 'number' ? index : 0;
 
-    document.body.style.overflow = 'hidden';
-
-  };
-
-
-
-  const closeDrawingModal = () => {
-
-    if (modal) {
-
-      modal.classList.remove('active');
-
-      if (pdfObj) pdfObj.data = '';
-
-      if (iframe) iframe.src = '';
-
-      document.body.style.overflow = '';
-
+    if (currentPdfCatKey && cachedDrawingsData && cachedDrawingsData[currentPdfCatKey]) {
+      updatePdfModalContent();
+    } else {
+      const rawPath = (pdfUrl.startsWith('/') ? pdfUrl.slice(1) : pdfUrl);
+      const cleanUrl = encodeURI(rawPath);
+      if (titleEl) titleEl.textContent = title || 'Drawing Document';
+      if (downloadBtn) {
+        downloadBtn.href = cleanUrl;
+        downloadBtn.download = (title || 'Drawing').replace(/\s+/g, '_') + '.pdf';
+      }
+      if (counterEl) counterEl.textContent = '';
+      if (pdfObj) pdfObj.data = cleanUrl;
+      if (iframe) iframe.src = cleanUrl;
     }
 
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
   };
 
+  prevBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentPdfIndex--;
+    updatePdfModalContent();
+  });
 
+  nextBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentPdfIndex++;
+    updatePdfModalContent();
+  });
+
+  const closeDrawingModal = () => {
+    if (modal) {
+      modal.classList.remove('active');
+      if (pdfObj) pdfObj.data = '';
+      if (iframe) iframe.src = '';
+      document.body.style.overflow = '';
+    }
+  };
 
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeDrawingModal);
 
   if (modal) {
-
     modal.addEventListener('click', (e) => {
-
       if (e.target === modal) closeDrawingModal();
-
     });
-
   }
 
   document.addEventListener('keydown', (e) => {
-
-    if (e.key === 'Escape' && modal?.classList.contains('active')) closeDrawingModal();
-
+    if (!modal || !modal.classList.contains('active')) return;
+    if (e.key === 'Escape') closeDrawingModal();
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      currentPdfIndex--;
+      updatePdfModalContent();
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      currentPdfIndex++;
+      updatePdfModalContent();
+    }
   });
-
 }
 
 
