@@ -2807,22 +2807,29 @@ window.openDetail = function(id) {
 
   dOverlay?.scrollTo({ top: 0, behavior: 'instant' });
   dScrollContent?.scrollTo({ top: 0, behavior: 'instant' });
-  if (dBackToTop) dBackToTop.style.display = 'none';
+  if (dBackToTop) dBackToTop.classList.remove('visible');
+
+  const updateFabVisibility = () => {
+    const fab = document.getElementById('detailBackToTopFab');
+    if (!fab) return;
+    const contentScroll = dScrollContent ? dScrollContent.scrollTop : 0;
+    const overlayScroll = dOverlay ? dOverlay.scrollTop : 0;
+    const isScrolled = contentScroll > 250 || overlayScroll > 250;
+    if (isScrolled) {
+      fab.classList.add('visible');
+    } else {
+      fab.classList.remove('visible');
+    }
+  };
 
   if (dScrollContent && !dScrollContent.dataset.scrollBound) {
     dScrollContent.dataset.scrollBound = 'true';
-    dScrollContent.addEventListener('scroll', () => {
-      const fab = document.getElementById('detailBackToTopFab');
-      if (fab) fab.style.display = dScrollContent.scrollTop > 200 ? 'flex' : 'none';
-    });
+    dScrollContent.addEventListener('scroll', updateFabVisibility, { passive: true });
   }
 
   if (dOverlay && !dOverlay.dataset.scrollBound) {
     dOverlay.dataset.scrollBound = 'true';
-    dOverlay.addEventListener('scroll', () => {
-      const fab = document.getElementById('detailBackToTopFab');
-      if (fab) fab.style.display = dOverlay.scrollTop > 200 ? 'flex' : 'none';
-    });
+    dOverlay.addEventListener('scroll', updateFabVisibility, { passive: true });
   }
 
   dOverlay?.classList.add('open');
