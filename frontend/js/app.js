@@ -71,7 +71,7 @@ function initCustomCursor() {
 function updateLogoForTheme() {
   const isDark = document.body.classList.contains('dark-mode');
   const logoSrc = isDark ? 'assets/logo-white.png' : 'assets/logo.png';
-  document.querySelectorAll('.brand .logo-box img, #loaderLogo, #loginLogo img, .login-logo img').forEach(img => {
+  document.querySelectorAll('.brand .logo-box img, #loginLogo img, .login-logo img').forEach(img => {
     img.src = logoSrc;
   });
 }
@@ -301,7 +301,7 @@ function renderMap() {
 
     window.MapModule.loadMapData(() => {
 
-      window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
       initCountryToggle();
 
@@ -327,7 +327,7 @@ function renderMap() {
 
         window.MapModule.loadMapData(() => {
 
-          window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+          window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
           initCountryToggle();
 
@@ -483,7 +483,7 @@ function initCountryToggle() {
 
         setTimeout(() => {
 
-          if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+          if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
           setTimeout(() => mapEl.classList.remove('fade-out'), 50);
 
@@ -491,7 +491,7 @@ function initCountryToggle() {
 
       } else {
 
-        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+        if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
       }
 
@@ -641,70 +641,41 @@ function renderCategoryChips() {
 
   } else {
 
-    // 2-Row Grid layout on desktop so Row 1 ends with Data Center and Row 2 ends with Search Bar aligned with map box edge
-
+    // 2-Row Grid layout matching edge-to-edge with identical equal gaps
     const row1Cats = ['All', 'Industrial', 'Commercial', 'Healthcare', 'Warehouse', 'Stadium', 'Institutional', 'Manufacturing', 'Data Center'];
-
     const row2Cats = cats.filter(c => !row1Cats.includes(c));
 
-
-
     const row1HTML = row1Cats.filter(c => cats.includes(c)).map(c =>
-
-      `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
-
+      `<button class="filter-chip desktop-grid-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
     ).join('');
-
-
 
     const row2HTML = row2Cats.map(c =>
-
-      `<button class="filter-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
-
+      `<button class="filter-chip desktop-grid-chip ${c === currentCategory ? 'active' : ''}" data-cat="${c}">${c}</button>`
     ).join('');
 
-
-
     row.innerHTML = `
-
     <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-
-      <!-- Row 1: All -> Data Center -->
-
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-
+      <!-- Row 1: 9 equal columns spanning 100% full width with uniform 8px gap -->
+      <div style="display: flex; gap: 8px; width: 100%;">
         ${row1HTML}
-
       </div>
 
-      <!-- Row 2: Remaining Chips + Search Bar ending at same edge -->
+      <!-- Row 2: 4 equal chips matching Row 1 column width + search bar spanning remaining columns to exact same right edge -->
+      <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
+        ${row2HTML}
 
-      <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-
-        <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0;">
-
-          ${row2HTML}
-
-        </div>
-
-        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="desktop-interactive-search-bar" style="flex: 1 1 auto; margin: 0; min-width: 220px;">
-
-          <svg class="search-bar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-
-            <circle cx="11" cy="11" r="8"></circle>
-
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-
-          </svg>
-
-          <input type="search" id="globalProjectSearch" name="search_atlas_projects" placeholder="${searchPlaceholder}" value="${oldVal ? String(oldVal).replace(/"/g, '&quot;') : ''}" class="search-bar-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" onpointerdown="this.removeAttribute('readonly');">
-
-          <div class="search-shortcut-badge">Ctrl+K</div>
-
+        <form role="search" autocomplete="off" onsubmit="event.preventDefault(); return false;" class="ask-ai-wrapper uiverse-search-group" style="position: relative; flex: 5 1 0; min-width: 0; margin: 0; height: 100%;">
+          <div class="ai-input-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; min-height: 38px; border: 1.5px solid var(--border-subtle, #cbd5e1); border-radius: 100px; padding: 0 14px; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.04); box-sizing: border-box;">
+            <input placeholder="Search projects by title, state, or category..." id="globalProjectSearch" name="search_atlas_projects" value="${oldVal ? String(oldVal).replace(/"/g, '&quot;') : ''}" class="ai-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="searchbox" aria-autocomplete="none" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" data-form-type="other" style="flex: 1; border: none !important; outline: none !important; outline-width: 0 !important; outline-style: none !important; box-shadow: none !important; -webkit-focus-ring-color: transparent !important; background: transparent; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--ink, #0f172a);" />
+            <span class="icon-container" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 8px; color: var(--sub, #64748b);">
+              <svg viewBox="0 0 24 24" height="18" width="18" xmlns="http://www.w3.org/2000/svg" class="ai-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+          </div>
         </form>
-
       </div>
-
     </div>`;
 
   }
@@ -745,7 +716,7 @@ function renderCategoryChips() {
 
       renderCategoryChips();
 
-      if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+      if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
       closePanel();
 
@@ -775,7 +746,7 @@ function renderCategoryChips() {
 
         renderCategoryChips();
 
-        if (window.MapModule) window.MapModule.drawMap(window.PROJECT_STATS || PROJECTS, currentCategory, currentCountry);
+        if (window.MapModule) window.MapModule.drawMap(PROJECTS, currentCategory, currentCountry);
 
         closePanel();
 
@@ -789,396 +760,219 @@ function renderCategoryChips() {
     
 
     // Cosmos-style Dropdown Search Popup
-
     function renderCosmosPopup(query) {
-
-      let popup = document.getElementById('cosmosSearchDropdown');
-
-      const searchGroup = document.querySelector('.uiverse-search-group');
+      const searchInput = document.getElementById('globalProjectSearch');
+      const searchGroup = searchInput
+        ? (searchInput.closest('.uiverse-search-group') || searchInput.closest('.ask-ai-wrapper') || searchInput.closest('.inline-search-wrap') || searchInput.parentElement)
+        : document.querySelector('.uiverse-search-group');
 
       if (!searchGroup) return;
 
+      searchGroup.style.position = 'relative';
 
-
+      let popup = document.getElementById('cosmosSearchDropdown');
       if (!popup) {
-
         popup = document.createElement('div');
-
         popup.id = 'cosmosSearchDropdown';
-
         popup.className = 'cosmos-search-popup';
-
-        searchGroup.appendChild(popup);
-
       }
 
-
+      if (popup.parentElement !== searchGroup) {
+        searchGroup.appendChild(popup);
+      }
 
       const q = (query || '').trim().toLowerCase();
-
       const allProjects = window.PROJECT_STATS || PROJECTS || [];
-
-
 
       if (q.length > 0) {
-
         // Query Results Mode
-
         const matches = allProjects.filter(p => projectMatchesQuery(p, q));
+        const numMatch = q.match(/(?:>|>=|above|over|more than|\+)?\s*(\d+[\d,]*)/);
+        const isPureNumericOrTons = numMatch && (/^[\s>=\+]*\d+[\d,]*\s*(tons?|t)?$/i.test(q) || q.includes('ton'));
+        let headerLabel = 'Matching Projects';
+        if (isPureNumericOrTons && numMatch[1]) {
+          const val = parseFloat(numMatch[1].replace(/,/g, ''));
+          if (!isNaN(val)) headerLabel = `Projects ≥ ${val.toLocaleString()} Tons`;
+        }
 
         let resultsHtml = `
-
           <div class="cosmos-section">
-
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-
-              <h4 class="cosmos-title">Results</h4>
-
-              <span style="font-size:11.5px; color:#9ca3af;">${matches.length} found</span>
-
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+              <h4 class="cosmos-title">${headerLabel}</h4>
+              <span style="font-size:11.5px; color:#9ca3af; font-weight: 600;">${matches.length} found</span>
             </div>`;
-
-
 
         if (matches.length === 0) {
-
           resultsHtml += `
-
-            <div style="padding: 24px 0; text-align: center; color: #9ca3af; font-size: 13px;">
-
+            <div style="padding: 20px 0; text-align: center; color: #9ca3af; font-size: 13px;">
               No projects found for "${query}"
-
             </div>`;
-
         } else {
-
           resultsHtml += `<div class="cosmos-results-list">`;
-
           matches.slice(0, 8).forEach(p => {
-
-            const imgUrl = (p.images && p.images.length > 0) 
-
-              ? (p.images[0].startsWith('http') ? p.images[0] : `/uploads/${p.images[0]}`) 
-
-              : 'assets/logo.png';
-
+            let imgUrl = 'assets/logo.png';
+            if (p.images && p.images.length > 0) {
+              const firstImg = p.images[0];
+              imgUrl = (typeof firstImg === 'string' && firstImg.startsWith('http')) ? firstImg : `/uploads/${firstImg}`;
+            }
             resultsHtml += `
-
               <div class="cosmos-result-item" data-id="${p.id}">
-
-                <div class="cosmos-res-left">
-
-                  <img class="cosmos-res-thumb" src="${imgUrl}" onerror="this.src='assets/logo.png'">
-
-                  <div>
-
-                    <div class="cosmos-res-title">${p.title}</div>
-
-                    <div class="cosmos-res-sub">${p.state || ''} · ${p.category || ''}</div>
-
+                <div class="cosmos-res-left" style="display:flex; align-items:center; gap:12px; overflow:hidden;">
+                  <img class="cosmos-res-thumb" src="${imgUrl}" onerror="this.src='assets/logo.png'" style="width:40px; height:40px; border-radius:8px; object-fit:cover; flex-shrink:0;">
+                  <div style="overflow:hidden;">
+                    <div class="cosmos-res-title" style="font-weight:700; font-size:13.5px; color:var(--fg, #0f172a); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.title || p.name || 'Untitled Project'}</div>
+                    <div class="cosmos-res-sub" style="font-size:11.5px; color:var(--sub, #64748b); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${p.state || p.location || ''}${p.category ? ' · ' + p.category : ''}</div>
                   </div>
-
                 </div>
-
-                ${p.tons ? `<div class="cosmos-res-tons">${Math.round(p.tons).toLocaleString()} T</div>` : ''}
-
+                ${p.tons ? `<div class="cosmos-res-tons" style="font-size:11.5px; font-weight:700; background:rgba(37,99,235,0.1); color:#2563eb; padding:3px 8px; border-radius:6px; flex-shrink:0;">${Math.round(p.tons).toLocaleString()} T</div>` : ''}
               </div>`;
-
           });
-
           resultsHtml += `</div>`;
-
         }
-
         resultsHtml += `</div>`;
-
         popup.innerHTML = resultsHtml;
-
       } else {
-
         // Default Explore Mode (Trending & Categories)
-
         popup.innerHTML = `
-
           <div class="cosmos-section">
-
             <h4 class="cosmos-title">Trending</h4>
-
             <div class="cosmos-pills-row">
-
               <button type="button" class="cosmos-pill" data-trend="Industrial">
-
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-
                 <span>Industrial</span>
-
               </button>
-
               <button type="button" class="cosmos-pill" data-trend="Data Center">
-
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-
                 <span>Data Center</span>
-
               </button>
-
               <button type="button" class="cosmos-pill" data-trend="Healthcare">
-
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-
                 <span>Healthcare</span>
-
               </button>
-
               <button type="button" class="cosmos-pill" data-trend="Commercial">
-
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-
                 <span>Commercial</span>
-
               </button>
-
             </div>
-
           </div>
-
-
 
           <div class="cosmos-section">
-
             <h4 class="cosmos-title">Categories</h4>
-
             <div class="cosmos-cards-grid">
-
               <div class="cosmos-card" data-cat="Industrial">
-
                 <img class="cosmos-card-thumb" src="assets/map_icons/map_misc.png" onerror="this.src='assets/logo.png'">
-
                 <span class="cosmos-card-label">Industrial</span>
-
               </div>
-
               <div class="cosmos-card" data-cat="Commercial">
-
                 <img class="cosmos-card-thumb" src="assets/map_icons/map_usa.png" onerror="this.src='assets/logo.png'">
-
                 <span class="cosmos-card-label">Commercial</span>
-
               </div>
-
               <div class="cosmos-card" data-cat="Stadium">
-
                 <img class="cosmos-card-thumb" src="assets/map_icons/map_canada.png" onerror="this.src='assets/logo.png'">
-
                 <span class="cosmos-card-label">Stadium</span>
-
               </div>
-
             </div>
-
           </div>
-
         `;
-
       }
-
-
 
       // Attach interaction listeners inside dropdown
-
       popup.querySelectorAll('.cosmos-pill').forEach(btn => {
-
         btn.onclick = (e) => {
-
           e.stopPropagation();
-
           const trend = btn.dataset.trend;
-
-          searchInput.value = trend;
-
+          if (searchInput) searchInput.value = trend;
           renderCosmosPopup(trend);
-
           const matches = allProjects.filter(p => projectMatchesQuery(p, trend));
-
           if (window.MapModule) window.MapModule.drawMap(matches, currentCategory, currentCountry);
-
         };
-
       });
-
-
-
-      popup.querySelectorAll('.cosmos-color-pill').forEach(btn => {
-
-        btn.onclick = (e) => {
-
-          e.stopPropagation();
-
-          const filter = btn.dataset.filter;
-
-          if (filter === 'us' || filter === 'ca') {
-
-            updateCountryToggleUI(filter);
-
-            if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
-
-          }
-
-          closeCosmosPopup();
-
-        };
-
-      });
-
-
 
       popup.querySelectorAll('.cosmos-card').forEach(card => {
-
         card.onclick = (e) => {
-
           e.stopPropagation();
-
-          const cat = card.dataset.cat;
-
-          currentCategory = cat;
-
+          currentCategory = card.dataset.cat;
           renderCategoryChips();
-
           if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
-
           closeCosmosPopup();
-
         };
-
       });
-
-
 
       popup.querySelectorAll('.cosmos-result-item').forEach(item => {
-
         item.onclick = (e) => {
-
           e.stopPropagation();
-
           closeCosmosPopup();
-
           if (window.openDetail) window.openDetail(item.dataset.id);
-
         };
-
       });
-
-
 
       popup.classList.add('active');
-
     }
-
-
 
     function closeCosmosPopup() {
-
       const popup = document.getElementById('cosmosSearchDropdown');
-
       if (popup) popup.classList.remove('active');
-
     }
-
-
 
     // Close on outside click
-
     document.addEventListener('click', (e) => {
-
-      const searchGroup = document.querySelector('.uiverse-search-group');
-
-      if (searchGroup && !searchGroup.contains(e.target)) {
-
-        closeCosmosPopup();
-
+      const popup = document.getElementById('cosmosSearchDropdown');
+      const searchInput = document.getElementById('globalProjectSearch');
+      if (popup && popup.classList.contains('active')) {
+        const searchGroup = searchInput
+          ? (searchInput.closest('.uiverse-search-group') || searchInput.closest('.ask-ai-wrapper') || searchInput.closest('.inline-search-wrap') || searchInput.parentElement)
+          : null;
+        if (searchGroup && !searchGroup.contains(e.target)) {
+          closeCosmosPopup();
+        }
       }
-
     });
 
-
-
     function executeSearch() {
-
       const q = searchInput ? searchInput.value.trim() : '';
-
       const allProjects = window.PROJECT_STATS || PROJECTS || [];
-
       if (!q) {
-
         if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
-
         renderCosmosPopup('');
-
         return;
-
       }
-
       const filtered = allProjects.filter(p => projectMatchesQuery(p, q));
-
       if (window.MapModule) window.MapModule.drawMap(filtered, currentCategory, currentCountry);
-
       renderCosmosPopup(q);
-
     }
-
-
 
     if (searchBtn) {
-
       searchBtn.addEventListener('click', () => {
-
-        if (window.innerWidth <= 768) {
-
-          openSpotlight(searchInput ? searchInput.value.trim() : '');
-
-        } else {
-
-          executeSearch();
-
-        }
-
+        executeSearch();
       });
-
     }
 
-
-
     if (searchInput) {
-      const handleSearchTrigger = (query) => {
-        if (typeof openSpotlight === 'function') {
-          openSpotlight(query || '');
-        }
-      };
-
-      searchInput.addEventListener('pointerdown', () => {
-        searchInput.removeAttribute('readonly');
+      searchInput.addEventListener('focus', () => {
+        renderCosmosPopup(searchInput.value.trim());
       });
 
       searchInput.addEventListener('click', (e) => {
         e.stopPropagation();
-        searchInput.removeAttribute('readonly');
-        handleSearchTrigger(searchInput.value.trim());
-      });
-
-      searchInput.addEventListener('focus', () => {
-        searchInput.removeAttribute('readonly');
-        handleSearchTrigger(searchInput.value.trim());
-      });
-
-      searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleSearchTrigger(searchInput.value.trim());
-        }
+        renderCosmosPopup(searchInput.value.trim());
       });
 
       searchInput.addEventListener('input', () => {
-        handleSearchTrigger(searchInput.value.trim());
+        const q = searchInput.value.trim();
+        renderCosmosPopup(q);
+        const allProjects = window.PROJECT_STATS || PROJECTS || [];
+        if (q) {
+          const filtered = allProjects.filter(p => projectMatchesQuery(p, q));
+          if (window.MapModule) window.MapModule.drawMap(filtered, currentCategory, currentCountry);
+        } else {
+          if (window.MapModule) window.MapModule.drawMap(allProjects, currentCategory, currentCountry);
+        }
+      });
+
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeCosmosPopup();
+        }
       });
     }
 
@@ -1579,7 +1373,7 @@ function setupNavigation() {
           </div>
         </div>
         <div class="smooky-card-right">
-          <div class="smooky-wave-bg"></div>
+          <div class="smooky-wave-bg" style="--pc-pastel-bg: ${theme.bg};"></div>
           <div class="smooky-icon-box">
             <img src="${imgSrc}" alt="${categoryData.title}" class="smooky-card-img" />
           </div>
@@ -1646,15 +1440,11 @@ function setupNavigation() {
 
     const categoryColors = {
 
-      usa: { back: '#2563eb', flapFrom: '#3b82f6', flapTo: '#60a5fa', shadowFrom: '#60a5fa', shadowTo: '#1d4ed8' },    // Blue (USA)
-
-      canada: { back: '#dc2626', flapFrom: '#ef4444', flapTo: '#f87171', shadowFrom: '#f87171', shadowTo: '#b91c1c' }, // Red (Canada)
-
-      quebec: { back: '#991b1b', flapFrom: '#b91c1c', flapTo: '#f87171', shadowFrom: '#f87171', shadowTo: '#7f1d1d' }, // Dark Red (Quebec, Canada)
-
-      uae: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Emerald Green (UAE)
-
-      misc: { back: '#4f46e5', flapFrom: '#6366f1', flapTo: '#818cf8', shadowFrom: '#818cf8', shadowTo: '#3730a3' }   // Indigo (Misc)
+      usa: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Vibrant Green
+      canada: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }, // Vibrant Green
+      quebec: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }, // Vibrant Green
+      uae: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Vibrant Green
+      misc: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }   // Vibrant Green
 
     };
 
@@ -1762,18 +1552,19 @@ function setupNavigation() {
 
     // 2. Focal scroll detection: Only ONE card is active at a time as user scrolls down
     const updateActiveCardOnScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 0;
-      const innerHeight = window.innerHeight || 0;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      const innerHeight = window.innerHeight;
+      const scrollY = window.scrollY || window.pageYOffset;
+      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 60);
+      const isAtTop = scrollY <= 60;
 
-      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 15);
-      const isAtTop = scrollY <= 40;
+      let closestCard = null;
 
-      let closestCard = cards[0];
-
-      if (isAtBottom) {
+      if (isAtTop) {
+        closestCard = cards[0];
+      } else if (isAtBottom) {
         closestCard = cards[cards.length - 1];
-      } else if (!isAtTop) {
+      } else {
         let minDistance = Infinity;
         const viewportCenter = innerHeight * 0.42;
 
@@ -1782,17 +1573,15 @@ function setupNavigation() {
           const cardCenter = rect.top + (rect.height / 2);
           const distance = Math.abs(cardCenter - viewportCenter);
 
-          if (rect.bottom > 20 && rect.top < innerHeight - 20) {
-            if (distance < minDistance) {
-              minDistance = distance;
-              closestCard = card;
-            }
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestCard = card;
           }
         });
       }
 
       cards.forEach(card => {
-        if (card === closestCard) {
+        if (closestCard && card === closestCard) {
           card.classList.add('is-in-view');
         } else {
           card.classList.remove('is-in-view');
@@ -5468,45 +5257,41 @@ const STATE_COORDS = {
 
 
   function projectMatchesQuery(p, q) {
-
     if (!q) return true;
 
-    const lowerQ = q.toLowerCase();
+    const lowerQ = q.trim().toLowerCase();
+
+    // Support numeric tonnage threshold filtering (e.g., searching "11000" or "11000 tons" or ">5000" shows projects >= 11000 tons)
+    const numMatch = lowerQ.match(/(?:>|>=|above|over|more than|\+)?\s*(\d+[\d,]*)/);
+    const pTons = parseFloat(p.tons || 0);
+
+    if (numMatch) {
+      const rawNum = parseFloat(numMatch[1].replace(/,/g, ''));
+      if (!isNaN(rawNum) && rawNum > 0) {
+        const isPureNumericOrTons = /^[\s>=\+]*\d+[\d,]*\s*(tons?|t)?$/i.test(lowerQ) || lowerQ.includes('ton');
+        if (isPureNumericOrTons && !isNaN(pTons) && pTons >= rawNum) {
+          return true;
+        }
+      }
+    }
 
     const title = (p.title || '').toLowerCase();
-
     const cat = (p.category || '').toLowerCase();
-
     const desc = (p.description || '').toLowerCase();
-
     const type = (p.type || '').toLowerCase();
-
     const state = (p.state || '').toLowerCase();
-
-    const stateFull = STATE_NAMES[state] || '';
-
-    const tons = (p.tons || '').toString().toLowerCase();
-
-    const year = (p.year || '').toString().toLowerCase();
-
-
+    const stateFull = (typeof STATE_NAMES !== 'undefined' && STATE_NAMES[state]) ? STATE_NAMES[state].toLowerCase() : '';
+    const tonsStr = (p.tons || '').toString().toLowerCase();
+    const yearStr = (p.year || '').toString().toLowerCase();
 
     return title.includes(lowerQ) ||
-
            cat.includes(lowerQ) ||
-
            desc.includes(lowerQ) ||
-
            type.includes(lowerQ) ||
-
            state.includes(lowerQ) ||
-
            stateFull.includes(lowerQ) ||
-
-           tons.includes(lowerQ) ||
-
-           year.includes(lowerQ);
-
+           tonsStr.includes(lowerQ) ||
+           yearStr.includes(lowerQ);
   }
 
 

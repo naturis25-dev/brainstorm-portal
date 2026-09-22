@@ -74,7 +74,7 @@ function getFinalUrl(filename) {
   return `${base}/uploads/${filename}`;
 }
 
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 
 function startOptimization(targetPath, filename) {
   const processingPath = targetPath + '.processing';
@@ -86,8 +86,9 @@ function startOptimization(targetPath, filename) {
 
   const nodeExe = process.execPath;
   const optimizerScript = path.join(__dirname, '..', 'optimizer.mjs');
+  const args = ['--max-old-space-size=6000', optimizerScript, processingPath, targetPath];
 
-  exec(`"${nodeExe}" --max-old-space-size=6000 "${optimizerScript}" "${processingPath}" "${targetPath}"`, async (error, stdout, stderr) => {
+  execFile(nodeExe, args, async (error, stdout, stderr) => {
     let finalLocalPath = targetPath;
     let optimizationFailed = false;
     

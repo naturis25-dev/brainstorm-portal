@@ -16,147 +16,184 @@
   <script src="js/map-data.js"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20260917018">
+  <link rel="stylesheet" href="css/style.css?v=20260922012">
 
   <style>
-  /* ================= LOADER ================= */
+  /* ================= MODERN LOADER STYLES ================= */
+  :root {
+    --ink: #151a1b;
+    --paper: #f5f2ea;
+    --lime: #d9ff48;
+    --muted: #8f9798;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
 
-    .floating-logo {
-      animation: logoFloat 3s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-    }
-    @keyframes logoFloat {
-      0% { transform: scale(1) translateY(0); }
-      50% { transform: scale(1.03) translateY(-6px); }
-      100% { transform: scale(1) translateY(0); }
-    }
-
-
+  .loader,
   #loader {
     position: fixed;
     inset: 0;
-    background: #fff;
-    z-index: 999;
-
+    background: var(--ink);
+    color: var(--paper);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 99999;
+    clip-path: inset(0);
+    transition: clip-path 1.05s var(--ease);
+  }
+
+  .loader.done,
+  #loader.done {
+    clip-path: inset(0 0 100% 0);
+    pointer-events: none;
+  }
+
+  .loader-inner {
+    width: min(760px, 82vw);
+    display: flex;
     flex-direction: column;
+    align-items: center;
   }
 
-    #loaderLogo {
-      width: 150px;
-      height: auto;
-      opacity: 0;
-      margin-bottom: 28px;
-      animation: logoFadeIn 0.8s cubic-bezier(.22,1,.36,1) forwards, logoFloat 2.5s cubic-bezier(0.65, 0, 0.35, 1) infinite 0.8s;
-    }
-    @keyframes logoFadeIn {
-      from { opacity: 0; transform: scale(0.85) translateY(5px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-  #loader svg {
-    width: 280px;
-    height: 80px;
-  }
-
-  .ldr-line {
-    stroke: #6D5DF6;
-    stroke-width: 1.4;
-    fill: none;
-    stroke-dasharray: 600;
-    stroke-dashoffset: 600;
-    animation: drawLine 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  @keyframes drawLine {
-    to { stroke-dashoffset: 0; }
-  }
-
-  .ldr-caption {
-    margin-top: 18px;
-
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-
-    color: #A8A4B8;
-    text-transform: uppercase;
-
+  .logo-wrap {
+    width: 118px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 44px;
+    background: transparent !important;
     opacity: 0;
+    transform: translateY(16px) scale(.96);
+    animation: logoIn .9s var(--ease) .1s forwards;
   }
 
-  /* Exit animation */
-  #loader.loaded {
-    animation: loaderExit 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  .logo-wrap .logo {
+    display: block;
+    width: 118px;
+    height: auto;
+    max-height: 72px;
+    object-fit: contain;
+    background: transparent !important;
+    mix-blend-mode: screen;
   }
 
-  @keyframes loaderExit {
-    to {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-  }
-
-  /* Skyline Animation */
-  .loader-skyline {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+  .loader-main {
     width: 100%;
+    opacity: 0;
+    transform: translateY(18px);
+    animation: contentIn .8s var(--ease) .28s forwards;
+  }
+
+  .loader-top {
     display: flex;
     align-items: flex-end;
-    justify-content: space-around;
-    padding: 0 4%;
-    pointer-events: none;
-    z-index: 1;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 12px;
+  }
+
+  .loader-label {
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #aeb5b6;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .loader-num {
+    font-size: clamp(72px, 11vw, 132px);
+    font-weight: 900;
+    line-height: .72;
+    letter-spacing: -.09em;
+    color: var(--paper);
+    font-variant-numeric: tabular-nums;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .loader-track {
+    height: 3px;
+    width: 100%;
+    background: #394143;
     overflow: hidden;
-    height: 300px;
+    margin-top: 22px;
   }
 
-  .sky-box {
-    width: 8%;
-    background: #f4f4f5; /* Very subtle gray matching the mockup */
-    border-radius: 4px 4px 0 0;
-    transform-origin: bottom;
-    animation: skylinePulse 2.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+  .loader-fill {
+    height: 100%;
+    width: 0;
+    background: var(--lime);
+    box-shadow: 0 0 18px rgba(217, 255, 72, .28);
+    transition: width .08s linear;
   }
 
-  /* Different heights based on mockup */
-  .box-1 { height: 180px; animation-delay: 0.1s; }
-  .box-2 { height: 140px; animation-delay: 0.5s; width: 10%; }
-  .box-3 { height: 80px;  animation-delay: 0.2s; }
-  .box-4 { height: 220px; animation-delay: 0.7s; width: 12%; }
-  .box-5 { height: 160px; animation-delay: 0.3s; }
-  .box-6 { height: 120px; animation-delay: 0.9s; width: 11%; }
-  .box-7 { height: 90px;  animation-delay: 0.4s; }
-  .box-8 { height: 150px; animation-delay: 0.8s; }
-
-  @keyframes skylinePulse {
-    0% { transform: scaleY(0.65); opacity: 0.7; }
-    100% { transform: scaleY(1.05); opacity: 1; }
-  }
-  /* Exit & Center Opening Animation */
-  #loader.opening #loaderLogo,
-  #loader.opening svg,
-  #loader.opening .ldr-caption,
-  #loader.opening .loader-skyline {
-    opacity: 0 !important;
-    transform: scale(0.92) translateY(-6px) !important;
-    transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1), transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  .loader-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 20px;
   }
 
-  #loader.opening {
-    clip-path: polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%);
-    animation: loaderCenterExpand 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .loader-word {
+    font-size: 9px;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+    color: #737c7d;
+    font-family: 'Inter', sans-serif;
   }
 
-  @keyframes loaderCenterExpand {
-    0% {
-      clip-path: polygon(0% 0%, 0% 100%, 35% 100%, 35% 32%, 65% 32%, 65% 68%, 35% 68%, 35% 100%, 100% 100%, 100% 0%);
+  .loader-status {
+    font-size: 9px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: #9da5a6;
+    font-family: 'Inter', sans-serif;
+  }
+
+  @keyframes logoIn {
+    to {
+      opacity: 1;
+      transform: none;
     }
-    100% {
-      clip-path: polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%);
+  }
+
+  @keyframes contentIn {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .loader-inner {
+      width: 82vw;
+    }
+    .logo-wrap {
+      width: 92px;
+      height: 58px;
+      margin-bottom: 34px;
+    }
+    .logo-wrap .logo {
+      width: 92px;
+      max-height: 58px;
+    }
+    .loader-top {
+      align-items: flex-end;
+    }
+    .loader-label {
+      font-size: 8px;
+      letter-spacing: .15em;
+    }
+    .loader-num {
+      font-size: 76px;
+    }
+    .loader-bottom {
+      display: block;
+    }
+    .loader-status {
+      margin-top: 7px;
     }
   }
 
@@ -278,6 +315,28 @@
       transition: none !important;
       filter: none !important;
     }
+  /* Global complete suppression of default input focus rectangle / border outline */
+  input,
+  input:focus,
+  input:focus-visible,
+  input:active,
+  #globalProjectSearch,
+  #globalProjectSearch:focus,
+  #globalProjectSearch:focus-visible,
+  .ai-input,
+  .ai-input:focus,
+  .ai-input:focus-visible,
+  .ai-input-container,
+  .ai-input-container:focus-within,
+  .ask-ai-wrapper,
+  .uiverse-search-group {
+    outline: none !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-focus-ring-color: transparent !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
   </style>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -312,136 +371,86 @@
   </div>
 
   <!-- ================= LOADER ================= -->
-  <div id="loader" role="status" aria-label="Loading">
-    <img
-      id="loaderLogo"
-      src="assets/logo.png"
-      alt="Brainstorm Infotech"
-    />
-
-    
-
-    
-    <svg viewBox="0 0 280 80" aria-hidden="true">
-      <path
-        class="ldr-line"
-        d="M10 40
-           C35 15, 60 65, 85 40
-           S135 15, 160 40
-           S235 15, 270 40"
-      />
-    </svg>
-    <div class="ldr-caption" id="ldrCaption">
-      INITIALIZING PLATFORM <span id="ldrPct">0%</span>
+  <div class="loader" id="loader" role="status" aria-label="Loading">
+    <div class="loader-inner">
+      <div class="logo-wrap">
+        <img class="logo" id="loaderLogo" src="assets/logo-white-transparent.png" alt="Brainstorm Infotech" onerror="this.src='assets/logo.png'">
+      </div>
+      <div class="loader-main">
+        <div class="loader-top">
+          <div class="loader-label">Loading project experience</div>
+          <div class="loader-num" id="loaderNum">00</div>
+        </div>
+        <div class="loader-track">
+          <div class="loader-fill" id="loaderFill"></div>
+        </div>
+        <div class="loader-bottom">
+          <div class="loader-word">Brainstorm Atlas · Project Intelligence Portal</div>
+          <div class="loader-status" id="loaderStatus">Initializing Atlas</div>
+        </div>
+      </div>
     </div>
-    
-    <div class="loader-skyline">
-      <div class="sky-box box-1"></div>
-      <div class="sky-box box-2"></div>
-      <div class="sky-box box-3"></div>
-      <div class="sky-box box-4"></div>
-      <div class="sky-box box-5"></div>
-      <div class="sky-box box-6"></div>
-      <div class="sky-box box-7"></div>
-      <div class="sky-box box-8"></div>
-    </div>
-    
-    <div class="loader-skyline">
-      <div class="sky-box box-1"></div>
-      <div class="sky-box box-2"></div>
-      <div class="sky-box box-3"></div>
-      <div class="sky-box box-4"></div>
-      <div class="sky-box box-5"></div>
-      <div class="sky-box box-6"></div>
-      <div class="sky-box box-7"></div>
-      <div class="sky-box box-8"></div>
-    </div>
-
-    <!-- Animated Skyline -->
-    
   </div>
 
   <script>
-    /* ================= LOADER ANIMATION ================= */
-    let _loaderInterval;
-    let _loaderProgress = 0;
-    
-    const _loadStartTime = Date.now();
-      const MIN_LOAD_TIME = 2400;
+    /* ================= PROGRESSIVE LOADER CONTROLLER ================= */
+    (function() {
+      const loader = document.getElementById('loader');
+      const num = document.getElementById('loaderNum');
+      const fill = document.getElementById('loaderFill');
+      const status = document.getElementById('loaderStatus');
+      const labels = [
+        [0, 'Initializing Atlas'],
+        [24, 'Loading project map'],
+        [48, 'Preparing project data'],
+        [72, 'Loading drawings'],
+        [90, 'Finalizing experience'],
+        [100, 'Atlas ready']
+      ];
+
+      let progress = 0;
+      let completed = false;
+
+      function updateProgress(val) {
+        if (!num || !fill || !status) return;
+        const p = Math.min(100, Math.max(0, val));
+        num.textContent = String(p).padStart(2, '0');
+        fill.style.width = p + '%';
+        let current = labels[0][1];
+        for (let i = 0; i < labels.length; i++) {
+          if (p >= labels[i][0]) current = labels[i][1];
+        }
+        status.textContent = current;
+      }
+
+      const timer = setInterval(() => {
+        if (completed) return;
+        progress = Math.min(100, progress + Math.floor(Math.random() * 5) + 2);
+        updateProgress(progress);
+
+        if (progress >= 100) {
+          completed = true;
+          clearInterval(timer);
+          updateProgress(100);
+
+          setTimeout(() => {
+            if (loader) {
+              loader.classList.add('done');
+              document.body.classList.add('atlas-revealed');
+              setTimeout(() => {
+                if (loader && loader.parentNode) loader.remove();
+                document.body.classList.add('reveal-complete');
+              }, 1100);
+            }
+          }, 420);
+        }
+      }, 70);
+
+      // Safe global hook
       window.hideLoader = function() {
-        const elapsed = Date.now() - _loadStartTime;
-        const remaining = Math.max(0, MIN_LOAD_TIME - elapsed);
-        setTimeout(() => {
-          const loader = document.getElementById("loader");
-          const pct = document.getElementById("ldrPct");
-          if (typeof _loaderInterval !== 'undefined') clearInterval(_loaderInterval);
-          if (pct) pct.textContent = '100%';
-          
-          const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          if (prefersReducedMotion) {
-            if (loader) loader.remove();
-            document.body.classList.add("atlas-revealed", "reveal-complete");
-            return;
-          }
-
-          if (loader) {
-            document.body.classList.add("atlas-revealed");
-            loader.classList.add("opening");
-            setTimeout(() => {
-              loader.remove();
-            }, 1400);
-            setTimeout(() => {
-              document.body.classList.add("reveal-complete");
-            }, 1850);
-          }
-        }, remaining);
+        // Allow natural progressive loader to complete cleanly
       };
-
-    // Safety fallback: ensure loader dismisses even if initial fetch or scripts lag
-    setTimeout(() => {
-      if (document.getElementById("loader")) {
-        window.hideLoader();
-      }
-    }, 3800);
-
-    window.addEventListener("load", () => {
-      const logo = document.getElementById("loaderLogo");
-      const line = document.querySelector(".ldr-line");
-      const caption = document.querySelector(".ldr-caption");
-      const pct = document.getElementById("ldrPct");
-
-      _loaderProgress = 20;
-        _loaderInterval = setInterval(() => {
-          _loaderProgress += 1;
-          if (_loaderProgress >= 100) {
-            _loaderProgress = 100;
-            clearInterval(_loaderInterval);
-          }
-          if(pct) pct.textContent = _loaderProgress + '%';
-        }, 30);
-
-      if (line) {
-        line.animate(
-          [
-            { strokeDashoffset: 300, opacity: 0 },
-            { strokeDashoffset: 0, opacity: 1 }
-          ],
-          { duration: 1200, easing: "cubic-bezier(0.65, 0, 0.35, 1)", fill: "forwards" }
-        );
-      }
-
-      if (caption) {
-        setTimeout(() => {
-          caption.animate(
-            [
-              { opacity: 0, transform: "translateY(5px)" },
-              { opacity: 1, transform: "translateY(0)" }
-            ],
-            { duration: 500, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
-          );
-        }, 200);
-      }
-    });
+    })();
   </script>
 
   <!-- Glassmorphism Top Bar Navigation -->
@@ -1199,9 +1208,10 @@
 
 
 
-  <script src="js/map.js?v=20260904001"></script>
-  <script src="js/atlas-intro.js?v=20260915001"></script>
-  <script src="js/app.js?v=20260917020"></script>
+  <script src="js/config.js?v=20260922012"></script>
+  <script src="js/map.js?v=20260922012"></script>
+  <script src="js/atlas-intro.js?v=20260922012"></script>
+  <script src="js/app.js?v=20260922012"></script>
 
   <!-- Mobile Bottom Floating Navigation Dock (Zepto/Blinkit Style) -->
   <nav class="mobile-bottom-dock-wrapper ui-stagger-item ui-stagger-5" id="mobileBottomDock">

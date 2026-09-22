@@ -65,6 +65,54 @@ try { db.exec("ALTER TABLE projects ADD COLUMN deleted_at TEXT"); } catch (e) {}
 try { db.exec("ALTER TABLE admins ADD COLUMN role TEXT DEFAULT 'MANAGER'"); } catch (e) {} // SUPER_ADMIN or MANAGER
 try { db.exec("ALTER TABLE projects ADD COLUMN version INTEGER DEFAULT 1"); } catch (e) {}
 
+// Seed projects from projects_100.json if database is currently empty
+try {
+  const countRow = db.prepare('SELECT COUNT(*) as cnt FROM projects').get();
+  if (!countRow || countRow.cnt === 0) {
+    const seedPath = path.join(__dirname, '../frontend/assets/data/projects_100.json');
+    if (fs.existsSync(seedPath)) {
+      const rawSeed = fs.readFileSync(seedPath, 'utf8');
+      const seedList = JSON.parse(rawSeed);
+      if (Array.isArray(seedList) && seedList.length > 0) {
+        const insertStmt = db.prepare(`
+          INSERT OR REPLACE INTO projects (id, title, country, state, category, type, tons, status, images, video, year, description, modelUrl, isKeyProject, is_deleted)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        `);
+        const insertTx = db.transaction((items) => {
+          for (const item of items) {
+            let imgVal = item.images;
+            if (Array.isArray(imgVal)) imgVal = JSON.stringify(imgVal);
+            insertStmt.run(
+              item.id || String(Date.now() + Math.random()),
+              item.title || 'Untitled Project',
+              (item.country || 'US').toUpperCase(),
+              item.state || '',
+              item.category || 'Commercial',
+              item.type || '',
+              item.tons || 0,
+              item.status || 'Active',
+              imgVal || '[]',
+              item.video || '',
+              item.year || null,
+              item.description || '',
+              item.modelUrl || '',
+              item.isKeyProject ? 1 : 0
+            );
+          }
+        });
+        insertTx(seedList);
+        console.log(`[DB Seed] Auto-seeded ${seedList.length} projects into SQLite database.`);
+      }
+    }
+  } else {
+    // Bring any soft-deleted seed rows back if deleted
+    db.prepare('UPDATE projects SET is_deleted = 0 WHERE is_deleted = 1').run();
+    console.log('[DB Seed] Restored project records.');
+  }
+} catch (seedErr) {
+  console.error('[DB Seed] Warning: Auto-seed failed:', seedErr);
+}
+
 // ----------------------------------------------------
 // Database Operations
 // ----------------------------------------------------

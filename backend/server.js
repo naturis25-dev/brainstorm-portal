@@ -31,20 +31,23 @@ app.use(morgan('dev')); // Log API requests to terminal
 // Anti-Brute Force on Auth
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // limit each IP to 20 auth attempts per window
-  message: "Too many login attempts, please try again later"
+  max: 30, // limit each IP to 30 auth attempts per window
+  message: { message: "Too many authentication requests, please try again after 15 minutes." }
 });
-app.use('/api/auth/login', authLimiter);
+app.use('/api/auth', authLimiter);
 
 // Standard Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use('/uploads', express.static(uploadDir, { maxAge: '365d', immutable: true }));
 app.use('/api/media', bodyParser.json({ limit: '1000mb' }), mediaRouter);
-app.use(bodyParser.json({ limit: '100mb' })); // Reduced from 1000mb for DOS protection
-app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }));
+app.use(bodyParser.json({ limit: '50mb' })); // DOS protection
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
-
-app.get('/api/debug-db', async (req, res) => {
+// Protected Debug Endpoint for Admins Only
+app.get('/api/debug-db', requireAuth, async (req, res) => {
+  if (req.admin.role !== 'SUPER_ADMIN') {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
   try {
     const db = require('./db.js');
     if (process.env.DB_CLIENT !== 'pg') {
@@ -58,17 +61,12 @@ app.get('/api/debug-db', async (req, res) => {
     client.release();
     res.json({ 
       status: 'Connected to Postgres!', 
-      DATABASE_URL_LENGTH: process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0,
-      DATABASE_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 15) : null,
       info: result.rows 
     });
   } catch (err) {
-    res.json({ 
+    res.status(500).json({ 
       status: 'Failed to connect', 
-      error: err.message, 
-      stack: err.stack,
-      DATABASE_URL_LENGTH: process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0,
-      DATABASE_URL_START: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 15) : null
+      error: err.message
     });
   }
 });

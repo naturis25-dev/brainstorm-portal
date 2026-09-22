@@ -160,9 +160,9 @@ function handleClick(event, d, projectsList, category) {
   var name = d.properties.name;
   var list = projectsForState(name, projectsList, category);
   
-  // Smoothly scroll the map to the center of the screen when clicked
+  // Smoothly scroll the map to the center of the screen when clicked (desktop only to avoid mobile viewport jump)
   var mapCardElement = document.querySelector('.map-card');
-  if (mapCardElement) {
+  if (mapCardElement && window.innerWidth > 768) {
     mapCardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   
