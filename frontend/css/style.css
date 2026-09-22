@@ -9240,11 +9240,11 @@ body.dark-mode .m-brochure-menu-item:active, body.dark-mode .m-brochure-menu-ite
   color: #60a5fa;
 }
 
-/* Category Specific 3D Folder Color Schemes (Vibrant Green for All Folders) */
-.drawing-card .work-5 { background: #059669 !important; }
-.drawing-card .work-5::after, .drawing-card .work-5::before { background: #059669 !important; }
-.drawing-card .work-1 { background: linear-gradient(to top, #10b981, #34d399) !important; }
-.drawing-card .work-1::after, .drawing-card .work-1::before { background: #34d399 !important; }
+/* Category Specific 3D Folder Color Schemes (Clean Minimalist Slate Gray for All Folders) */
+.drawing-card .work-5 { background: #475569 !important; }
+.drawing-card .work-5::after, .drawing-card .work-5::before { background: #475569 !important; }
+.drawing-card .work-1 { background: linear-gradient(to top, #64748b, #94a3b8) !important; }
+.drawing-card .work-1::after, .drawing-card .work-1::before { background: #94a3b8 !important; }
 
 
 
