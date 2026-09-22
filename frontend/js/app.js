@@ -832,6 +832,20 @@ function renderCategoryChips() {
         resultsHtml += `</div>`;
         popup.innerHTML = resultsHtml;
       } else {
+        // Helper to get first project image for a category
+        const getCatImg = (catName) => {
+          const matchProj = allProjects.find(p => p.category && p.category.toLowerCase() === catName.toLowerCase() && p.images && p.images.length > 0);
+          if (matchProj && matchProj.images && matchProj.images.length > 0) {
+            const firstImg = matchProj.images[0];
+            return (typeof firstImg === 'string' && firstImg.startsWith('http')) ? firstImg : `/uploads/${firstImg}`;
+          }
+          return 'assets/logo.png';
+        };
+
+        const industrialImg = getCatImg('Industrial');
+        const commercialImg = getCatImg('Commercial');
+        const stadiumImg = getCatImg('Stadium');
+
         // Default Explore Mode (Trending & Categories)
         popup.innerHTML = `
           <div class="cosmos-section">
@@ -860,15 +874,15 @@ function renderCategoryChips() {
             <h4 class="cosmos-title">Categories</h4>
             <div class="cosmos-cards-grid">
               <div class="cosmos-card" data-cat="Industrial">
-                <img class="cosmos-card-thumb" src="assets/map_icons/map_misc.png" onerror="this.src='assets/logo.png'">
+                <img class="cosmos-card-thumb" src="${industrialImg}" onerror="this.src='assets/logo.png'">
                 <span class="cosmos-card-label">Industrial</span>
               </div>
               <div class="cosmos-card" data-cat="Commercial">
-                <img class="cosmos-card-thumb" src="assets/map_icons/map_usa.png" onerror="this.src='assets/logo.png'">
+                <img class="cosmos-card-thumb" src="${commercialImg}" onerror="this.src='assets/logo.png'">
                 <span class="cosmos-card-label">Commercial</span>
               </div>
               <div class="cosmos-card" data-cat="Stadium">
-                <img class="cosmos-card-thumb" src="assets/map_icons/map_canada.png" onerror="this.src='assets/logo.png'">
+                <img class="cosmos-card-thumb" src="${stadiumImg}" onerror="this.src='assets/logo.png'">
                 <span class="cosmos-card-label">Stadium</span>
               </div>
             </div>
