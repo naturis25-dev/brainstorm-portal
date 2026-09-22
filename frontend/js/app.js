@@ -1439,13 +1439,11 @@ function setupNavigation() {
     
 
     const categoryColors = {
-
-      usa: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Vibrant Green
-      canada: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }, // Vibrant Green
-      quebec: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }, // Vibrant Green
-      uae: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' },    // Vibrant Green
-      misc: { back: '#059669', flapFrom: '#10b981', flapTo: '#34d399', shadowFrom: '#34d399', shadowTo: '#047857' }   // Vibrant Green
-
+      usa: { back: '#475569', flapFrom: '#64748b', flapTo: '#94a3b8', shadowFrom: '#94a3b8', shadowTo: '#334155' },    // Professional Slate Gray
+      canada: { back: '#475569', flapFrom: '#64748b', flapTo: '#94a3b8', shadowFrom: '#94a3b8', shadowTo: '#334155' }, // Professional Slate Gray
+      quebec: { back: '#475569', flapFrom: '#64748b', flapTo: '#94a3b8', shadowFrom: '#94a3b8', shadowTo: '#334155' }, // Professional Slate Gray
+      uae: { back: '#475569', flapFrom: '#64748b', flapTo: '#94a3b8', shadowFrom: '#94a3b8', shadowTo: '#334155' },    // Professional Slate Gray
+      misc: { back: '#475569', flapFrom: '#64748b', flapTo: '#94a3b8', shadowFrom: '#94a3b8', shadowTo: '#334155' }   // Professional Slate Gray
     };
 
 

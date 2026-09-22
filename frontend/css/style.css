@@ -4753,7 +4753,7 @@ body:not(.theme-ca) .smooky-action-btn {
 }
 
 .uiverse-folder-container .work-5 {
-  background-color: #d97706; /* amber-600 */
+  background-color: #475569; /* slate-600 */
   width: 100%;
   height: 100%;
   transform-origin: top;
@@ -4770,7 +4770,7 @@ body:not(.theme-ca) .smooky-action-btn {
   left: 0;
   width: 48px; /* w-12 */
   height: 12px; /* h-3 */
-  background-color: #d97706;
+  background-color: #475569;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -4782,14 +4782,14 @@ body:not(.theme-ca) .smooky-action-btn {
   left: 45px;
   width: 12px;
   height: 12px;
-  background-color: #d97706;
+  background-color: #475569;
   clip-path: polygon(0 35%, 0% 100%, 50% 100%);
 }
 
 .uiverse-folder-container .work-4 {
   position: absolute;
   inset: 4px;
-  background-color: #a1a1aa; /* zinc-400 */
+  background-color: #94a3b8; /* slate-400 */
   border-radius: 12px;
   transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
@@ -4806,7 +4806,7 @@ body:not(.theme-ca) .smooky-action-btn {
 .uiverse-folder-container .work-3 {
   position: absolute;
   inset: 4px;
-  background-color: #d4d4d8; /* zinc-300 */
+  background-color: #cbd5e1; /* slate-300 */
   border-radius: 12px;
   transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
@@ -4815,7 +4815,7 @@ body:not(.theme-ca) .smooky-action-btn {
 .uiverse-folder-container .work-2 {
   position: absolute;
   inset: 4px;
-  background-color: #e4e4e7; /* zinc-200 */
+  background-color: #e2e8f0; /* slate-200 */
   border-radius: 12px;
   transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
   transform-origin: bottom;
@@ -4824,7 +4824,7 @@ body:not(.theme-ca) .smooky-action-btn {
 .uiverse-folder-container .work-1 {
   position: absolute;
   bottom: 0;
-  background: linear-gradient(to top, #f59e0b, #fbbf24); /* amber-500 to amber-400 */
+  background: linear-gradient(to top, #64748b, #94a3b8); /* slate-500 to slate-400 */
   width: 100%;
   height: 92px;
   border-radius: 12px;
@@ -4842,7 +4842,7 @@ body:not(.theme-ca) .smooky-action-btn {
   right: 0;
   width: 86px;
   height: 10px;
-  background-color: #fbbf24;
+  background-color: #94a3b8;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -4854,7 +4854,7 @@ body:not(.theme-ca) .smooky-action-btn {
   right: 84px;
   width: 10px;
   height: 10px;
-  background-color: #fbbf24;
+  background-color: #94a3b8;
   clip-path: polygon(100% 14%, 50% 100%, 100% 100%);
 }
 
