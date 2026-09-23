@@ -11080,13 +11080,13 @@ body.dark-mode .map-card .map-controls-bar {
   }
 
   .atlas-brand-footer .footer-social-btn {
-    width: 32px !important;
-    height: 32px !important;
+    width: 26px !important;
+    height: 26px !important;
     border-radius: 50% !important;
     background: #ffffff !important;
     color: #475569 !important;
     border: 1px solid rgba(226, 232, 240, 0.9) !important;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.04) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -11098,17 +11098,17 @@ body.dark-mode .map-card .map-controls-bar {
 
   .atlas-brand-footer .footer-social-btn:active,
   .atlas-brand-footer .footer-social-btn:hover {
-    transform: translateY(-2px) scale(1.15) !important;
+    transform: scale(1.15) !important;
     background: #334155 !important;
     color: #ffffff !important;
     border-color: #334155 !important;
-    box-shadow: 0 6px 14px rgba(51, 65, 85, 0.25) !important;
+    box-shadow: 0 4px 10px rgba(51, 65, 85, 0.22) !important;
   }
 
   .atlas-brand-footer .footer-social-btn:active svg,
   .atlas-brand-footer .footer-social-btn:hover svg {
     fill: #ffffff !important;
-    transform: scale(1.12) rotate(4deg) !important;
+    transform: scale(1.1) rotate(4deg) !important;
   }
 
   body.dark-mode .atlas-brand-footer .footer-social-btn {
@@ -11126,8 +11126,8 @@ body.dark-mode .map-card .map-controls-bar {
 
   .atlas-brand-footer .footer-social-btn svg {
     fill: #475569 !important;
-    width: 17px !important;
-    height: 17px !important;
+    width: 12px !important;
+    height: 12px !important;
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.25s ease !important;
   }
 
