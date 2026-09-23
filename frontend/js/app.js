@@ -1352,11 +1352,11 @@ function setupNavigation() {
     
 
     const pastelThemeColors = {
-      canada: { bg: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)', circle: '#2563eb' },      // Canada (Soft Red Pastel)
-      quebec: { bg: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)', circle: '#2563eb' },      // Quebec (Soft Orange/Peach Pastel)
-      usa: { bg: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', circle: '#2563eb' },         // USA (Soft Blue Pastel)
-      uae: { bg: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', circle: '#2563eb' },         // UAE (Soft Mint Green Pastel)
-      misc: { bg: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)', circle: '#2563eb' }         // Misc (Soft Lavender Pastel)
+      canada: { bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', circle: '#334155' },
+      quebec: { bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', circle: '#334155' },
+      usa: { bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', circle: '#334155' },
+      uae: { bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', circle: '#334155' },
+      misc: { bg: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)', circle: '#334155' }
     };
 
     desiredOrder.forEach(catKey => {
@@ -2149,6 +2149,24 @@ function closeDetail() {
 }
 window.closeDetail = closeDetail;
 
+window.switchDetailTab = function(targetSecId, clickedBtn) {
+  if (clickedBtn) {
+    const parent = clickedBtn.closest('.detail-subnav-bar');
+    if (parent) {
+      parent.querySelectorAll('.d-tab').forEach(t => t.classList.remove('active'));
+      clickedBtn.classList.add('active');
+    }
+  }
+  const el = document.getElementById(targetSecId);
+  if (el) {
+    window._isTabClickScrolling = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      window._isTabClickScrolling = false;
+    }, 800);
+  }
+};
+
 // ============================================================
 // PROJECT DETAIL VIEW
 // ============================================================
@@ -2347,19 +2365,22 @@ window.openDetail = function(id) {
               </div>
             </div>
             ${p.images.length > 1 ? `
-              <button class="carousel-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" aria-label="Previous image">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              </button>
-              <button class="carousel-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" aria-label="Next image">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
               <div class="carousel-dock-pill" id="projCarouselDots-${p.id}">
+                <button class="carousel-dock-nav-btn prev" onclick="window.stepCarouselSlide('${p.id}', -1)" title="Previous Image (←)" aria-label="Previous image">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="carousel-dock-sep"></div>
                 <div class="carousel-dots-group">
                   ${p.images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="window.selectCarouselSlide('${p.id}', ${i})"></span>`).join('')}
                 </div>
+                <div class="carousel-dock-sep"></div>
                 <button class="carousel-play-btn playing" id="projCarouselPlay-${p.id}" onclick="window.toggleCarouselAutoplay('${p.id}')" title="Pause Slideshow" aria-label="Toggle slideshow">
                   <svg class="icon-pause" viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
                   <svg class="icon-play" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:none;"><polygon points="6 4 18 12 6 20 6 4"></polygon></svg>
+                </button>
+                <div class="carousel-dock-sep"></div>
+                <button class="carousel-dock-nav-btn next" onclick="window.stepCarouselSlide('${p.id}', 1)" title="Next Image (→)" aria-label="Next image">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </button>
               </div>
             ` : ''}
@@ -2473,11 +2494,11 @@ window.openDetail = function(id) {
 
     const subNavHtml = `
       <div class="detail-subnav-bar">
-        ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" onclick="document.getElementById('sec-gallery-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Project Gallery</span><span class="d-tab-short">Gallery</span></button>` : ''}
-        ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" onclick="document.getElementById('sec-3d-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">3D Model</span><span class="d-tab-short">3D View</span></button>` : ''}
-        <button class="d-tab ${overviewTabActive ? 'active' : ''}" onclick="document.getElementById('sec-overview-${p.id}')?.scrollIntoView({behavior:'smooth'})">Overview</button>
-        ${hasVideo ? `<button class="d-tab ${videoTabActive ? 'active' : ''}" onclick="document.getElementById('sec-walkthrough-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Walkthrough</span><span class="d-tab-short">Video</span></button>` : ''}
-        <button class="d-tab" onclick="document.getElementById('sec-similar-${p.id}')?.scrollIntoView({behavior:'smooth'})"><span class="d-tab-full">Similar Projects</span><span class="d-tab-short">Similar</span></button>
+        ${hasImages ? `<button class="d-tab ${galleryTabActive ? 'active' : ''}" data-target="sec-gallery-${p.id}" onclick="window.switchDetailTab('sec-gallery-${p.id}', this)"><span class="d-tab-full">Project Gallery</span><span class="d-tab-short">Gallery</span></button>` : ''}
+        ${hasModel ? `<button class="d-tab ${modelTabActive ? 'active' : ''}" data-target="sec-3d-${p.id}" onclick="window.switchDetailTab('sec-3d-${p.id}', this)"><span class="d-tab-full">3D Model</span><span class="d-tab-short">3D View</span></button>` : ''}
+        <button class="d-tab ${overviewTabActive ? 'active' : ''}" data-target="sec-overview-${p.id}" onclick="window.switchDetailTab('sec-overview-${p.id}', this)">Overview</button>
+        ${hasVideo ? `<button class="d-tab ${videoTabActive ? 'active' : ''}" data-target="sec-walkthrough-${p.id}" onclick="window.switchDetailTab('sec-walkthrough-${p.id}', this)"><span class="d-tab-full">Walkthrough</span><span class="d-tab-short">Video</span></button>` : ''}
+        <button class="d-tab" data-target="sec-similar-${p.id}" onclick="window.switchDetailTab('sec-similar-${p.id}', this)"><span class="d-tab-full">Similar Projects</span><span class="d-tab-short">Similar</span></button>
       </div>
     `;
 
@@ -2836,14 +2857,58 @@ window.openDetail = function(id) {
     }
   };
 
+  const updateActiveTabOnScroll = () => {
+    if (window._isTabClickScrolling) return;
+    const subnav = document.querySelector('.detail-subnav-bar');
+    if (!subnav) return;
+    const tabs = subnav.querySelectorAll('.d-tab[data-target]');
+    if (!tabs || !tabs.length) return;
+
+    const sections = Array.from(tabs).map(t => {
+      const targetId = t.getAttribute('data-target');
+      return { tab: t, el: document.getElementById(targetId) };
+    }).filter(item => item.el !== null);
+
+    let currentTab = null;
+    const scrollOffset = 220;
+
+    for (let i = 0; i < sections.length; i++) {
+      const rect = sections[i].el.getBoundingClientRect();
+      if (rect.top <= scrollOffset && rect.bottom > scrollOffset - 60) {
+        currentTab = sections[i].tab;
+        break;
+      }
+    }
+
+    if (!currentTab && sections.length > 0) {
+      const isAtBottom = (dScrollContent && dScrollContent.scrollHeight - dScrollContent.scrollTop <= dScrollContent.clientHeight + 60) ||
+                         (dOverlay && dOverlay.scrollHeight - dOverlay.scrollTop <= dOverlay.clientHeight + 60);
+      if (isAtBottom) {
+        currentTab = sections[sections.length - 1].tab;
+      } else {
+        currentTab = sections[0].tab;
+      }
+    }
+
+    if (currentTab && !currentTab.classList.contains('active')) {
+      tabs.forEach(t => t.classList.remove('active'));
+      currentTab.classList.add('active');
+    }
+  };
+
+  const handleDetailScroll = () => {
+    updateFabVisibility();
+    updateActiveTabOnScroll();
+  };
+
   if (dScrollContent && !dScrollContent.dataset.scrollBound) {
     dScrollContent.dataset.scrollBound = 'true';
-    dScrollContent.addEventListener('scroll', updateFabVisibility, { passive: true });
+    dScrollContent.addEventListener('scroll', handleDetailScroll, { passive: true });
   }
 
   if (dOverlay && !dOverlay.dataset.scrollBound) {
     dOverlay.dataset.scrollBound = 'true';
-    dOverlay.addEventListener('scroll', updateFabVisibility, { passive: true });
+    dOverlay.addEventListener('scroll', handleDetailScroll, { passive: true });
   }
 
   dOverlay?.classList.add('open');
@@ -3887,9 +3952,13 @@ function setupModal() {
 
 
 
+  let isSavingProject = false;
+
   const handleSaveProjectClick = async (e) => {
 
     if (e) { try { e.preventDefault(); e.stopPropagation(); } catch(err) {} }
+
+    if (isSavingProject) return;
 
     const titleInput = document.getElementById('f-title');
 
@@ -3918,6 +3987,8 @@ function setupModal() {
     if (!title) { alert('Please fill in Title.'); return; }
 
 
+
+    isSavingProject = true;
 
     const saveBtn = document.getElementById('modalSave');
 
@@ -4119,6 +4190,8 @@ function setupModal() {
 
     } finally {
 
+      isSavingProject = false;
+
       if (saveBtn) {
 
         saveBtn.disabled = false;
@@ -4135,7 +4208,10 @@ function setupModal() {
 
   window.handleSaveProjectClick = handleSaveProjectClick;
 
-  document.getElementById('modalSave')?.addEventListener('click', handleSaveProjectClick);
+  const modalSaveBtn = document.getElementById('modalSave');
+  if (modalSaveBtn) {
+    modalSaveBtn.onclick = handleSaveProjectClick;
+  }
 
 }
 
@@ -4695,7 +4771,8 @@ if (document.readyState === 'loading') {
 
     document.getElementById('d-name').value = '';
 
-    document.getElementById('d-tag').value = '';
+    const tagInput = document.getElementById('d-tag');
+    if (tagInput) tagInput.value = '';
 
     document.getElementById('d-file').value = '';
 
@@ -4729,7 +4806,7 @@ if (document.readyState === 'loading') {
 
         cat.files.forEach((file, index) => {
 
-          html += '<div style=\"display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:4px;\"><div><div style=\"font-weight:600; font-size:13px; color:var(--ink);\">' + file.name + '</div><div style=\"font-size:11px; color:var(--sub);\">' + file.tag + ' &middot; <a href=\"/' + file.path + '\" target=\"_blank\" style=\"color:var(--accent);\">View PDF</a></div></div><button class=\"btn delete-btn\" style=\"padding: 4px 10px; font-size: 12px; color: #d32f2f; background: #ffebee;\" onclick=\"deleteDrawing(\'' + catKey + '\', ' + index + ')\">Remove</button></div>';
+          html += '<div style=\"display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.05); margin-bottom:4px;\"><div><div style=\"font-weight:600; font-size:13px; color:var(--ink);\">' + file.name + '</div><div style=\"font-size:11px; color:var(--sub);\">' + (file.tag ? file.tag + ' &middot; ' : '') + '<a href=\"/' + file.path + '\" target=\"_blank\" style=\"color:var(--accent);\">View PDF</a></div></div><button class=\"btn delete-btn\" style=\"padding: 4px 10px; font-size: 12px; color: #d32f2f; background: #ffebee;\" onclick=\"deleteDrawing(\'' + catKey + '\', ' + index + ')\">Remove</button></div>';
 
         });
 
@@ -4749,7 +4826,8 @@ if (document.readyState === 'loading') {
 
     document.getElementById('d-name').value = '';
 
-    document.getElementById('d-tag').value = '';
+    const tagInput = document.getElementById('d-tag');
+    if (tagInput) tagInput.value = '';
 
     document.getElementById('d-file').value = '';
 
@@ -4804,13 +4882,15 @@ if (document.readyState === 'loading') {
 
 
 
+  let isSavingDrawing = false;
+
   saveBtn?.addEventListener('click', async () => {
+
+    if (isSavingDrawing) return;
 
     const catKey = document.getElementById('d-category').value;
 
     const name = document.getElementById('d-name').value.trim();
-
-    const tag = document.getElementById('d-tag').value.trim();
 
     const fileInput = document.getElementById('d-file');
 
@@ -4820,7 +4900,7 @@ if (document.readyState === 'loading') {
 
 
 
-    if (!name || !tag || !fileInput.files[0]) {
+    if (!name || !fileInput.files[0]) {
 
       alert('Please fill out all fields and select a PDF file.');
 
@@ -4829,6 +4909,8 @@ if (document.readyState === 'loading') {
     }
 
 
+
+    isSavingDrawing = true;
 
     saveBtn.disabled = true;
 
@@ -4900,9 +4982,7 @@ if (document.readyState === 'loading') {
 
         cover: coverPath,
 
-        name: name,
-
-        tag: tag
+        name: name
 
       });
 
@@ -4956,6 +5036,8 @@ if (document.readyState === 'loading') {
       alert(err.message);
 
     } finally {
+
+      isSavingDrawing = false;
 
       saveBtn.disabled = false;
 

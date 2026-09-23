@@ -1002,7 +1002,7 @@
 
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
         <button class="btn" id="modalCancel" onclick="if(window.closeModal){window.closeModal();}else{document.getElementById('projectModal')?.classList.remove('open');}">Cancel</button>
-        <button class="btn primary" id="modalSave" onclick="if(window.handleSaveProjectClick) window.handleSaveProjectClick(event);">Save Project</button>
+        <button class="btn primary" id="modalSave">Save Project</button>
       </div>
     </div>
   </div>
@@ -1186,10 +1186,6 @@
       <div class="field">
         <label>Drawing Name *</label>
         <input type="text" id="d-name" placeholder="e.g. Curved Stairs">
-      </div>
-      <div class="field">
-        <label>Tag / Sub-category *</label>
-        <input type="text" id="d-tag" placeholder="e.g. Erection Sheets">
       </div>
       <div class="field">
         <label>Cover Image (Optional)</label>
