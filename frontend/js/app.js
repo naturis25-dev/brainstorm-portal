@@ -1591,40 +1591,31 @@ function setupNavigation() {
 
     if (window.innerWidth > 768) return;
 
-    // 2. Smooth focal scroll detection: activate each card naturally including first and last
+    // 2. Smooth dynamic focal scroll: activates every card sequentially from 0 to N without jumping
     let ticking = false;
     const updateActiveCardOnScroll = () => {
       const innerHeight = window.innerHeight;
       const scrollY = window.scrollY || window.pageYOffset || 0;
       const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-      
-      const isAtTop = scrollY <= 40;
-      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 40);
+      const maxScroll = Math.max(1, scrollHeight - innerHeight);
+      const scrollProgress = Math.max(0, Math.min(1, scrollY / maxScroll));
 
-      const firstCardRect = cards[0].getBoundingClientRect();
-      const lastCardRect = cards[cards.length - 1].getBoundingClientRect();
+      // Dynamic focal point sweeps smoothly from 20% down to 80% of viewport height as you scroll
+      const viewportFocalPoint = (innerHeight * 0.20) + (scrollProgress * (innerHeight * 0.60));
 
       let closestCard = null;
+      let minDistance = Infinity;
 
-      if (isAtTop || firstCardRect.top >= 50) {
-        closestCard = cards[0];
-      } else if (isAtBottom || lastCardRect.bottom <= (innerHeight - 30)) {
-        closestCard = cards[cards.length - 1];
-      } else {
-        let minDistance = Infinity;
-        const viewportFocalPoint = innerHeight * 0.44;
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + (rect.height / 2);
+        const distance = Math.abs(cardCenter - viewportFocalPoint);
 
-        cards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          const cardCenter = rect.top + (rect.height / 2);
-          const distance = Math.abs(cardCenter - viewportFocalPoint);
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestCard = card;
-          }
-        });
-      }
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCard = card;
+        }
+      });
 
       cards.forEach(card => {
         if (closestCard && card === closestCard) {
