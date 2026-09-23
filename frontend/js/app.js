@@ -1591,31 +1591,34 @@ function setupNavigation() {
 
     if (window.innerWidth > 768) return;
 
-    // 2. Smooth dynamic focal scroll: activates every card sequentially from 0 to N without jumping
+    // 2. High-performance focal tracking: activates 1st, 2nd, 3rd, 4th sequentially without skipping
     let ticking = false;
     const updateActiveCardOnScroll = () => {
       const innerHeight = window.innerHeight;
       const scrollY = window.scrollY || window.pageYOffset || 0;
       const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-      const maxScroll = Math.max(1, scrollHeight - innerHeight);
-      const scrollProgress = Math.max(0, Math.min(1, scrollY / maxScroll));
-
-      // Dynamic focal point sweeps smoothly from 20% down to 80% of viewport height as you scroll
-      const viewportFocalPoint = (innerHeight * 0.20) + (scrollProgress * (innerHeight * 0.60));
 
       let closestCard = null;
-      let minDistance = Infinity;
 
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.top + (rect.height / 2);
-        const distance = Math.abs(cardCenter - viewportFocalPoint);
+      if (scrollY <= 15) {
+        closestCard = cards[0];
+      } else if ((innerHeight + scrollY) >= (scrollHeight - 15)) {
+        closestCard = cards[cards.length - 1];
+      } else {
+        let minDistance = Infinity;
+        const focalY = innerHeight * 0.45;
 
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCard = card;
-        }
-      });
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const cardCenter = rect.top + (rect.height / 2);
+          const distance = Math.abs(cardCenter - focalY);
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestCard = card;
+          }
+        });
+      }
 
       cards.forEach(card => {
         if (closestCard && card === closestCard) {
