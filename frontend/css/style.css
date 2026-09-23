@@ -10584,10 +10584,12 @@ body.theme-ca .d-tab.active {
     grid-template-columns: 1fr;
   }
   .bento-overview-card,
-  .bento-specs-card,
-  .bento-scope-card {
+  .bento-specs-card {
     grid-column: 1;
     grid-row: auto;
+  }
+  .bento-scope-card {
+    display: none !important;
   }
   .similar-card {
     width: 200px;
@@ -11634,7 +11636,6 @@ body.dark-mode .region-footer-left {
   .bento-overview-card,
   .bento-right-stack,
   .bento-specs-card,
-  .bento-scope-card,
   .bento-card {
     width: 100% !important;
     max-width: 100% !important;
