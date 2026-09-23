@@ -2193,7 +2193,7 @@ function goToMap() {
 
 
 
-function closePanel() {
+function closePanel(updateHistory = true) {
 
   document.getElementById('overlay')?.classList.remove('open');
 
@@ -2201,9 +2201,16 @@ function closePanel() {
 
   document.body.classList.remove('region-modal-open');
 
+  sessionStorage.removeItem('brainstorm_open_region');
+
+  if (updateHistory && (window.location.hash || '').startsWith('#region')) {
+    window.location.hash = 'map';
+  }
+
   updateAdminBtnVisibility();
 
 }
+window.closePanel = closePanel;
 
 function closeDetail(updateHistory = true) {
   const detailOverlay = document.getElementById('detailOverlay');
@@ -6711,25 +6718,23 @@ function restoreNavState(isHashChangeEvent = false) {
     hashSub = parts.slice(1).join('/');
   }
 
-  // If no hash in URL and this is initial page load, check sessionStorage
+  // If no hash in URL on page load, start fresh on the map (clean slate)
   if (!hashView && !isHashChangeEvent) {
-    const savedView = sessionStorage.getItem('brainstorm_current_view') || 'map';
-    const savedFolder = sessionStorage.getItem('brainstorm_drawings_folder');
-    const savedProject = sessionStorage.getItem('brainstorm_open_project');
-    const savedRegion = sessionStorage.getItem('brainstorm_open_region');
-
-    if (savedProject) {
-      hashView = 'project';
-      hashSub = savedProject;
-    } else if (savedRegion && savedView === 'map') {
-      hashView = 'region';
-      hashSub = savedRegion;
-    } else if (savedView === 'drawings' && savedFolder) {
+    sessionStorage.removeItem('brainstorm_open_region');
+    sessionStorage.removeItem('brainstorm_open_project');
+    const savedView = sessionStorage.getItem('brainstorm_current_view');
+    if (savedView === 'drawings') {
       hashView = 'drawings';
-      hashSub = savedFolder;
+      const savedFolder = sessionStorage.getItem('brainstorm_drawings_folder');
+      if (savedFolder) hashSub = savedFolder;
     } else {
-      hashView = savedView;
+      hashView = 'map';
     }
+  }
+
+  // Ensure region panel is closed if view is not region
+  if (hashView !== 'region') {
+    closePanel(false);
   }
 
   if (hashView === 'region' && hashSub) {

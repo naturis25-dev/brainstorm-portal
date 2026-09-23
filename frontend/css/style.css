@@ -9426,8 +9426,16 @@ body.dark-mode .brochure-modal-body {
   border: none;
 }
 
+.brochure-modal-overlay.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
 /* Built-in Website Viewer Modal Styles */
 #websiteViewerModal {
+  position: fixed !important;
+  inset: 0 !important;
   z-index: 10050 !important;
 }
 
