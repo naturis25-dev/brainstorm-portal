@@ -6803,8 +6803,33 @@ model-viewer::part(interaction-prompt),
     top: 35% !important; 
   }
   .detail-nav-arrow {
-    width: 40px !important;
-    height: 40px !important;
+    width: 42px !important;
+    height: 42px !important;
+    background: rgba(255, 255, 255, 0.45) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.65) !important;
+    color: #0f172a !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+  }
+  .detail-nav-arrow:hover,
+  .detail-nav-arrow:active {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: var(--accent, #2563eb) !important;
+    border-color: rgba(255, 255, 255, 0.95) !important;
+    transform: scale(1.06) !important;
+  }
+  body.dark-mode .detail-nav-arrow {
+    background: rgba(15, 23, 42, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+  }
+  body.dark-mode .detail-nav-arrow:hover,
+  body.dark-mode .detail-nav-arrow:active {
+    background: rgba(30, 41, 59, 0.8) !important;
+    color: #60a5fa !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
   }
   .detail-nav-arrow svg {
     width: 20px !important;
@@ -11642,6 +11667,14 @@ body.dark-mode .region-footer-left {
     flex-direction: column !important;
     width: 100% !important;
     gap: 16px !important;
+  }
+
+  .bento-right-stack {
+    order: 1 !important;
+  }
+
+  .bento-overview-card {
+    order: 2 !important;
   }
 
   .bento-overview-card,
