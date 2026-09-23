@@ -16,7 +16,7 @@
   <script src="js/map-data.js"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/style.css?v=20260922014">
+  <link rel="stylesheet" href="css/style.css?v=20260923001">
 
   <style>
   /* ================= MODERN LOADER STYLES ================= */
@@ -756,6 +756,12 @@
 
   <!-- Project Detail Fullscreen Overlay -->
   <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-close" id="detailClose" onclick="if(window.closeDetail) window.closeDetail(); else document.getElementById('detailOverlay')?.classList.remove('open');" title="Close Project Detail">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
     <div class="detail-nav-row" id="detailNavRow"></div>
 
     <!-- Floating Bottom Action Dock (BACK + TOP) in Slanted Shape -->

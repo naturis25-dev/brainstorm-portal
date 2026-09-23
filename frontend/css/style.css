@@ -2542,7 +2542,47 @@ body.dark-mode .cta-content p {
 
 
 .detail-close {
-  display: none !important;
+  position: fixed !important;
+  top: 24px !important;
+  right: 28px !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 99999 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.detail-close:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  transform: rotate(90deg) scale(1.08) !important;
+  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.detail-close:active {
+  transform: rotate(90deg) scale(0.95) !important;
+}
+
+body.dark-mode .detail-close {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.dark-mode .detail-close:hover {
+  background: #dc2626 !important;
 }
 
 .detail-hero-section {
@@ -12017,7 +12057,7 @@ body.dark-mode .region-footer-left {
 
 .detail-floating-back-btn {
   pointer-events: auto !important;
-  display: inline-flex !important;
+  display: none !important;
   align-items: center !important;
   justify-content: center !important;
   height: 46px !important;
@@ -12114,12 +12154,16 @@ body.dark-mode .detail-back-to-top-fab {
 }
 
 @media (max-width: 768px) {
+  .detail-close {
+    display: none !important;
+  }
   .detail-floating-actions {
     bottom: 20px !important;
     right: 16px !important;
     gap: 6px !important;
   }
   .detail-floating-back-btn {
+    display: inline-flex !important;
     height: 42px !important;
     width: 80px !important;
     min-width: 80px !important;
