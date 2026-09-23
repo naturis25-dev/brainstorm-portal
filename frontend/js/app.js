@@ -1591,25 +1591,40 @@ function setupNavigation() {
 
     if (window.innerWidth > 768) return;
 
-    // 2. Smooth focal scroll detection: activate each card naturally without skipping
+    // 2. Smooth focal scroll detection: activate each card naturally including first and last
     let ticking = false;
     const updateActiveCardOnScroll = () => {
       const innerHeight = window.innerHeight;
-      const viewportFocalPoint = innerHeight * 0.44;
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      
+      const isAtTop = scrollY <= 40;
+      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 40);
+
+      const firstCardRect = cards[0].getBoundingClientRect();
+      const lastCardRect = cards[cards.length - 1].getBoundingClientRect();
 
       let closestCard = null;
-      let minDistance = Infinity;
 
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.top + (rect.height / 2);
-        const distance = Math.abs(cardCenter - viewportFocalPoint);
+      if (isAtTop || firstCardRect.top >= 50) {
+        closestCard = cards[0];
+      } else if (isAtBottom || lastCardRect.bottom <= (innerHeight - 30)) {
+        closestCard = cards[cards.length - 1];
+      } else {
+        let minDistance = Infinity;
+        const viewportFocalPoint = innerHeight * 0.44;
 
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCard = card;
-        }
-      });
+        cards.forEach(card => {
+          const rect = card.getBoundingClientRect();
+          const cardCenter = rect.top + (rect.height / 2);
+          const distance = Math.abs(cardCenter - viewportFocalPoint);
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestCard = card;
+          }
+        });
+      }
 
       cards.forEach(card => {
         if (closestCard && card === closestCard) {
