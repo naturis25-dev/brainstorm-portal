@@ -9427,11 +9427,17 @@ body.dark-mode .brochure-modal-body {
 }
 
 /* Built-in Website Viewer Modal Styles */
+#websiteViewerModal {
+  z-index: 10050 !important;
+}
+
 .website-modal-container {
-  max-width: 1280px !important;
+  max-width: 1300px !important;
   width: 95vw !important;
   height: 90vh !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 body.dark-mode .website-modal-container {
@@ -9441,14 +9447,34 @@ body.dark-mode .website-modal-container {
 
 .website-modal-header {
   padding: 14px 20px !important;
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  flex-shrink: 0 !important;
 }
 
 body.dark-mode .website-modal-header {
-  background: rgba(15, 23, 42, 0.9) !important;
+  background: rgba(15, 23, 42, 0.95) !important;
   border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.website-modal-body {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: calc(100% - 60px) !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.website-modal-body iframe {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 1 100% !important;
+  border: none !important;
+  display: block !important;
 }
 
 .website-domain-badge {

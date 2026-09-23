@@ -6605,6 +6605,52 @@ function initDrawingPdfViewerModal() {
   });
 }
 
+let _websiteLoaderTimer = null;
+
+function openWebsiteViewer(url = 'https://www.brainstorminfotech.com', title = 'Brainstorm Infotech') {
+  const modal = document.getElementById('websiteViewerModal');
+  const iframe = document.getElementById('websiteIframe');
+  const loader = document.getElementById('websiteLoaderOverlay');
+  const titleEl = document.getElementById('websiteModalTitle');
+  const badgeEl = document.getElementById('websiteModalDomainBadge');
+  const externalLink = document.getElementById('openWebsiteExternalBtn');
+
+  if (!modal) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  const cleanUrl = (url || 'https://www.brainstorminfotech.com').trim();
+  let hostname = 'brainstorminfotech.com';
+  try {
+    const u = new URL(cleanUrl);
+    hostname = u.hostname.replace(/^www\./, '');
+  } catch(e) {}
+
+  if (titleEl) titleEl.textContent = title;
+  if (badgeEl) badgeEl.textContent = hostname;
+  if (externalLink) externalLink.href = cleanUrl;
+
+  if (loader) loader.classList.remove('hidden');
+  if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
+
+  if (iframe) {
+    iframe.src = cleanUrl;
+    iframe.onload = () => {
+      setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+      }, 200);
+    };
+    // Auto-hide loader after 1.2s safety window so it never stays stuck
+    _websiteLoaderTimer = setTimeout(() => {
+      if (loader) loader.classList.add('hidden');
+    }, 1200);
+  }
+
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+window.openWebsiteViewer = openWebsiteViewer;
+
 function initWebsiteViewerModal() {
   if (window._websiteViewerInitialized) return;
   window._websiteViewerInitialized = true;
@@ -6614,45 +6660,13 @@ function initWebsiteViewerModal() {
   const iframe = document.getElementById('websiteIframe');
   const loader = document.getElementById('websiteLoaderOverlay');
   const reloadBtn = document.getElementById('reloadWebsiteFrameBtn');
-  const titleEl = document.getElementById('websiteModalTitle');
-  const badgeEl = document.getElementById('websiteModalDomainBadge');
-  const externalLink = document.getElementById('openWebsiteExternalBtn');
-
-  window.openWebsiteViewer = function(url = 'https://www.brainstorminfotech.com', title = 'Brainstorm Infotech') {
-    if (!modal) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    const cleanUrl = (url || 'https://www.brainstorminfotech.com').trim();
-    let hostname = 'brainstorminfotech.com';
-    try {
-      const u = new URL(cleanUrl);
-      hostname = u.hostname.replace(/^www\./, '');
-    } catch(e) {}
-
-    if (titleEl) titleEl.textContent = title;
-    if (badgeEl) badgeEl.textContent = hostname;
-    if (externalLink) externalLink.href = cleanUrl;
-
-    if (loader) loader.classList.remove('hidden');
-    if (iframe) {
-      iframe.src = cleanUrl;
-      iframe.onload = () => {
-        setTimeout(() => {
-          if (loader) loader.classList.add('hidden');
-        }, 300);
-      };
-    }
-
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  };
 
   const closeWebsiteModal = () => {
     if (modal) {
       modal.classList.remove('active');
       if (iframe) iframe.src = '';
       if (loader) loader.classList.remove('hidden');
+      if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
       document.body.style.overflow = '';
     }
   };
@@ -6663,8 +6677,12 @@ function initWebsiteViewerModal() {
   if (reloadBtn && iframe) {
     reloadBtn.addEventListener('click', () => {
       if (loader) loader.classList.remove('hidden');
-      const curSrc = iframe.src;
+      const curSrc = iframe.src || 'https://www.brainstorminfotech.com';
       iframe.src = '';
+      if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
+      _websiteLoaderTimer = setTimeout(() => {
+        if (loader) loader.classList.add('hidden');
+      }, 1200);
       setTimeout(() => { iframe.src = curSrc; }, 100);
     });
   }
