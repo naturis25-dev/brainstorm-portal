@@ -1067,7 +1067,11 @@ function setupNavigation() {
         if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
         if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        if (window.openWebsiteViewer) {
+          window.openWebsiteViewer('https://www.brainstorminfotech.com');
+        } else {
+          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        }
       }
     });
   }
@@ -1091,7 +1095,11 @@ function setupNavigation() {
         if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
         if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        if (window.openWebsiteViewer) {
+          window.openWebsiteViewer('https://www.brainstorminfotech.com');
+        } else {
+          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        }
       }
     }
   });
@@ -6597,7 +6605,82 @@ function initDrawingPdfViewerModal() {
   });
 }
 
+function initWebsiteViewerModal() {
+  if (window._websiteViewerInitialized) return;
+  window._websiteViewerInitialized = true;
 
+  const modal = document.getElementById('websiteViewerModal');
+  const closeModalBtn = document.getElementById('closeWebsiteModal');
+  const iframe = document.getElementById('websiteIframe');
+  const loader = document.getElementById('websiteLoaderOverlay');
+  const reloadBtn = document.getElementById('reloadWebsiteFrameBtn');
+  const titleEl = document.getElementById('websiteModalTitle');
+  const badgeEl = document.getElementById('websiteModalDomainBadge');
+  const externalLink = document.getElementById('openWebsiteExternalBtn');
+
+  window.openWebsiteViewer = function(url = 'https://www.brainstorminfotech.com', title = 'Brainstorm Infotech') {
+    if (!modal) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const cleanUrl = (url || 'https://www.brainstorminfotech.com').trim();
+    let hostname = 'brainstorminfotech.com';
+    try {
+      const u = new URL(cleanUrl);
+      hostname = u.hostname.replace(/^www\./, '');
+    } catch(e) {}
+
+    if (titleEl) titleEl.textContent = title;
+    if (badgeEl) badgeEl.textContent = hostname;
+    if (externalLink) externalLink.href = cleanUrl;
+
+    if (loader) loader.classList.remove('hidden');
+    if (iframe) {
+      iframe.src = cleanUrl;
+      iframe.onload = () => {
+        setTimeout(() => {
+          if (loader) loader.classList.add('hidden');
+        }, 300);
+      };
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeWebsiteModal = () => {
+    if (modal) {
+      modal.classList.remove('active');
+      if (iframe) iframe.src = '';
+      if (loader) loader.classList.remove('hidden');
+      document.body.style.overflow = '';
+    }
+  };
+  window.closeWebsiteViewer = closeWebsiteModal;
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeWebsiteModal);
+
+  if (reloadBtn && iframe) {
+    reloadBtn.addEventListener('click', () => {
+      if (loader) loader.classList.remove('hidden');
+      const curSrc = iframe.src;
+      iframe.src = '';
+      setTimeout(() => { iframe.src = curSrc; }, 100);
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeWebsiteModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+      closeWebsiteModal();
+    }
+  });
+}
 
 function restoreNavState(isHashChangeEvent = false) {
   const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
@@ -6754,6 +6837,8 @@ function initApp() {
   initBrochureHandlers();
 
   initDrawingPdfViewerModal();
+
+  initWebsiteViewerModal();
 
   window.addEventListener('hashchange', () => {
     restoreNavState(true);

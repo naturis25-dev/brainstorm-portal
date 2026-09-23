@@ -1382,6 +1382,46 @@
         </div>
       </div>
     </div>
+  <!-- Built-In Website Viewer Modal Sheet -->
+  <div id="websiteViewerModal" class="brochure-modal-overlay">
+    <div class="brochure-modal-container website-modal-container">
+      <div class="brochure-modal-header website-modal-header">
+        <div class="bm-header-title">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span class="bm-title-text" id="websiteModalTitle">Brainstorm Infotech</span>
+          <span class="website-domain-badge" id="websiteModalDomainBadge">brainstorminfotech.com</span>
+        </div>
+        <div class="bm-header-actions" style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" class="website-header-btn" id="reloadWebsiteFrameBtn" title="Reload Website" aria-label="Reload Website">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+          <a href="https://www.brainstorminfotech.com" target="_blank" rel="noopener noreferrer" class="website-header-btn" id="openWebsiteExternalBtn" title="Open in New Tab" aria-label="Open in New Tab">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+          <button type="button" class="bm-close-btn" id="closeWebsiteModal" title="Close Website Viewer">&times;</button>
+        </div>
+      </div>
+      <div class="brochure-modal-body website-modal-body" style="position: relative;">
+        <!-- Loading Spinner -->
+        <div class="website-loader-overlay" id="websiteLoaderOverlay">
+          <div class="website-spinner"></div>
+          <span class="website-loader-text">Connecting to Brainstorm Infotech...</span>
+        </div>
+        <iframe id="websiteIframe" src="" title="Brainstorm Infotech Website Viewer" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"></iframe>
+      </div>
+    </div>
   </div>
 
   <!-- Download Notification Toast -->

@@ -9426,6 +9426,130 @@ body.dark-mode .brochure-modal-body {
   border: none;
 }
 
+/* Built-in Website Viewer Modal Styles */
+.website-modal-container {
+  max-width: 1280px !important;
+  width: 95vw !important;
+  height: 90vh !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode .website-modal-container {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.website-modal-header {
+  padding: 14px 20px !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+body.dark-mode .website-modal-header {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.website-domain-badge {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: var(--accent, #2563eb) !important;
+  background: var(--accent-soft, rgba(37, 99, 235, 0.08)) !important;
+  padding: 3px 10px !important;
+  border-radius: 100px !important;
+  border: 1px solid rgba(37, 99, 235, 0.15) !important;
+  margin-left: 6px !important;
+}
+
+body.dark-mode .website-domain-badge {
+  background: rgba(96, 165, 250, 0.12) !important;
+  color: #60a5fa !important;
+  border-color: rgba(96, 165, 250, 0.25) !important;
+}
+
+.website-header-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+  background: var(--gray-100, #f1f5f9) !important;
+  color: var(--ink, #0f172a) !important;
+  border: 1px solid var(--line, #e2e8f0) !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+}
+
+.website-header-btn:hover {
+  background: var(--accent, #2563eb) !important;
+  color: #ffffff !important;
+  border-color: var(--accent, #2563eb) !important;
+  transform: translateY(-1px) scale(1.05) !important;
+}
+
+body.dark-mode .website-header-btn {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+
+body.dark-mode .website-header-btn:hover {
+  background: var(--accent, #2563eb) !important;
+  color: #ffffff !important;
+}
+
+.website-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #ffffff;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+body.dark-mode .website-loader-overlay {
+  background: #0f172a;
+}
+
+.website-loader-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.website-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid rgba(37, 99, 235, 0.15);
+  border-top-color: var(--accent, #2563eb);
+  animation: siteSpin 0.75s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes siteSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.website-loader-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sub, #64748b);
+}
+
+body.dark-mode .website-loader-text {
+  color: #94a3b8;
+}
+
 /* Mobile Brochure Bottom Dock Dropdown */
 .m-brochure-dropdown-container {
   position: relative;
