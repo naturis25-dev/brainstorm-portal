@@ -6440,19 +6440,12 @@ body.dark-mode .smooky-action-wrap {
     align-items: center !important;
   }
   .cta-banner .cta-icon {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    border-radius: 50% !important;
-    background: #f1f5f9 !important;
-    border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  }
-  .cta-banner .cta-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+    display: none !important;
   }
   .cta-banner .cta-content {
-    padding-right: 10px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    padding-right: 12px !important;
     border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
   }
   body.dark-mode .cta-banner .cta-content {
