@@ -11815,11 +11815,12 @@ body.dark-mode .detail-back-to-top-fab {
   }
 }
 
-/* Secret Admin Trigger Icon Button (Top-Left Position - Reveals on Mouse Proximity) */
+/* Secret Admin Trigger Icon Button (Top-Right Position - Reveals on Mouse Proximity) */
 .secret-admin-trigger {
   position: fixed !important;
   top: 18px !important;
-  left: 18px !important;
+  right: 18px !important;
+  left: auto !important;
   z-index: 10000 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -11862,8 +11863,8 @@ body.dark-mode .detail-back-to-top-fab {
   display: block !important;
 }
 
-/* Smooth reveal when mouse approaches top-left corner or hovers the button directly */
-.secret-admin-trigger.near-top-left,
+/* Smooth reveal when mouse approaches top-right corner or hovers the button directly */
+.secret-admin-trigger.near-top-right,
 .secret-admin-trigger:hover {
   opacity: 1 !important;
   visibility: visible !important;

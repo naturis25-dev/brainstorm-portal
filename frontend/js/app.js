@@ -6306,20 +6306,20 @@ function initApp() {
 
   initDrawingPdfViewerModal();
 
-  // Top-Left Corner Mouse Proximity Detection for Secret Admin Button (Desktop Only)
+  // Top-Right Corner Mouse Proximity Detection for Secret Admin Button (Desktop Only)
   document.addEventListener('mousemove', (e) => {
     if (window.innerWidth <= 768) return; // Completely disable on mobile
     const adminBtns = document.querySelectorAll('.secret-admin-trigger, #secretAdminTriggerBtn');
     if (!adminBtns.length) return;
     
-    // Check if mouse is within 150px of the top-left corner (x <= 150 && y <= 150)
-    const isNearTopLeft = e.clientX <= 150 && e.clientY <= 150;
+    // Check if mouse is within 150px of the top-right corner (x >= innerWidth - 150 && y <= 150)
+    const isNearTopRight = e.clientX >= (window.innerWidth - 150) && e.clientY <= 150;
     
     adminBtns.forEach(btn => {
-      if (isNearTopLeft) {
-        btn.classList.add('near-top-left');
+      if (isNearTopRight) {
+        btn.classList.add('near-top-right');
       } else {
-        btn.classList.remove('near-top-left');
+        btn.classList.remove('near-top-right');
       }
     });
   });
