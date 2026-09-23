@@ -3541,52 +3541,60 @@ body.dark-mode .tagline-static {
 }
 
 .footer-social-btn {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--gray-100, #f1f5f9);
-  color: var(--sub, #475569);
+  background: #ffffff;
+  color: #475569;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid var(--line, rgba(0, 0, 0, 0.04));
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 0.25s ease,
+              color 0.25s ease,
+              border-color 0.25s ease,
+              box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .footer-social-btn svg {
-  width: 15px;
-  height: 15px;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .footer-social-btn:hover {
-  background: var(--accent, #2563eb);
+  background: #334155;
   color: #ffffff;
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-  border-color: transparent;
-}
-
-body.theme-ca .footer-social-btn:hover {
-  background: #dc2626;
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+  transform: translateY(-3px) scale(1.15);
+  box-shadow: 0 8px 20px rgba(51, 65, 85, 0.28);
+  border-color: #334155;
 }
 
 .footer-social-btn:hover svg {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.14) rotate(4deg);
+}
+
+.footer-social-btn:active {
+  transform: translateY(0) scale(0.95);
 }
 
 body.dark-mode .footer-social-btn {
-  background: var(--gray-200, #23252a);
-  color: var(--sub, #9ca3af);
-  border-color: rgba(255, 255, 255, 0.06);
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 body.dark-mode .footer-social-btn:hover {
-  background: var(--accent, #2563eb);
+  background: #475569;
   color: #ffffff;
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.45);
+  border-color: #475569;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .footer-info-text {
@@ -3681,21 +3689,29 @@ body.dark-mode .footer-social-btn:hover {
     flex-direction: row !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
   .footer-social-btn {
-    width: 32px !important;
-    height: 32px !important;
-    background: transparent !important;
-    border: 1px solid var(--line, rgba(0, 0, 0, 0.08)) !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #475569 !important;
+    border: 1px solid rgba(226, 232, 240, 0.95) !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   body.dark-mode .footer-social-btn {
+    background: #1e293b !important;
+    color: #94a3b8 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
   .footer-social-btn svg {
-    width: 14px !important;
-    height: 14px !important;
-    color: var(--sub, #64748b) !important;
+    width: 18px !important;
+    height: 18px !important;
+    fill: currentColor !important;
   }
   .footer-info-text {
     align-items: flex-start !important;
@@ -8558,37 +8574,59 @@ body.dark-mode .uiverse-search-group .input:focus {
   .atlas-brand-footer .footer-social-row {
     display: flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 8px !important;
   }
 
   .atlas-brand-footer .footer-social-btn {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 6px !important;
-    background: transparent !important;
-    border: none !important;
-    color: var(--sub, #64748b) !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    color: #475569 !important;
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05) !important;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.3s ease !important;
   }
 
   .atlas-brand-footer .footer-social-btn svg {
     fill: currentColor !important;
     stroke: none !important;
-    width: 13px !important;
-    height: 13px !important;
+    width: 16px !important;
+    height: 16px !important;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
   }
 
-  .atlas-brand-footer .footer-social-btn:active {
-    transform: scale(0.9) !important;
+  .atlas-brand-footer .footer-social-btn:active,
+  .atlas-brand-footer .footer-social-btn:hover {
+    transform: translateY(-2px) scale(1.15) !important;
+    background: #334155 !important;
+    color: #ffffff !important;
+    border-color: #334155 !important;
+    box-shadow: 0 6px 14px rgba(51, 65, 85, 0.25) !important;
+  }
+
+  .atlas-brand-footer .footer-social-btn:active svg,
+  .atlas-brand-footer .footer-social-btn:hover svg {
+    fill: #ffffff !important;
+    transform: scale(1.12) rotate(4deg) !important;
   }
 
   body.dark-mode .atlas-brand-footer .tagline-static,
-  body.dark-mode .atlas-brand-footer .footer-copyright,
-  body.dark-mode .atlas-brand-footer .footer-social-btn {
+  body.dark-mode .atlas-brand-footer .footer-copyright {
     color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  body.dark-mode .atlas-brand-footer .footer-social-btn {
+    background: #1e293b !important;
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 }
 
@@ -8602,17 +8640,16 @@ body.dark-mode .uiverse-search-group .input:focus {
   }
 
   body.dark-mode .atlas-brand-footer .footer-social-btn {
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: #1e293b !important;
+    color: #94a3b8 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  body.dark-mode .atlas-brand-footer .footer-social-btn:active,
+  body.dark-mode .atlas-brand-footer .footer-social-btn:hover {
+    background: #475569 !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-  }
-
-  body.dark-mode .atlas-brand-footer .footer-social-btn svg {
-    fill: #ffffff !important;
-  }
-
-  body.dark-mode .atlas-brand-footer .footer-social-btn:active {
-    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: #475569 !important;
   }
 }
 
@@ -11043,43 +11080,59 @@ body.dark-mode .map-card .map-controls-bar {
   }
 
   .atlas-brand-footer .footer-social-btn {
-    width: 26px !important;
-    height: 26px !important;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50% !important;
     background: #ffffff !important;
-    color: #2563eb !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.04) !important;
+    color: #475569 !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.3s ease !important;
   }
 
   .atlas-brand-footer .footer-social-btn:active,
   .atlas-brand-footer .footer-social-btn:hover {
-    transform: scale(1.1) !important;
-    background: #ffffff !important;
+    transform: translateY(-2px) scale(1.15) !important;
+    background: #334155 !important;
+    color: #ffffff !important;
+    border-color: #334155 !important;
+    box-shadow: 0 6px 14px rgba(51, 65, 85, 0.25) !important;
   }
 
-  
-
-  
+  .atlas-brand-footer .footer-social-btn:active svg,
+  .atlas-brand-footer .footer-social-btn:hover svg {
+    fill: #ffffff !important;
+    transform: scale(1.12) rotate(4deg) !important;
+  }
 
   body.dark-mode .atlas-brand-footer .footer-social-btn {
     background: #1e293b !important;
-    color: #60a5fa !important;
+    color: #94a3b8 !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
+  body.dark-mode .atlas-brand-footer .footer-social-btn:active,
+  body.dark-mode .atlas-brand-footer .footer-social-btn:hover {
+    background: #475569 !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+  }
+
   .atlas-brand-footer .footer-social-btn svg {
-    fill: #2563eb !important;
-    width: 11px !important;
-    height: 11px !important;
+    fill: #475569 !important;
+    width: 17px !important;
+    height: 17px !important;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.25s ease !important;
   }
 
   body.dark-mode .atlas-brand-footer .footer-social-btn svg {
-    fill: #60a5fa !important;
+    fill: #94a3b8 !important;
   }
 
   .atlas-brand-footer .footer-info-text {
