@@ -11557,34 +11557,45 @@ body.dark-mode .region-footer-left {
   }
 
   .region-modal-header {
-    padding: 18px 18px 12px !important;
-    gap: 10px !important;
+    padding: 20px 20px 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .region-header-left {
+    width: 100% !important;
   }
   .region-eyebrow {
-    font-size: 10px !important;
-    margin-bottom: 2px !important;
-    letter-spacing: 1px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    margin-bottom: 4px !important;
+    letter-spacing: 1.2px !important;
+    color: var(--sub) !important;
+    text-transform: uppercase !important;
   }
   .region-name-title {
-    font-size: 22px !important;
-    margin-bottom: 4px !important;
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 0 0 6px 0 !important;
+    letter-spacing: -0.5px !important;
+    color: var(--ink) !important;
   }
   .region-stats-sub {
-    font-size: 11.5px !important;
-    gap: 6px !important;
-    flex-wrap: nowrap !important;
-    white-space: nowrap !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    color: var(--sub) !important;
+    gap: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+  }
+  .region-stats-sub span {
+    display: inline-flex !important;
+    align-items: center !important;
   }
   .state-illustration-container {
-    padding: 4px !important;
-  }
-  .state-svg-wrapper {
-    width: 58px !important;
-    height: 52px !important;
-  }
-  .state-script-name {
-    font-size: 18px !important;
-    margin-top: -6px !important;
+    display: none !important;
   }
 
   .region-toolbar-row {
