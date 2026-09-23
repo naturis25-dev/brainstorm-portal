@@ -190,9 +190,8 @@ async function fetchAppInitialData() {
     try {
 
       const proj = await apiFetch('/projects');
-
-      const loadedProj = proj.data || proj.projects || (Array.isArray(proj) ? proj : []);
-      if (loadedProj && loadedProj.length > 0) {
+      const loadedProj = proj.data || proj.projects || (Array.isArray(proj) ? proj : null);
+      if (Array.isArray(loadedProj)) {
         PROJECTS = loadedProj.map(p => {
           if (typeof p.images === 'string') {
             try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
@@ -201,9 +200,7 @@ async function fetchAppInitialData() {
           return p;
         });
       } else {
-
-        throw new Error('Empty projects from API');
-
+        throw new Error('Invalid projects response from API');
       }
 
     } catch(e) {
