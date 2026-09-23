@@ -289,6 +289,10 @@ async function fetchAppInitialData() {
 
     if (typeof window.hideLoader === 'function') window.hideLoader();
 
+    if (typeof window.restoreNavState === 'function') {
+      window.restoreNavState();
+    }
+
   }
 
 }
@@ -1209,7 +1213,7 @@ function setupNavigation() {
 
 
 
-  function loadDrawingsData() {
+  function loadDrawingsData(cb) {
 
     const tryFetch = (url) => fetch(url).then(res => { if (!res.ok) throw new Error('Not OK'); return res.json(); });
 
@@ -1229,6 +1233,8 @@ function setupNavigation() {
 
           setupDrawingsFilter();
 
+          if (typeof cb === 'function') cb(data);
+
         }
 
       })
@@ -1236,6 +1242,8 @@ function setupNavigation() {
       .catch(err => console.error('Failed to load drawings data:', err));
 
   }
+
+  window.loadDrawingsData = loadDrawingsData;
 
 
 
@@ -1307,10 +1315,16 @@ function setupNavigation() {
 
 
 
-  function renderFolders() {
+  function renderFolders(updateHistory = true) {
 
     window.renderFolders = renderFolders;
     try { window.scrollTo(0, 0); } catch(e) {}
+
+    if (updateHistory) {
+      window.location.hash = 'drawings';
+      sessionStorage.setItem('brainstorm_current_view', 'drawings');
+      sessionStorage.removeItem('brainstorm_drawings_folder');
+    }
 
     const gallery = document.getElementById('drawingsGallery');
 
@@ -1426,10 +1440,16 @@ function setupNavigation() {
 
 
 
-  function renderFolderContents(catKey) {
+  function renderFolderContents(catKey, updateHistory = true) {
 
     window.renderFolderContents = renderFolderContents;
     try { window.scrollTo(0, 0); } catch(e) {}
+
+    if (updateHistory) {
+      window.location.hash = 'drawings/' + catKey;
+      sessionStorage.setItem('brainstorm_current_view', 'drawings');
+      sessionStorage.setItem('brainstorm_drawings_folder', catKey);
+    }
 
     const gallery = document.getElementById('drawingsGallery');
 
@@ -1438,7 +1458,7 @@ function setupNavigation() {
     // Show back-to-folder floating button when inside a folder
     document.body.classList.add('in-folder-view');
 
-    const categoryData = cachedDrawingsData[catKey];
+    const categoryData = (cachedDrawingsData || window.cachedDrawingsData)?.[catKey];
 
     if (!gallery || !categoryData) return;
 
@@ -1951,9 +1971,17 @@ window.updateMobileDockIndicator = updateMobileDockIndicator;
 
 
 
-function showView(name) {
+function showView(name, updateHistory = true) {
   window.showView = showView;
   try { window.scrollTo(0, 0); } catch(e) {}
+
+  if (updateHistory) {
+    window.location.hash = name;
+    sessionStorage.setItem('brainstorm_current_view', name);
+    if (name !== 'drawings') {
+      sessionStorage.removeItem('brainstorm_drawings_folder');
+    }
+  }
 
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 
@@ -2115,6 +2143,8 @@ function goToMap() {
 
   if (detailOverlay) detailOverlay.classList.remove('open');
 
+  sessionStorage.removeItem('brainstorm_open_project');
+
   updateAdminBtnVisibility();
 
   
@@ -2153,9 +2183,21 @@ function closePanel() {
 
 }
 
-function closeDetail() {
+function closeDetail(updateHistory = true) {
   const detailOverlay = document.getElementById('detailOverlay');
   if (detailOverlay) detailOverlay.classList.remove('open');
+  sessionStorage.removeItem('brainstorm_open_project');
+
+  if (updateHistory) {
+    const curFolder = sessionStorage.getItem('brainstorm_drawings_folder');
+    const curView = sessionStorage.getItem('brainstorm_current_view') || 'map';
+    if (curView === 'drawings' && curFolder) {
+      window.location.hash = 'drawings/' + curFolder;
+    } else {
+      window.location.hash = curView;
+    }
+  }
+
   updateAdminBtnVisibility();
 }
 window.closeDetail = closeDetail;
@@ -2182,12 +2224,17 @@ window.switchDetailTab = function(targetSecId, clickedBtn) {
 // PROJECT DETAIL VIEW
 // ============================================================
 
-window.openDetail = function(id) {
+window.openDetail = function(id, updateHistory = true) {
   if (typeof closePanel === 'function') closePanel();
 
   const p = PROJECTS.find(x => x.id === id);
 
   if (!p) return;
+
+  if (updateHistory) {
+    window.location.hash = 'project/' + id;
+    sessionStorage.setItem('brainstorm_open_project', id);
+  }
 
 
 
@@ -6293,6 +6340,107 @@ function initDrawingPdfViewerModal() {
 
 
 
+function restoreNavState(isHashChangeEvent = false) {
+  const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+  let hashView = rawHash;
+  let hashSub = '';
+
+  if (rawHash.includes('/')) {
+    const parts = rawHash.split('/');
+    hashView = parts[0];
+    hashSub = parts.slice(1).join('/');
+  }
+
+  // If no hash in URL and this is initial page load, check sessionStorage
+  if (!hashView && !isHashChangeEvent) {
+    const savedView = sessionStorage.getItem('brainstorm_current_view') || 'map';
+    const savedFolder = sessionStorage.getItem('brainstorm_drawings_folder');
+    const savedProject = sessionStorage.getItem('brainstorm_open_project');
+
+    if (savedProject) {
+      hashView = 'project';
+      hashSub = savedProject;
+    } else if (savedView === 'drawings' && savedFolder) {
+      hashView = 'drawings';
+      hashSub = savedFolder;
+    } else {
+      hashView = savedView;
+    }
+  }
+
+  if (hashView === 'project' && hashSub) {
+    const savedView = sessionStorage.getItem('brainstorm_current_view') || 'map';
+    showView(savedView, false);
+    const projId = hashSub;
+    if (PROJECTS && PROJECTS.length > 0) {
+      window.openDetail(projId, false);
+    } else {
+      setTimeout(() => {
+        if (window.openDetail) window.openDetail(projId, false);
+      }, 300);
+    }
+    return;
+  }
+
+  // If not in project view, close detail modal if it happens to be open
+  const detailOverlay = document.getElementById('detailOverlay');
+  if (detailOverlay && detailOverlay.classList.contains('open') && hashView !== 'project') {
+    closeDetail(false);
+  }
+
+  if (hashView === 'drawings') {
+    showView('drawings', false);
+    const catKey = hashSub;
+    if (catKey) {
+      if (window.cachedDrawingsData && window.renderFolderContents) {
+        window.renderFolderContents(catKey, false);
+      } else if (typeof window.loadDrawingsData === 'function') {
+        window.loadDrawingsData((data) => {
+          if (window.renderFolderContents) window.renderFolderContents(catKey, false);
+        });
+      }
+    } else {
+      if (window.renderFolders) {
+        window.renderFolders(false);
+      } else if (typeof window.loadDrawingsData === 'function') {
+        window.loadDrawingsData();
+      }
+    }
+    return;
+  }
+
+  if (hashView === 'admin') {
+    const token = localStorage.getItem('steeltrack_admin_token');
+    if (token) {
+      showView('admin', false);
+      try { if (typeof renderAdmin === 'function') renderAdmin(); } catch(e) {}
+    } else {
+      showView('login', false);
+    }
+    return;
+  }
+
+  if (hashView === 'login') {
+    showView('login', false);
+    return;
+  }
+
+  if (hashView === 'manage-admins') {
+    showView('manage-admins', false);
+    try { if (typeof fetchAndRenderManageAdmins === 'function') fetchAndRenderManageAdmins(); } catch(e) {}
+    return;
+  }
+
+  if (hashView === 'brochure') {
+    showView('brochure', false);
+    return;
+  }
+
+  // Default fallback: map
+  showView('map', false);
+}
+window.restoreNavState = restoreNavState;
+
 function initApp() {
 
   if (window._appInitialized) return;
@@ -6316,6 +6464,10 @@ function initApp() {
   initBrochureHandlers();
 
   initDrawingPdfViewerModal();
+
+  window.addEventListener('hashchange', () => {
+    restoreNavState(true);
+  });
 
   // Top-Right Corner Mouse Proximity Detection for Secret Admin Button (Desktop Only)
   document.addEventListener('mousemove', (e) => {
