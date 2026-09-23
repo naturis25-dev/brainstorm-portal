@@ -1629,11 +1629,16 @@ function setupNavigation() {
 
   function updateAuthUI(loggedIn) {
 
+    const secretTrigger = document.getElementById('secretAdminTriggerBtn');
+    if (secretTrigger) secretTrigger.style.display = loggedIn ? 'none' : '';
+
     if (loginBtn)  loginBtn.style.display  = loggedIn ? 'none' : '';
 
-    if (logoutBtn) logoutBtn.style.display = loggedIn ? '' : 'none';
+    if (logoutBtn) logoutBtn.style.display = loggedIn ? 'flex' : 'none';
 
     if (adminBtn)  adminBtn.style.display  = loggedIn ? '' : 'none';
+
+    if (typeof updateAdminBtnVisibility === 'function') updateAdminBtnVisibility();
 
   }
 
@@ -1861,6 +1866,13 @@ function updateAdminBtnVisibility() {
   const adminBtn = document.querySelector('.secret-admin-trigger');
 
   if (!adminBtn) return;
+
+  const isLoggedIn = !!localStorage.getItem('steeltrack_admin_token');
+
+  if (isLoggedIn) {
+    adminBtn.style.display = 'none';
+    return;
+  }
 
   const isMapActive = document.getElementById('view-map')?.classList.contains('active');
 
@@ -6309,6 +6321,7 @@ function initApp() {
   // Top-Right Corner Mouse Proximity Detection for Secret Admin Button (Desktop Only)
   document.addEventListener('mousemove', (e) => {
     if (window.innerWidth <= 768) return; // Completely disable on mobile
+    if (localStorage.getItem('steeltrack_admin_token')) return; // Completely skip if logged in
     const adminBtns = document.querySelectorAll('.secret-admin-trigger, #secretAdminTriggerBtn');
     if (!adminBtns.length) return;
     
