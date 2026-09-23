@@ -4066,16 +4066,12 @@ function setupModal() {
   async function handleExportBackup() {
     try {
       if (window.showToast) window.showToast('Generating 1-click complete backup file...', 'info');
-      const token = localStorage.getItem('token');
       let projectsList = [];
       let sampleDrawings = null;
 
       try {
-        const res = await fetch('/api/projects/export', {
-          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
-        if (res.ok) {
-          const data = await res.json();
+        const data = await apiFetch('/projects/export');
+        if (data) {
           projectsList = data.projects || data.data || data;
           sampleDrawings = data.sampleDrawings || null;
         }
@@ -4089,8 +4085,7 @@ function setupModal() {
 
       if (!sampleDrawings) {
         try {
-          const dRes = await fetch('/api/drawings');
-          if (dRes.ok) sampleDrawings = await dRes.json();
+          sampleDrawings = await apiFetch('/drawings');
         } catch(e){}
       }
 
@@ -4169,23 +4164,14 @@ function setupModal() {
       if (!confirmed) return;
 
       if (window.showToast) window.showToast(`Restoring ${importedProjects.length} projects to database...`, 'info');
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/projects/import', {
+      
+      await apiFetch('/projects/import', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
         body: JSON.stringify({ 
           projects: importedProjects, 
           sampleDrawings: importedDrawings 
         })
       });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || 'Import API returned error');
-      }
 
       if (window.showToast) window.showToast(`100% Complete! Restored ${importedProjects.length} projects & sample drawings in seconds.`, 'success');
       
