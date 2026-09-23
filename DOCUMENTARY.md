@@ -4,6 +4,8 @@
 
 ## 📑 Table of Contents
 1. [Executive Summary & Purpose](#1-executive-summary--purpose)
+   - [Git Repository & Download Links](#git-repository--download-links)
+   - [Quick Start Commands](#quick-start-commands)
 2. [Interactive Functions & Core Public Features](#2-interactive-functions--core-public-features)
    - [2.1 Interactive North America Geographic Map (D3 & TopoJSON)](#21-interactive-north-america-geographic-map-d3--topojson)
    - [2.2 Proportional Edge-to-Edge Filter System](#22-proportional-edge-to-edge-filter-system)
@@ -34,6 +36,7 @@
    - [Why Node.js & Express for Backend](#why-nodejs--express-for-backend)
    - [Dual-Engine Database Architecture (SQLite & PostgreSQL)](#dual-engine-database-architecture-sqlite--postgresql)
    - [Cloud Storage Engine (AWS S3 & Cloudflare R2)](#cloud-storage-engine-aws-s3--cloudflare-r2)
+   - [Complete Environment Variables Reference (.env)](#complete-environment-variables-reference-env)
 6. [Enterprise Security Architecture](#6-enterprise-security-architecture)
    - [Security Features Breakdown](#security-features-breakdown)
    - [Defending Against Major Threat Vectors](#defending-against-major-threat-vectors)
@@ -46,6 +49,29 @@
 ## 1. Executive Summary & Purpose
 
 **Brainstorm Atlas** is an enterprise-grade, interactive digital intelligence portal developed for **Brainstorm Infotech** to showcase its extensive structural and architectural steel detailing portfolio across North America and global markets.
+
+### 📦 Git Repository & Download Links
+
+| Resource | Link / URL |
+| :--- | :--- |
+| **GitHub Repository** | [https://github.com/naturis25-dev/brainstorm-portal](https://github.com/naturis25-dev/brainstorm-portal) |
+| **Direct ZIP Archive Download** | [Download main.zip](https://github.com/naturis25-dev/brainstorm-portal/archive/refs/heads/main.zip) |
+| **HTTPS Clone Command** | `git clone https://github.com/naturis25-dev/brainstorm-portal.git` |
+| **SSH Clone Command** | `git clone git@github.com:naturis25-dev/brainstorm-portal.git` |
+
+### 🚀 Quick Start Commands
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/naturis25-dev/brainstorm-portal.git
+cd brainstorm-portal/backend
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the application server (runs on http://localhost:5050)
+node server.js
+```
 
 ```mermaid
 graph TD
@@ -299,6 +325,57 @@ brainstorm-portal/
 
 ### Cloud Storage Engine (AWS S3 & Cloudflare R2)
 * Local uploads are stored in `/uploads`, but with `S3_BUCKET` configured, the backend automatically pipes uploads to **AWS S3 / Cloudflare R2** and serves assets over high-speed CDNs.
+
+### Complete Environment Variables Reference (.env)
+
+The application configuration is managed via standard environment variables loaded at startup via `dotenv`. Create a `.env` file inside the `/backend` directory:
+
+| Variable | Type | Default Value | Description |
+| :--- | :--- | :--- | :--- |
+| `PORT` | Number | `5050` | The network port the Express application server listens on. |
+| `NODE_ENV` | String | `development` | Deployment environment mode (`development` or `production`). |
+| `CORS_ORIGIN` | String | `*` (true) | Allowed CORS origin(s) for API security. |
+| `DATA_DIR` | Path | `./uploads` | Persistent directory path for media uploads and local database files. |
+| `DB_CLIENT` | String | `sqlite` | Database engine selector (`sqlite` for local dev file DB or `pg` for PostgreSQL). |
+| `DATABASE_URL` | URI String | *None* | PostgreSQL connection string (e.g., `postgres://user:pass@host:5432/dbname`). Required when `DB_CLIENT=pg`. |
+| `GOOGLE_CLIENT_ID` | String | *None* | Google OAuth 2.0 Web Client ID for Google Identity Services SSO. |
+| `ADMIN_EMAIL_DOMAIN` | String | `@brainstorminfotech.co.in` | Restricted email domain for administrative CMS logins. |
+| `S3_ENDPOINT` | URL | *None* | S3-compatible API endpoint URL (AWS S3 or Cloudflare R2). |
+| `S3_ACCESS_KEY` | String | *None* | Cloud storage access key ID. |
+| `S3_SECRET_KEY` | String | *None* | Cloud storage secret access key. |
+| `S3_BUCKET` | String | *None* | Target cloud storage bucket name. |
+| `S3_PUBLIC_URL` | URL | *None* | Public CDN/subdomain URL for serving media assets. |
+
+#### Production `.env.example` Template
+
+```ini
+# ==============================================================================
+# Brainstorm Atlas - Environment Configuration Template
+# ==============================================================================
+
+# Server & Network Configuration
+PORT=5050
+NODE_ENV=production
+CORS_ORIGIN=https://atlas.brainstorminfotech.co.in
+
+# Database Configuration (sqlite | pg)
+DB_CLIENT=sqlite
+# If using PostgreSQL in production, set DB_CLIENT=pg and uncomment DATABASE_URL:
+# DB_CLIENT=pg
+# DATABASE_URL=postgres://postgres:password@rds-host.amazonaws.com:5432/brainstorm_atlas
+
+# Google Single Sign-On (SSO) Authentication
+GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
+ADMIN_EMAIL_DOMAIN=@brainstorminfotech.co.in
+
+# Cloud Storage Engine - AWS S3 / Cloudflare R2 (Optional)
+# Leave blank to store media files in the local ./uploads directory
+# S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+# S3_ACCESS_KEY=your_access_key_id
+# S3_SECRET_KEY=your_secret_access_key
+# S3_BUCKET=brainstorm-atlas-media
+# S3_PUBLIC_URL=https://media.brainstorminfotech.co.in
+```
 
 ---
 
