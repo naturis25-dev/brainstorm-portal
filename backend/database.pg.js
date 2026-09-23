@@ -407,6 +407,11 @@ const getAuditLogs = async (limit = 100) => {
   });
 };
 
+const clearAllProjects = async () => {
+  await pool.query('DELETE FROM projects');
+  return true;
+};
+
 const getProjectsCount = async () => { const res = await pool.query("SELECT COUNT(*) as count FROM projects WHERE is_deleted = 0"); return parseInt(res.rows[0].count, 10); };
 module.exports = {
   getProjectsCount,
@@ -423,6 +428,7 @@ module.exports = {
   parseImages,
   getProjectStats,
   bulkInsertProjects,
+  clearAllProjects,
   getSecondaryAdmin,
   insertSecondaryAdmin,
   getAllSecondaryAdmins,

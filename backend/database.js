@@ -337,6 +337,11 @@ const bulkInsertProjects = (projects) => {
   return insertMany(projects);
 };
 
+const clearAllProjects = () => {
+  db.prepare('DELETE FROM projects').run();
+  return true;
+};
+
 const getSecondaryAdmin = (username) => {
   return db.prepare('SELECT * FROM admins WHERE username = ?').get(username);
 };
@@ -383,6 +388,7 @@ module.exports = {
   parseImages,
   getProjectStats,
   bulkInsertProjects,
+  clearAllProjects,
   getSecondaryAdmin,
   insertSecondaryAdmin,
   getAllSecondaryAdmins,

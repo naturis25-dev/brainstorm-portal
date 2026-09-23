@@ -59,6 +59,23 @@ router.post('/import', requireAuth, async (req, res) => {
   }
 });
 
+router.post('/clear-all', requireAuth, async (req, res) => {
+  try {
+    if (db.clearAllProjects) {
+      await db.clearAllProjects();
+    }
+    try {
+      if (req.admin && db.insertAuditLog) {
+        await db.insertAuditLog(req.admin.username, 'CLEAR_ALL_PROJECTS', null, { clearedAt: new Date().toISOString() });
+      }
+    } catch(e){}
+    res.json({ success: true, message: 'All project records have been cleared.' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Failed to clear projects: ' + e.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const project = await db.getProjectById(req.params.id);
