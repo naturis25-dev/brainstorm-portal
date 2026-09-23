@@ -2361,10 +2361,9 @@ window.openDetail = function(id, updateHistory = true) {
 
     let similarHtml = '';
     if (similar.length > 0) {
-      const doubleSimilar = [...similar, ...similar];
-      similarHtml = doubleSimilar.map(s => `
-        <div onclick="window.openDetail('${s.id}')" class="similar-card">
-          <img src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" alt="${s.title}" onerror="this.src='assets/logo.png';">
+      similarHtml = similar.map((s, idx) => `
+        <div onclick="window.openDetail('${s.id}')" class="similar-card" data-idx="${idx}">
+          <img loading="lazy" decoding="async" src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" alt="${s.title}" onerror="this.src='assets/logo.png';">
           <div class="similar-card-body">
             <div class="similar-card-title">${s.title}</div>
             <div class="similar-card-loc">📍 ${s.state}, ${s.country === 'US' ? 'USA' : 'CAN'}</div>
@@ -2543,13 +2542,23 @@ window.openDetail = function(id, updateHistory = true) {
 
     // 5. SIMILAR PROJECTS
     const similarProjectsHtml = similarHtml ? `
-      <div class="detail-full-block" id="sec-similar-${p.id}">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-          <h3 class="dcard-title">Similar Projects</h3>
-          <span style="font-size: 12px; color: var(--sub); font-weight: 500; opacity: 0.8;">Hover to pause</span>
+      <div class="detail-full-block similar-section-block" id="sec-similar-${p.id}">
+        <div class="similar-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 class="dcard-title" style="margin:0;">Similar Projects</h3>
+            <span class="similar-count-badge">${similar.length} Projects</span>
+          </div>
+          <div class="similar-nav-controls">
+            <button class="similar-nav-btn prev" onclick="window.stepSimilarProjects('${p.id}', -1)" title="Previous Project" aria-label="Previous Similar Project">
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button class="similar-nav-btn next" onclick="window.stepSimilarProjects('${p.id}', 1)" title="Next Project" aria-label="Next Similar Project">
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
         </div>
-        <div class="similar-projects-viewport">
-          <div class="similar-projects-track">${similarHtml}</div>
+        <div class="similar-projects-viewport" id="similarViewport-${p.id}">
+          <div class="similar-projects-track" id="similarTrack-${p.id}">${similarHtml}</div>
         </div>
       </div>
     ` : '';
@@ -2972,6 +2981,17 @@ window.openDetail = function(id, updateHistory = true) {
       return;
     }
 
+    // 1. If similar projects section is scrolled into view, always reveal arrows
+    const similarEl = document.querySelector('[id^="sec-similar-"]');
+    if (similarEl) {
+      const simRect = similarEl.getBoundingClientRect();
+      if (simRect.top <= window.innerHeight * 0.75) {
+        navRow.classList.remove('nav-arrows-hidden');
+        return;
+      }
+    }
+
+    // 2. Check overview text section
     const overviewEl = document.querySelector('.bento-overview-card') || document.querySelector('[id^="sec-overview-"]');
     if (!overviewEl) {
       navRow.classList.remove('nav-arrows-hidden');
@@ -2979,9 +2999,10 @@ window.openDetail = function(id, updateHistory = true) {
     }
 
     const rect = overviewEl.getBoundingClientRect();
-    const arrowZoneTop = window.innerHeight * 0.22;
-    const arrowZoneBottom = window.innerHeight * 0.78;
-    const isOverlapping = (rect.top <= arrowZoneBottom && rect.bottom >= arrowZoneTop);
+    // Nav arrows sit vertically at 50% (the center of mobile screen)
+    const arrowCenterTop = window.innerHeight * 0.38;
+    const arrowCenterBottom = window.innerHeight * 0.62;
+    const isOverlapping = (rect.top <= arrowCenterBottom && rect.bottom >= arrowCenterTop);
 
     if (isOverlapping) {
       navRow.classList.add('nav-arrows-hidden');
@@ -3169,6 +3190,14 @@ window.stepCarouselSlide = function(projId, step) {
 
   window.selectCarouselSlide(projId, cur + step);
 
+};
+
+window.stepSimilarProjects = function(projId, step) {
+  const vp = document.getElementById(`similarViewport-${projId}`);
+  if (!vp) return;
+  const firstCard = vp.querySelector('.similar-card');
+  const cardWidth = firstCard ? (firstCard.offsetWidth + 16) : 240;
+  vp.scrollBy({ left: step * cardWidth, behavior: 'smooth' });
 };
 
 
