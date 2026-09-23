@@ -22,17 +22,29 @@ router.get('/stats', async (req, res) => {
   catch (e) { console.error(e); res.status(500).json({ message: 'Error' }); }
 });
 
+const path = require('path');
+const fs = require('fs');
+
 router.get('/export', requireAuth, async (req, res) => {
   try {
     const allProjects = await db.getProjects({ limit: 100000 });
+    let sampleDrawings = null;
+    const drawingsPath = path.join(__dirname, '../../frontend/drawings_data.json');
+    if (fs.existsSync(drawingsPath)) {
+      try {
+        sampleDrawings = JSON.parse(fs.readFileSync(drawingsPath, 'utf8'));
+      } catch(e){}
+    }
+
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="atlas_projects_backup_${new Date().toISOString().split('T')[0]}.json"`);
+    res.setHeader('Content-Disposition', `attachment; filename="atlas_complete_backup_${new Date().toISOString().split('T')[0]}.json"`);
     res.json({
-      backupVersion: "1.0",
+      backupVersion: "2.0",
       exportedAt: new Date().toISOString(),
       exportedBy: req.admin ? req.admin.username : 'Admin',
-      total: allProjects.length,
-      projects: allProjects
+      totalProjects: allProjects.length,
+      projects: allProjects,
+      sampleDrawings: sampleDrawings
     });
   } catch (e) {
     console.error(e);
@@ -42,17 +54,34 @@ router.get('/export', requireAuth, async (req, res) => {
 
 router.post('/import', requireAuth, async (req, res) => {
   try {
-    let list = req.body.projects || req.body.data || req.body;
-    if (!Array.isArray(list)) {
-      return res.status(400).json({ message: 'Invalid payload format. Expected an array of projects.' });
+    let list = req.body.projects || req.body.data || (Array.isArray(req.body) ? req.body : null);
+    let sampleDrawings = req.body.sampleDrawings || req.body.drawings || null;
+
+    let importedCount = 0;
+    if (Array.isArray(list) && list.length > 0) {
+      importedCount = await db.bulkInsertProjects(list);
     }
-    const count = await db.bulkInsertProjects(list);
+
+    if (sampleDrawings && typeof sampleDrawings === 'object') {
+      const drawingsPath = path.join(__dirname, '../../frontend/drawings_data.json');
+      fs.writeFileSync(drawingsPath, JSON.stringify(sampleDrawings, null, 2));
+    }
+
     try {
       if (req.admin && db.insertAuditLog) {
-        await db.insertAuditLog(req.admin.username, 'IMPORT_BACKUP', null, { count: list.length });
+        await db.insertAuditLog(req.admin.username, 'IMPORT_BACKUP', null, { 
+          projectsCount: importedCount, 
+          restoredDrawings: !!sampleDrawings 
+        });
       }
     } catch(e){}
-    res.json({ success: true, message: `Successfully imported and restored ${list.length} projects!`, count: list.length });
+
+    res.json({ 
+      success: true, 
+      message: `Successfully imported & restored ${importedCount} projects${sampleDrawings ? ' and all sample drawings' : ''}!`, 
+      count: importedCount,
+      restoredDrawings: !!sampleDrawings
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'Import failed: ' + e.message });

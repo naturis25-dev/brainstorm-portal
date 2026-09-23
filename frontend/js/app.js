@@ -4068,9 +4068,10 @@ function setupModal() {
   // 1-Click Backup Export (.json / .csv)
   async function handleExportBackup() {
     try {
-      if (window.showToast) window.showToast('Generating 1-click backup file...', 'info');
+      if (window.showToast) window.showToast('Generating 1-click complete backup file...', 'info');
       const token = localStorage.getItem('token');
       let projectsList = [];
+      let sampleDrawings = null;
 
       try {
         const res = await fetch('/api/projects/export', {
@@ -4079,6 +4080,7 @@ function setupModal() {
         if (res.ok) {
           const data = await res.json();
           projectsList = data.projects || data.data || data;
+          sampleDrawings = data.sampleDrawings || null;
         }
       } catch (err) {
         console.warn('Direct export API fallback to local cache:', err);
@@ -4088,8 +4090,15 @@ function setupModal() {
         projectsList = Array.isArray(PROJECTS) && PROJECTS.length ? PROJECTS : [];
       }
 
-      if (!projectsList.length) {
-        if (window.showToast) window.showToast('No project records found to export.', 'error');
+      if (!sampleDrawings) {
+        try {
+          const dRes = await fetch('/api/drawings');
+          if (dRes.ok) sampleDrawings = await dRes.json();
+        } catch(e){}
+      }
+
+      if (!projectsList.length && !sampleDrawings) {
+        if (window.showToast) window.showToast('No project or drawing records found to export.', 'error');
         return;
       }
 
@@ -4097,7 +4106,8 @@ function setupModal() {
         atlasBackupVersion: "2.0",
         exportedAt: new Date().toISOString(),
         totalProjects: projectsList.length,
-        projects: projectsList
+        projects: projectsList,
+        sampleDrawings: sampleDrawings
       };
 
       const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
@@ -4105,13 +4115,13 @@ function setupModal() {
       const a = document.createElement('a');
       const dateStr = new Date().toISOString().slice(0, 10);
       a.href = url;
-      a.download = `atlas_projects_backup_${dateStr}_(${projectsList.length}_projects).json`;
+      a.download = `atlas_complete_backup_${dateStr}_(${projectsList.length}_projects).json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      if (window.showToast) window.showToast(`Exported ${projectsList.length} projects successfully!`, 'success');
+      if (window.showToast) window.showToast(`Exported ${projectsList.length} projects & sample drawings successfully!`, 'success');
     } catch (e) {
       console.error(e);
       if (window.showToast) window.showToast('Failed to export backup: ' + e.message, 'error');
@@ -4125,6 +4135,7 @@ function setupModal() {
       if (window.showToast) window.showToast('Reading backup file...', 'info');
       const text = await file.text();
       let importedProjects = [];
+      let importedDrawings = null;
 
       if (file.name.endsWith('.json')) {
         const parsed = JSON.parse(text);
@@ -4132,8 +4143,12 @@ function setupModal() {
           importedProjects = parsed;
         } else if (parsed && Array.isArray(parsed.projects)) {
           importedProjects = parsed.projects;
+          importedDrawings = parsed.sampleDrawings || parsed.drawings || null;
         } else if (parsed && Array.isArray(parsed.data)) {
           importedProjects = parsed.data;
+          importedDrawings = parsed.sampleDrawings || parsed.drawings || null;
+        } else if (parsed && (parsed.sampleDrawings || parsed.drawings)) {
+          importedDrawings = parsed.sampleDrawings || parsed.drawings;
         }
       } else if (file.name.endsWith('.csv')) {
         const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -4148,12 +4163,12 @@ function setupModal() {
         }
       }
 
-      if (!importedProjects.length) {
-        if (window.showToast) window.showToast('Invalid backup file. No projects found.', 'error');
+      if (!importedProjects.length && !importedDrawings) {
+        if (window.showToast) window.showToast('Invalid backup file. No projects or drawings found.', 'error');
         return;
       }
 
-      const confirmed = window.confirm(`Ready to import & restore ${importedProjects.length} projects.\n\nDo you want to proceed?`);
+      const confirmed = window.confirm(`Ready to import & restore ${importedProjects.length} projects${importedDrawings ? ' and sample drawings data' : ''}.\n\nDo you want to proceed?`);
       if (!confirmed) return;
 
       if (window.showToast) window.showToast(`Restoring ${importedProjects.length} projects to database...`, 'info');
@@ -4164,7 +4179,10 @@ function setupModal() {
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
-        body: JSON.stringify({ projects: importedProjects })
+        body: JSON.stringify({ 
+          projects: importedProjects, 
+          sampleDrawings: importedDrawings 
+        })
       });
 
       if (!res.ok) {
@@ -4172,14 +4190,17 @@ function setupModal() {
         throw new Error(err.message || 'Import API returned error');
       }
 
-      if (window.showToast) window.showToast(`100% Complete! Restored ${importedProjects.length} projects in seconds.`, 'success');
+      if (window.showToast) window.showToast(`100% Complete! Restored ${importedProjects.length} projects & sample drawings in seconds.`, 'success');
       
-      // Reload projects from server & refresh admin table
+      // Reload projects & drawings from server & refresh admin table
       if (typeof fetchProjects === 'function') {
         await fetchProjects();
       }
       if (typeof renderAdminTable === 'function') {
         renderAdminTable(PROJECTS);
+      }
+      if (typeof fetchDrawingsData === 'function') {
+        await fetchDrawingsData();
       }
     } catch (err) {
       console.error(err);
