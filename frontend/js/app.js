@@ -1524,7 +1524,6 @@ function setupNavigation() {
         
         <div style="padding:24px;flex-grow:1;display:flex;flex-direction:column;">
           <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:24px;">
-            <div class="p-eyebrow" style="color:var(--sub);font-weight:700;letter-spacing:1px;font-size:10px;">${categoryData.title.toUpperCase()}</div>
             <div class="pc-title" style="font-size:17px;font-weight:800;color:var(--ink);line-height:1.3;margin:0;">${file.name}</div>
           </div>
           
