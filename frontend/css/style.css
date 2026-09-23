@@ -2542,28 +2542,7 @@ body.dark-mode .cta-content p {
 
 
 .detail-close {
-  display: flex !important;
-  position: fixed !important;
-  top: 24px !important;
-  right: 28px !important;
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 50% !important;
-  background: rgba(15, 23, 42, 0.7) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  backdrop-filter: blur(12px) !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  z-index: 9999 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.detail-close:hover {
-  background: rgba(37, 99, 235, 0.95) !important;
-  transform: scale(1.1) rotate(90deg) !important;
+  display: none !important;
 }
 
 .detail-hero-section {
@@ -11805,15 +11784,15 @@ body.dark-mode .region-footer-left {
   }
 }
 
-/* Floating Bottom Action Dock (BACK + Back to Top) */
+/* Floating Bottom Action Dock (BACK + TOP) in Slanted Shape */
 .detail-floating-actions {
   position: fixed !important;
-  bottom: 32px !important;
-  right: 32px !important;
-  z-index: 9999 !important;
+  bottom: 28px !important;
+  right: 24px !important;
+  z-index: 99999 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 8px !important;
   pointer-events: none !important;
 }
 
@@ -11822,36 +11801,43 @@ body.dark-mode .region-footer-left {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 7px !important;
-  height: 42px !important;
-  padding: 0 18px !important;
-  border-radius: 100px !important;
-  background: #475569 !important;
+  height: 46px !important;
+  width: 86px !important;
+  min-width: 86px !important;
+  padding: 0 !important;
+  border-radius: 16px !important;
+  border: none !important;
+  outline: none !important;
+  transform: skewX(-10deg) !important;
+  background: #64748b !important;
   color: #ffffff !important;
-  font-size: 12.5px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.5px !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25) !important;
   cursor: pointer !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 8px 24px rgba(100, 116, 139, 0.35) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s, box-shadow 0.25s !important;
+}
+
+.detail-floating-back-btn .m-btn-content {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  transform: skewX(10deg) !important;
+}
+
+.detail-floating-back-btn span {
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.5px !important;
 }
 
 .detail-floating-back-btn:hover {
-  background: #334155 !important;
-  transform: translateY(-2px) scale(1.04) !important;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.35) !important;
+  background: #475569 !important;
+  transform: skewX(-10deg) translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 12px 28px rgba(71, 85, 105, 0.45) !important;
 }
 
 .detail-floating-back-btn:active {
-  transform: scale(0.96) !important;
-}
-
-body.dark-mode .detail-floating-back-btn {
-  background: #334155 !important;
-  color: #f8fafc !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  transform: skewX(-10deg) scale(0.96) !important;
 }
 
 .detail-back-to-top-fab {
@@ -11859,66 +11845,75 @@ body.dark-mode .detail-floating-back-btn {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 7px !important;
-  height: 42px !important;
-  padding: 0 18px !important;
-  border-radius: 100px !important;
-  background: var(--accent, #2563eb) !important;
+  height: 46px !important;
+  width: 52px !important;
+  min-width: 52px !important;
+  padding: 0 !important;
+  border-radius: 16px !important;
+  border: none !important;
+  outline: none !important;
+  transform: skewX(-10deg) translateY(12px) scale(0.9) !important;
+  background: #64748b !important;
   color: #ffffff !important;
-  font-size: 12.5px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.02em !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35) !important;
   cursor: pointer !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: translateY(12px) scale(0.9) !important;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s !important;
+  box-shadow: 0 8px 24px rgba(100, 116, 139, 0.35) !important;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s, background-color 0.25s, box-shadow 0.25s !important;
+}
+
+.detail-back-to-top-fab .m-btn-content {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: skewX(10deg) !important;
 }
 
 .detail-back-to-top-fab.visible {
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
-  transform: translateY(0) scale(1) !important;
+  transform: skewX(-10deg) translateY(0) scale(1) !important;
 }
 
 .detail-back-to-top-fab.visible:hover {
-  opacity: 1 !important;
-  transform: translateY(-2px) scale(1.04) !important;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45) !important;
+  background: #475569 !important;
+  transform: skewX(-10deg) translateY(-2px) scale(1.06) !important;
+  box-shadow: 0 12px 28px rgba(71, 85, 105, 0.45) !important;
 }
 
 .detail-back-to-top-fab.visible:active {
-  transform: scale(0.96) !important;
+  transform: skewX(-10deg) scale(0.96) !important;
 }
 
+body.dark-mode .detail-floating-back-btn,
 body.dark-mode .detail-back-to-top-fab {
-  background: #3b82f6 !important;
+  background: #334155 !important;
   color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
 @media (max-width: 768px) {
   .detail-floating-actions {
-    bottom: 22px !important;
-    right: 18px !important;
-    gap: 8px !important;
+    bottom: 20px !important;
+    right: 16px !important;
+    gap: 6px !important;
   }
   .detail-floating-back-btn {
-    height: 38px !important;
-    padding: 0 14px !important;
-    font-size: 11.5px !important;
-    border-radius: 100px !important;
+    height: 42px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    border-radius: 14px !important;
+  }
+  .detail-floating-back-btn span {
+    font-size: 11px !important;
   }
   .detail-back-to-top-fab {
-    height: 38px !important;
-    padding: 0 14px !important;
-    font-size: 11.5px !important;
-    border-radius: 100px !important;
+    height: 42px !important;
+    width: 46px !important;
+    min-width: 46px !important;
+    border-radius: 14px !important;
   }
 }
 
