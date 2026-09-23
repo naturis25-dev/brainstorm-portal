@@ -9446,7 +9446,7 @@ body.dark-mode .brochure-modal-body {
   background: rgba(10, 15, 29, 0.62) !important;
   backdrop-filter: blur(0px) !important;
   -webkit-backdrop-filter: blur(0px) !important;
-  padding: 24px !important;
+  padding: 10px !important;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               visibility 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -9474,10 +9474,11 @@ body.dark-mode .brochure-modal-body {
 }
 
 .website-modal-container {
-  max-width: 1300px !important;
-  width: 95vw !important;
-  height: 90vh !important;
-  border-radius: 22px !important;
+  max-width: 98vw !important;
+  width: 98vw !important;
+  height: 96vh !important;
+  height: 96dvh !important;
+  border-radius: 20px !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow: 0 32px 80px -16px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
@@ -9511,7 +9512,7 @@ body.dark-mode .website-modal-container {
 }
 
 .website-modal-header {
-  padding: 13px 20px !important;
+  padding: 12px 18px !important;
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -9528,7 +9529,7 @@ body.dark-mode .website-modal-header {
   position: relative !important;
   flex: 1 1 auto !important;
   width: 100% !important;
-  height: calc(100% - 60px) !important;
+  height: calc(100% - 56px) !important;
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -9681,6 +9682,68 @@ body.dark-mode .website-loader-overlay {
 
 body.dark-mode .website-loader-text {
   color: #94a3b8;
+}
+
+/* Responsive adjustments for Website Viewer Modal */
+@media (max-width: 768px) {
+  #websiteViewerModal {
+    padding: 0 !important;
+  }
+
+  .website-modal-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* User requested: Do not show domain badge on mobile */
+  .website-domain-badge,
+  #websiteModalDomainBadge {
+    display: none !important;
+  }
+
+  .website-modal-header {
+    padding: 10px 14px !important;
+  }
+
+  .website-modal-header .bm-header-title {
+    font-size: 13.5px !important;
+    max-width: 60% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .website-modal-header .bm-title-text {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .website-modal-header .bm-header-actions {
+    gap: 6px !important;
+  }
+
+  .website-header-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 9px !important;
+  }
+
+  .website-modal-header .bm-close-btn {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 22px !important;
+    border-radius: 9px !important;
+  }
+
+  .website-modal-body {
+    height: calc(100% - 50px) !important;
+  }
 }
 
 /* Mobile Brochure Bottom Dock Dropdown */
