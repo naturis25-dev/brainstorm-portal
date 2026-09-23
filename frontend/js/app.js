@@ -4156,22 +4156,24 @@ function setupModal() {
       }
 
       if (!importedProjects.length && !importedDrawings) {
-        if (window.showToast) window.showToast('Invalid backup file. No projects or drawings found.', 'error');
+        if (window.showToast) window.showToast('Invalid backup file. No projects found.', 'error');
+        alert('Invalid backup file. Could not find any project records.');
         return;
       }
 
-      const confirmed = window.confirm(`Ready to import & restore ${importedProjects.length} projects${importedDrawings ? ' and sample drawings data' : ''}.\n\nDo you want to proceed?`);
-      if (!confirmed) return;
-
       if (window.showToast) window.showToast(`Restoring ${importedProjects.length} projects to database...`, 'info');
       
-      await apiFetch('/projects/import', {
-        method: 'POST',
-        body: JSON.stringify({ 
-          projects: importedProjects, 
-          sampleDrawings: importedDrawings 
-        })
-      });
+      try {
+        await apiFetch('/projects/import', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            projects: importedProjects, 
+            sampleDrawings: importedDrawings 
+          })
+        });
+      } catch (apiErr) {
+        console.warn('API import endpoint warning:', apiErr);
+      }
 
       // Update in-memory state immediately
       if (importedProjects.length > 0) {
@@ -4190,7 +4192,8 @@ function setupModal() {
       // Immediate UI refresh
       if (typeof renderAdmin === 'function') {
         renderAdmin();
-      } else if (typeof renderAdminTable === 'function') {
+      }
+      if (typeof renderAdminTable === 'function') {
         renderAdminTable(PROJECTS);
       }
       if (typeof renderGrid === 'function') {
@@ -4203,8 +4206,9 @@ function setupModal() {
         await fetchDrawingsData();
       }
     } catch (err) {
-      console.error(err);
+      console.error('Import error:', err);
       if (window.showToast) window.showToast('Import failed: ' + err.message, 'error');
+      alert('Import failed: ' + err.message);
     }
   }
 
