@@ -2964,9 +2964,36 @@ window.openDetail = function(id, updateHistory = true) {
     }
   };
 
+  const updateNavArrowsVisibility = () => {
+    const navRow = document.getElementById('detailNavRow');
+    if (!navRow) return;
+    if (window.innerWidth > 768) {
+      navRow.classList.remove('nav-arrows-hidden');
+      return;
+    }
+
+    const overviewEl = document.querySelector('.bento-overview-card') || document.querySelector('[id^="sec-overview-"]');
+    if (!overviewEl) {
+      navRow.classList.remove('nav-arrows-hidden');
+      return;
+    }
+
+    const rect = overviewEl.getBoundingClientRect();
+    const arrowZoneTop = window.innerHeight * 0.22;
+    const arrowZoneBottom = window.innerHeight * 0.78;
+    const isOverlapping = (rect.top <= arrowZoneBottom && rect.bottom >= arrowZoneTop);
+
+    if (isOverlapping) {
+      navRow.classList.add('nav-arrows-hidden');
+    } else {
+      navRow.classList.remove('nav-arrows-hidden');
+    }
+  };
+
   const handleDetailScroll = () => {
     updateFabVisibility();
     updateActiveTabOnScroll();
+    updateNavArrowsVisibility();
   };
 
   if (dScrollContent && !dScrollContent.dataset.scrollBound) {
@@ -2980,6 +3007,7 @@ window.openDetail = function(id, updateHistory = true) {
   }
 
   dOverlay?.classList.add('open');
+  updateNavArrowsVisibility();
 
   updateAdminBtnVisibility();
 

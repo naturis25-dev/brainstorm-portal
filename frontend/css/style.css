@@ -6849,6 +6849,13 @@ model-viewer::part(interaction-prompt),
     right: 16px !important;
     transform: translateY(-50%) !important;
     height: 0 !important;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s !important;
+  }
+  .detail-nav-row.nav-arrows-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(-50%) scale(0.85) !important;
   }
   .detail-nav-arrow.next {
     margin-left: auto;
@@ -11668,6 +11675,13 @@ body.dark-mode .region-footer-left {
     padding: 18px 16px !important;
   }
 
+  .bento-overview-card p {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+  }
+
   .p-specs-table {
     width: 100% !important;
   }
@@ -11782,6 +11796,28 @@ body.dark-mode .region-footer-left {
   .d-tab-short {
     display: inline !important;
   }
+
+  /* Mobile Justified Alignment for Project Overview Description */
+  .bento-overview-card p,
+  .bento-overview-card .overview-content,
+  [id^="sec-overview-"] p {
+    text-align: justify !important;
+    text-justify: inter-word !important;
+    hyphens: auto !important;
+    -webkit-hyphens: auto !important;
+  }
+}
+
+/* Detail Nav Row dynamic transition & hidden state */
+.detail-nav-row {
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s, transform 0.28s !important;
+}
+
+.detail-nav-row.nav-arrows-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-50%) scale(0.92) !important;
 }
 
 /* Floating Bottom Action Dock (BACK + TOP) in Slanted Shape */
