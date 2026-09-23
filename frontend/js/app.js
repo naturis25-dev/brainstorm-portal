@@ -1060,18 +1060,10 @@ function setupNavigation() {
   if (navWebsiteBtn) {
     navWebsiteBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (navWebsiteBtn.classList.contains('is-scrolled')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
-        if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
-        if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
-        if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof window.openWebsiteViewer === 'function') {
+        window.openWebsiteViewer('https://www.brainstorminfotech.com');
       } else {
-        if (window.openWebsiteViewer) {
-          window.openWebsiteViewer('https://www.brainstorminfotech.com');
-        } else {
-          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
-        }
+        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
       }
     });
   }
@@ -1088,18 +1080,10 @@ function setupNavigation() {
     const mBtn = e.target.closest('#mNavWebsiteBtn');
     if (mBtn) {
       e.preventDefault();
-      if (mBtn.classList.contains('is-scrolled')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.querySelectorAll('.view').forEach(c => c.scrollTo({ top: 0, behavior: 'smooth' }));
-        if (panel) panel.scrollTo({ top: 0, behavior: 'smooth' });
-        if (panelBody) panelBody.scrollTo({ top: 0, behavior: 'smooth' });
-        if (detailOverlay) detailOverlay.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof window.openWebsiteViewer === 'function') {
+        window.openWebsiteViewer('https://www.brainstorminfotech.com');
       } else {
-        if (window.openWebsiteViewer) {
-          window.openWebsiteViewer('https://www.brainstorminfotech.com');
-        } else {
-          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
-        }
+        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
       }
     }
   });
