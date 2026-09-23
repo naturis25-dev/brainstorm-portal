@@ -18,11 +18,13 @@
    - [2.7 Brochure Viewer & Instant Download Flow](#27-brochure-viewer--instant-download-flow)
    - [2.8 Dark-Ink Progressive Loader Experience](#28-dark-ink-progressive-loader-experience)
    - [2.9 Mobile Responsive Experience & Floating Dock](#29-mobile-responsive-experience--floating-dock)
-3. [Mobile & Tablet Optimization Architecture](#3-mobile--tablet-optimization-architecture)
-   - [3.1 Adaptive Responsive Breakpoints](#31-adaptive-responsive-breakpoints)
-   - [3.2 iOS & Android Bottom Floating Dock](#32-ios--android-bottom-floating-dock)
-   - [3.3 Touch & Gesture Optimization](#33-touch--gesture-optimization)
-   - [3.4 Mobile Drawing & 3D WebGL Performance](#34-mobile-drawing--3d-webgl-performance)
+3. [Mobile vs. Desktop Version: Features & Architecture Differences](#3-mobile-vs-desktop-version-features--architecture-differences)
+   - [3.1 Comprehensive Desktop vs. Mobile Feature Comparison Matrix](#31-comprehensive-desktop-vs-mobile-feature-comparison-matrix)
+   - [3.2 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)](#32-navigation--dismissal-architecture-desktop-top-close-vs-mobile-slanted-back-dock)
+   - [3.3 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)](#33-smart-content-aware-collision-detection-side-arrow-auto-hiding)
+   - [3.4 Bento Grid Layout & Justified Mobile Typography](#34-bento-grid-layout--justified-mobile-typography)
+   - [3.5 iOS & Android Bottom Floating Glass Dock](#35-ios--android-bottom-floating-glass-dock)
+   - [3.6 Adaptive Responsive Breakpoints & Performance Throttling](#36-adaptive-responsive-breakpoints--performance-throttling)
 4. [Atlas Admin Dashboard & Management System](#4-atlas-admin-dashboard--management-system)
    - [4.1 Discreet Access Mechanisms](#41-discreet-access-mechanisms)
    - [4.2 Enterprise Authentication & Google SSO](#42-enterprise-authentication--google-sso)
@@ -235,45 +237,111 @@ graph TD
 
 ---
 
-## 3. Mobile & Tablet Optimization Architecture
+## 3. Mobile vs. Desktop Version: Features & Architecture Differences
 
-Brainstorm Atlas is engineered with a **Mobile-First Progressive Web App (PWA) Philosophy**, ensuring field engineers, general contractors on job sites, and traveling executives experience zero friction when browsing from iPhone, iPad, or Android devices.
+Brainstorm Atlas utilizes a custom adaptive architecture engineered to deliver optimal ergonomics on both high-resolution multi-monitor desktop workstations and touch-first mobile smartphones.
 
 ```mermaid
 graph LR
-    Screen[Device Viewport Detection] --> Mobile[Mobile < 768px]
-    Screen --> Tablet[Tablet 768px - 1024px]
-    Screen --> Desktop[Desktop > 1024px]
+    Screen[Viewport Breakpoint Engine] --> Desktop[Desktop > 768px]
+    Screen --> Mobile[Mobile <= 768px]
 
-    Mobile --> BottomDock[iOS-Style Floating Glass Dock]
-    Mobile --> TouchMap[Single-Touch Zoom & State Tooltip Sheets]
-    Mobile --> SheetModals[Full-Screen Touch Swipe Modals]
-    Mobile --> PDFMobile[Auto-Fit PDF Viewer with Pinch-Zoom]
+    Desktop --> D_Close[Top-Right Frosted Close Button]
+    Desktop --> D_Arrows[Fixed Center Side Nav Arrows]
+    Desktop --> D_Grid[Multi-Column Bento Grid]
+    Desktop --> D_Chips[Proportional Equal-Width Chip Grid]
+    Desktop --> D_Nav[Full Glassmorphic Top Navbar]
+
+    Mobile --> M_Back[Bottom Slanted Floating BACK Dock]
+    Mobile --> M_SmartArrow[Collision-Aware Auto-Hiding Arrows]
+    Mobile --> M_Stack[Single-Column Stack + Justified Text]
+    Mobile --> M_Scroll[Kinetic Momentum Scrollbar]
+    Mobile --> M_Dock[Persistent iOS/Android Glass Dock]
 ```
 
-### 3.1 Adaptive Responsive Breakpoints
-* **Smart Breakpoint Cascade**:
-  * **`< 560px` (Compact Mobile)**: Hero stats reflow into high-density 2x2 grid tiles; loader adjusts typography dynamically (`width: 82vw`, `76px` counter font); header actions collapse into simplified icons.
-  * **`560px – 768px` (Standard Handheld)**: Search bar switches into an edge-to-edge touch trigger; filter pills enable horizontal kinetic swiping with momentum.
-  * **`768px – 1024px` (Tablets / iPad)**: Map and project listing switch from side-by-side to a stacked master-detail layout with preserved map aspect ratios.
+---
 
-### 3.2 iOS & Android Bottom Floating Dock
-* **Floating Glassmorphic Tab Bar**:
-  * Docked fixed at the bottom with `backdrop-filter: blur(20px)` and safe-area inset support (`env(safe-area-inset-bottom)`).
-  * Quick-switch tabs for:
+### 3.1 Comprehensive Desktop vs. Mobile Feature Comparison Matrix
+
+| Feature / Component | 🖥️ Desktop Version (`> 768px`) | 📱 Mobile Version (`≤ 768px`) |
+| :--- | :--- | :--- |
+| **Top Navigation Bar** | Full horizontal glass bar with text labels, category dropdowns, jump-and-land website button, and secret admin proximity button. | Minimalist compact header; navigation shifts to the persistent iOS/Android bottom floating glass dock. |
+| **Project Detail Dismissal** | **Top-Right Frosted Close (`X`)**: Fixed `44x44px` circular frosted button with 90° rotation hover effect. Bottom back button is **hidden**. | **Bottom Slanted `BACK` Dock**: Floating `42px` slanted (10° skew) button docked in the bottom-right for instant one-thumb navigation. Top close button is **hidden**. |
+| **Side Navigation Arrows** | Vertically fixed at 50% screen height for continuous one-click jumping between projects. | **Smart Content-Aware Collision**: Arrows automatically fade out (`opacity: 0`) when scrolling over project descriptions to ensure 100% text readability. |
+| **Floating Action Dock** | Displays the scroll-activated **Back-to-Top FAB** when browsing deep down project pages. | Combined floating action dock housing both the **Slanted `BACK` Button** and scroll-activated **Back-to-Top FAB**. |
+| **Category & Status Filters** | Two-row proportional edge-to-edge grid chips (`desktop-grid-chip`) with matching mathematical gap distribution. | Horizontal kinetic swipe bar with momentum scrolling (`-webkit-overflow-scrolling: touch`) and compact badge chips. |
+| **Project Bento Grid Layout** | Multi-column Bento Grid (2 to 4 responsive columns) with expanded scope tags and large photo lightboxes. | Single-column stacked vertical cards with auto-adjusting aspect ratios. |
+| **Project Overview Description** | Standard left-aligned paragraphs with spacious line-height. | **Full Justification & Hyphenation** (`text-align: justify; hyphens: auto;`) for clean magazine-style readability on narrow screens. |
+| **Sub-Navigation Tabs** | Full verbose tab labels (`.d-tab-full`, e.g. "Similar Projects", "Specifications"). | Compact abbreviated tab labels (`.d-tab-short`, e.g. "Similar", "Specs") to prevent horizontal line wrapping. |
+| **Geographic Map Experience** | Interactive side-by-side D3.js vector map with hover tooltip balloons and right-hand side drawer panel (`540px`). | Responsive vector map; tapping any state triggers an animated bottom-sheet card with project counts and tonnage. |
+| **PDF Drawing Viewer** | Full-width PDF sheet canvas with header zoom buttons and bottom pagination dock (`1 of 11`). | Touch-centered pagination dock (`← Prev` / `Next →`), pinch-to-zoom enabled, desktop zoom buttons suppressed for maximum view space. |
+| **Spotlight / Quick Search** | Centered floating modal with `Ctrl/Cmd + K` keyboard shortcut and arrow navigation. | Fullscreen edge-to-edge touch search sheet with instant tap-to-clear and optimized software keyboard layout. |
+| **Footer Social Bar** | Full branding row with large `42px` slate-gray rounded icon buttons. | Compact `26px` touch-friendly icon buttons arranged in an elegant horizontal strip. |
+
+---
+
+### 3.2 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)
+
+* **Desktop Workstation Mode (`> 768px`)**:
+  * Users expect top-corner dismissal conforming to desktop UI standards (macOS / Windows modal conventions).
+  * `#detailClose` is fixed at `top: 24px; right: 28px;` with high z-index (`99999`) and frosted blur background (`backdrop-filter: blur(12px)`).
+  * Hovering executes a smooth 90-degree clockwise spin with transition physics (`cubic-bezier(0.16, 1, 0.3, 1)`).
+  * The bottom slanted `BACK` button is forcefully hidden (`display: none !important;`) to keep desktop presentation pristine.
+
+* **Mobile Smartphone Mode (`≤ 768px`)**:
+  * Reaching top corners on tall mobile displays causes thumb strain. Navigation is moved to the **bottom-right thumb zone**.
+  * `.detail-floating-back-btn` renders as a custom slanted pill (`transform: skewX(-10deg)` with counter-skewed text `transform: skewX(10deg)`), styled in slate gray (`#64748b`).
+  * Tapping instantly executes `window.closeDetail()` and restores the previous scroll position and history hash.
+  * The top close button is forcefully hidden (`display: none !important;`) to prevent viewport clutter.
+
+---
+
+### 3.3 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)
+
+On mobile screens, fixed side navigation arrows (`prev` and `next`) can visually overlap reading paragraphs. Brainstorm Atlas incorporates an **Intersection / Bounding Collision Engine**:
+1. During scroll, the client monitors bounding coordinates of `.bento-overview-card` and overview descriptions relative to the viewport center (`window.innerHeight * 0.38` to `0.62`).
+2. When text scrolls into the arrow zone, `nav-arrows-hidden` is attached, smoothly fading the arrows out (`opacity: 0; pointer-events: none`).
+3. As the user reaches media or the similar projects section, the arrows seamlessly fade back in for project switching.
+
+---
+
+### 3.4 Bento Grid Layout & Justified Mobile Typography
+
+* **Mobile Typographic Polish**:
+  * Description paragraphs on mobile activate hyphenation rules:
+    ```css
+    .bento-overview-card p,
+    [id^="sec-overview-"] p {
+      text-align: justify !important;
+      text-justify: inter-word !important;
+      hyphens: auto !important;
+      -webkit-hyphens: auto !important;
+    }
+    ```
+  * Subnav bars automatically swap text nodes (`.d-tab-full` hidden, `.d-tab-short` visible), keeping the active section tabs on a single sleek line without horizontal wrapping.
+
+---
+
+### 3.5 iOS & Android Bottom Floating Glass Dock
+
+* **Persistent Glassmorphism Tab Bar**:
+  * Fixed at bottom (`bottom: 20px; right: 16px;`) with `backdrop-filter: blur(20px)` and safe-area inset support (`env(safe-area-inset-bottom)`).
+  * Houses quick-switch actions for:
     1. 🗺️ **Map & Projects**: Immediate return to the geographic explorer.
     2. 📐 **Sample Drawings**: Direct access to PDF erection sheets and fabrication plans.
     3. 📄 **Brochure**: Instant corporate capability deck viewer.
     4. 🌓 **Theme Toggle**: One-tap Dark/Light mode switcher with tactile haptic-style micro-bounce animation (`scale(0.96)` on press).
 
-### 3.3 Touch & Gesture Optimization
-* **Touch-Friendly Hit Targets**: All buttons, chips, and interactive state paths exceed the **48x48px** Apple Human Interface Guidelines and WCAG touch criteria.
-* **Over-Scroll Prevention**: `overflow-x: hidden` enforced globally with momentum scrolling (`-webkit-overflow-scrolling: touch`) on all scrollable modal sheets.
-* **Map Touch Experience**: Prevents accidental page jumps when panning the D3 vector map on mobile. Tapping a state immediately summons a floating bottom bottom-sheet card with project metadata.
+---
 
-### 3.4 Mobile Drawing & 3D WebGL Performance
-* **WebGL Fallback & Throttling**: On mobile devices with limited GPU memory, `<model-viewer>` dynamically adjusts shadow density and polygon rendering to maintain smooth 60fps interaction.
-* **PDF Direct Touch Navigation**: On mobile, the PDF viewer dock centers controls for one-thumb switching (`← Prev` / `Next →`) without requiring pinch-to-find pagination buttons.
+### 3.6 Adaptive Responsive Breakpoints & Performance Throttling
+
+* **Breakpoints**:
+  * **`< 560px` (Compact Mobile)**: Hero stats reflow into high-density 2x2 grid tiles; loader counter scales to `76px`; header actions collapse into simplified icons.
+  * **`560px – 768px` (Standard Handheld)**: Search bar switches into an edge-to-edge touch trigger; filter pills enable kinetic swiping.
+  * **`768px – 1024px` (Tablets / iPad)**: Map and project listing switch from side-by-side to a stacked master-detail layout with preserved map aspect ratios.
+* **Mobile WebGL Optimization**:
+  * `<model-viewer>` dynamically lowers shadow fidelity and polygon sample rates on mobile GPUs to ensure constant 60fps orbiting without battery drain.
 
 ---
 

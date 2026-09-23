@@ -65,6 +65,22 @@ Open your browser and navigate to: **`http://localhost:5050`**
 
 ---
 
+## 📱 Mobile vs. Desktop Version: Key Feature Differences
+
+| Feature / Area | 🖥️ Desktop Version (`> 768px`) | 📱 Mobile Version (`≤ 768px`) |
+| :--- | :--- | :--- |
+| **Top Navigation** | Full horizontal glass navbar with text, drop-downs & website button. | Minimalist compact header; shifts navigation to bottom floating glass dock. |
+| **Project Detail Close / Back** | **Top-Right Frosted Close (`X`)**: Fixed `44x44px` circular frosted button. Bottom back is **hidden**. | **Bottom Slanted `BACK` Dock**: Floating `42px` slanted (10° skew) button. Top close is **hidden**. |
+| **Side Navigation Arrows** | Vertically centered (50% screen height) for rapid project flipping. | **Smart Collision Auto-Hiding**: Arrows smoothly fade out when scrolling over text to guarantee readability. |
+| **Filter Bar** | Two-row mathematically balanced edge-to-edge grid chips. | Horizontal kinetic swipe bar with touch momentum scrolling. |
+| **Bento Grid Layout** | Multi-column Bento Grid (2 to 4 responsive columns). | Single-column stacked vertical cards with auto-adjusting aspect ratios. |
+| **Project Descriptions** | Standard left-aligned paragraphs. | **Justified & Hyphenated** (`text-align: justify; hyphens: auto;`) for magazine-style reading. |
+| **PDF Drawing Viewer** | Full-width canvas with header zoom buttons and bottom dock (`1 of 11`). | Touch-centered pagination dock (`← Prev` / `Next →`), pinch-to-zoom enabled. |
+| **Quick Search** | Centered floating modal with `Ctrl/Cmd + K` shortcut. | Fullscreen edge-to-edge touch search sheet with tap-to-clear. |
+| **Footer Social Bar** | Full branding row with large `42px` slate-gray rounded icon buttons. | Compact `26px` touch-friendly icon buttons in a horizontal strip. |
+
+---
+
 ## 1. Executive System Overview
 
 The **Brainstorm Atlas** is a high-performance, full-stack web application for interactive 3D structural steel project visualization, regional map filtering, drawing portfolio management, and administrative control.
