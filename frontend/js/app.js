@@ -6597,6 +6597,7 @@ function initDrawingPdfViewerModal() {
 }
 
 let _websiteLoaderTimer = null;
+let _websiteCloseTimer = null;
 
 function openWebsiteViewer(url = 'https://www.brainstorminfotech.com', title = 'Brainstorm Infotech') {
   const modal = document.getElementById('websiteViewerModal');
@@ -6610,6 +6611,14 @@ function openWebsiteViewer(url = 'https://www.brainstorminfotech.com', title = '
     window.open(url, '_blank', 'noopener,noreferrer');
     return;
   }
+
+  // Cancel any pending close animation
+  if (_websiteCloseTimer) {
+    clearTimeout(_websiteCloseTimer);
+    _websiteCloseTimer = null;
+  }
+  modal.classList.remove('closing');
+
   const cleanUrl = (url || 'https://www.brainstorminfotech.com').trim();
   let hostname = 'brainstorminfotech.com';
   try {
@@ -6625,20 +6634,28 @@ function openWebsiteViewer(url = 'https://www.brainstorminfotech.com', title = '
   if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
 
   if (iframe) {
-    iframe.src = cleanUrl;
-    iframe.onload = () => {
-      setTimeout(() => {
-        if (loader) loader.classList.add('hidden');
-      }, 200);
-    };
+    if (iframe.src !== cleanUrl) {
+      iframe.src = cleanUrl;
+      iframe.onload = () => {
+        setTimeout(() => {
+          if (loader) loader.classList.add('hidden');
+        }, 200);
+      };
+    } else {
+      if (loader) loader.classList.add('hidden');
+    }
+
     // Auto-hide loader after 1.2s safety window so it never stays stuck
     _websiteLoaderTimer = setTimeout(() => {
       if (loader) loader.classList.add('hidden');
     }, 1200);
   }
 
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  // Fluid entrance trigger
+  requestAnimationFrame(() => {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
 }
 window.openWebsiteViewer = openWebsiteViewer;
 
@@ -6653,13 +6670,23 @@ function initWebsiteViewerModal() {
   const reloadBtn = document.getElementById('reloadWebsiteFrameBtn');
 
   const closeWebsiteModal = () => {
-    if (modal) {
-      modal.classList.remove('active');
+    if (!modal) return;
+    if (modal.classList.contains('closing')) return;
+
+    // Smooth exit animation
+    modal.classList.add('closing');
+    modal.classList.remove('active');
+
+    if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
+    if (_websiteCloseTimer) clearTimeout(_websiteCloseTimer);
+
+    _websiteCloseTimer = setTimeout(() => {
+      modal.classList.remove('closing');
       if (iframe) iframe.src = '';
       if (loader) loader.classList.remove('hidden');
-      if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
       document.body.style.overflow = '';
-    }
+      _websiteCloseTimer = null;
+    }, 320);
   };
   window.closeWebsiteViewer = closeWebsiteModal;
 
@@ -6667,6 +6694,9 @@ function initWebsiteViewerModal() {
 
   if (reloadBtn && iframe) {
     reloadBtn.addEventListener('click', () => {
+      reloadBtn.classList.add('is-spinning');
+      setTimeout(() => reloadBtn.classList.remove('is-spinning'), 650);
+
       if (loader) loader.classList.remove('hidden');
       const curSrc = iframe.src || 'https://www.brainstorminfotech.com';
       iframe.src = '';
@@ -6685,7 +6715,7 @@ function initWebsiteViewerModal() {
   }
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+    if (e.key === 'Escape' && (modal?.classList.contains('active') || modal?.classList.contains('closing'))) {
       closeWebsiteModal();
     }
   });
