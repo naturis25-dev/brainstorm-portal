@@ -3803,43 +3803,35 @@ window.currentAdminPage = 1;
     
 
     // Render pagination controls
-
     const paginationContainer = document.getElementById('adminPagination') || (function() {
-
       const c = document.createElement('div');
-
       c.id = 'adminPagination';
-
-      c.style.display = 'flex';
-
-      c.style.justifyContent = 'space-between';
-
-      c.style.alignItems = 'center';
-
-      c.style.padding = '16px';
-
-      c.style.borderTop = '1px solid var(--border)';
-
+      c.className = 'admin-pagination-bar';
       tbody.parentElement.parentElement.appendChild(c);
-
       return c;
-
     })();
 
-    
-
     paginationContainer.innerHTML = `
-
-      <div style="font-size:13px; color:var(--sub);">Showing ${start+1}-${Math.min(start+adminPageSize, list.length)} of ${list.length}</div>
-
-      <div style="display:flex; gap:8px;">
-
-        <button class="btn-sec" style="padding:4px 12px; font-size:13px;" ${window.currentAdminPage === 1 ? 'disabled' : ''} onclick="window.currentAdminPage--; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)">Prev</button>
-
-        <button class="btn-sec" style="padding:4px 12px; font-size:13px;" ${window.currentAdminPage === totalPages ? 'disabled' : ''} onclick="window.currentAdminPage++; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)">Next</button>
-
+      <div class="admin-pagination-info">
+        Showing <strong>${list.length === 0 ? 0 : start + 1}–${Math.min(start + adminPageSize, list.length)}</strong> of <strong>${list.length}</strong> projects
       </div>
-
+      <div class="admin-pagination-actions">
+        <button type="button" class="admin-page-btn prev" ${window.currentAdminPage <= 1 ? 'disabled' : ''} onclick="window.currentAdminPage--; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)" title="Previous Page" aria-label="Previous Page">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          <span>Prev</span>
+        </button>
+        <div class="admin-page-pill">
+          Page <strong>${window.currentAdminPage}</strong> of <strong>${totalPages}</strong>
+        </div>
+        <button type="button" class="admin-page-btn next" ${window.currentAdminPage >= totalPages ? 'disabled' : ''} onclick="window.currentAdminPage++; renderAdminTable(typeof getFilteredSortedAdminProjects === 'function' ? getFilteredSortedAdminProjects() : window.PROJECTS)" title="Next Page" aria-label="Next Page">
+          <span>Next</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
     `;
 
   }
