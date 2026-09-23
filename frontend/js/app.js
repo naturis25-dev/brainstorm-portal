@@ -4065,6 +4065,144 @@ function setupModal() {
 
 
 
+  // 1-Click Backup Export (.json / .csv)
+  async function handleExportBackup() {
+    try {
+      if (window.showToast) window.showToast('Generating 1-click backup file...', 'info');
+      const token = localStorage.getItem('token');
+      let projectsList = [];
+
+      try {
+        const res = await fetch('/api/projects/export', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (res.ok) {
+          const data = await res.json();
+          projectsList = data.projects || data.data || data;
+        }
+      } catch (err) {
+        console.warn('Direct export API fallback to local cache:', err);
+      }
+
+      if (!projectsList || !projectsList.length) {
+        projectsList = Array.isArray(PROJECTS) && PROJECTS.length ? PROJECTS : [];
+      }
+
+      if (!projectsList.length) {
+        if (window.showToast) window.showToast('No project records found to export.', 'error');
+        return;
+      }
+
+      const backupObj = {
+        atlasBackupVersion: "2.0",
+        exportedAt: new Date().toISOString(),
+        totalProjects: projectsList.length,
+        projects: projectsList
+      };
+
+      const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `atlas_projects_backup_${dateStr}_(${projectsList.length}_projects).json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      if (window.showToast) window.showToast(`Exported ${projectsList.length} projects successfully!`, 'success');
+    } catch (e) {
+      console.error(e);
+      if (window.showToast) window.showToast('Failed to export backup: ' + e.message, 'error');
+    }
+  }
+
+  // 1-Click Backup Import & Instant Restore
+  async function handleImportBackup(file) {
+    if (!file) return;
+    try {
+      if (window.showToast) window.showToast('Reading backup file...', 'info');
+      const text = await file.text();
+      let importedProjects = [];
+
+      if (file.name.endsWith('.json')) {
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed)) {
+          importedProjects = parsed;
+        } else if (parsed && Array.isArray(parsed.projects)) {
+          importedProjects = parsed.projects;
+        } else if (parsed && Array.isArray(parsed.data)) {
+          importedProjects = parsed.data;
+        }
+      } else if (file.name.endsWith('.csv')) {
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length > 1) {
+          const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
+          for (let i = 1; i < lines.length; i++) {
+            const values = lines[i].split(',').map(v => v.trim().replace(/^["']|["']$/g, ''));
+            const p = {};
+            headers.forEach((h, idx) => { p[h] = values[idx] || ''; });
+            if (p.title) importedProjects.push(p);
+          }
+        }
+      }
+
+      if (!importedProjects.length) {
+        if (window.showToast) window.showToast('Invalid backup file. No projects found.', 'error');
+        return;
+      }
+
+      const confirmed = window.confirm(`Ready to import & restore ${importedProjects.length} projects.\n\nDo you want to proceed?`);
+      if (!confirmed) return;
+
+      if (window.showToast) window.showToast(`Restoring ${importedProjects.length} projects to database...`, 'info');
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/projects/import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ projects: importedProjects })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Import API returned error');
+      }
+
+      if (window.showToast) window.showToast(`100% Complete! Restored ${importedProjects.length} projects in seconds.`, 'success');
+      
+      // Reload projects from server & refresh admin table
+      if (typeof fetchProjects === 'function') {
+        await fetchProjects();
+      }
+      if (typeof renderAdminTable === 'function') {
+        renderAdminTable(PROJECTS);
+      }
+    } catch (err) {
+      console.error(err);
+      if (window.showToast) window.showToast('Import failed: ' + err.message, 'error');
+    }
+  }
+
+  window.handleExportBackup = handleExportBackup;
+  window.handleImportBackup = handleImportBackup;
+
+  document.getElementById('exportBackupBtn')?.addEventListener('click', handleExportBackup);
+  
+  const importFileInput = document.getElementById('importBackupFileInput');
+  document.getElementById('importBackupBtn')?.addEventListener('click', () => {
+    importFileInput?.click();
+  });
+  importFileInput?.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleImportBackup(e.target.files[0]);
+      e.target.value = '';
+    }
+  });
+
   document.getElementById('openAddModal')?.addEventListener('click', openAddModal);
 
   document.getElementById('modalClose')?.addEventListener('click', closeModal);

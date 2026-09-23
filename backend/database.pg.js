@@ -317,22 +317,41 @@ const bulkInsertProjects = async (projects) => {
     for (const p of projects) {
       const query = `
         INSERT INTO projects (
-          id, title, country, state, category, type, tons, status, images, video, year, description
+          id, title, country, state, category, type, tons, status, images, video, year, description, model_url, is_key_project, is_deleted
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 0)
         ON CONFLICT (id) DO UPDATE SET
           title = EXCLUDED.title, country = EXCLUDED.country, state = EXCLUDED.state,
           category = EXCLUDED.category, type = EXCLUDED.type, tons = EXCLUDED.tons,
           status = EXCLUDED.status, images = EXCLUDED.images, video = EXCLUDED.video,
-          year = EXCLUDED.year, description = EXCLUDED.description
+          year = EXCLUDED.year, description = EXCLUDED.description,
+          model_url = EXCLUDED.model_url, is_key_project = EXCLUDED.is_key_project,
+          is_deleted = 0
       `;
+      let imgVal = p.images;
+      if (Array.isArray(imgVal)) imgVal = JSON.stringify(imgVal);
+      else if (typeof imgVal !== 'string') imgVal = '[]';
+
       const params = [
-        p.id, p.title, p.country, p.state, p.category, p.type, p.tons, p.status,
-        JSON.stringify(p.images || []), p.video, p.year, p.description
+        p.id || `${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+        p.title || 'Untitled Project',
+        (p.country || 'US').toUpperCase(),
+        p.state || '',
+        p.category || 'Commercial',
+        p.type || '',
+        p.tons || 0,
+        p.status || 'Active',
+        imgVal,
+        p.video || '',
+        p.year || null,
+        p.description || '',
+        p.modelUrl || p.model_url || '',
+        p.isKeyProject ? 1 : 0
       ];
       await client.query(query, params);
     }
     await client.query('COMMIT');
+    return projects.length;
   } catch (e) {
     await client.query('ROLLBACK');
     throw e;

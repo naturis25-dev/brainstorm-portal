@@ -302,26 +302,32 @@ const deleteProject = (id, username) => {
 // Bulk insert using transaction for extreme performance (can easily handle 4,000+ records in ms)
 const bulkInsertProjects = (projects) => {
   const insert = db.prepare(`
-    INSERT OR REPLACE INTO projects (id, title, country, state, category, type, tons, status, images, video, year, description)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO projects (id, title, country, state, category, type, tons, status, images, video, year, description, modelUrl, isKeyProject, is_deleted)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
   `);
   
   const insertMany = db.transaction((projs) => {
     let count = 0;
     for (const p of projs) {
+      let imgVal = p.images;
+      if (Array.isArray(imgVal)) imgVal = JSON.stringify(imgVal);
+      else if (typeof imgVal !== 'string') imgVal = '[]';
+
       insert.run(
-        p.id || `${Date.now()}-${count}`,
-        p.title || 'Untitled',
+        p.id || `${Date.now()}-${count}-${Math.random().toString(36).substr(2, 4)}`,
+        p.title || 'Untitled Project',
         (p.country || 'US').toUpperCase(),
         p.state || '',
-        p.category || 'Structural',
+        p.category || 'Commercial',
         p.type || '',
         p.tons || 0,
         p.status || 'Active',
-        JSON.stringify(p.images || []),
+        imgVal,
         p.video || '',
         p.year || null,
-        p.description || ''
+        p.description || '',
+        p.modelUrl || p.model_url || '',
+        p.isKeyProject ? 1 : 0
       );
       count++;
     }

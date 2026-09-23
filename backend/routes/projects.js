@@ -22,6 +22,43 @@ router.get('/stats', async (req, res) => {
   catch (e) { console.error(e); res.status(500).json({ message: 'Error' }); }
 });
 
+router.get('/export', requireAuth, async (req, res) => {
+  try {
+    const allProjects = await db.getProjects({ limit: 100000 });
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="atlas_projects_backup_${new Date().toISOString().split('T')[0]}.json"`);
+    res.json({
+      backupVersion: "1.0",
+      exportedAt: new Date().toISOString(),
+      exportedBy: req.admin ? req.admin.username : 'Admin',
+      total: allProjects.length,
+      projects: allProjects
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Export failed: ' + e.message });
+  }
+});
+
+router.post('/import', requireAuth, async (req, res) => {
+  try {
+    let list = req.body.projects || req.body.data || req.body;
+    if (!Array.isArray(list)) {
+      return res.status(400).json({ message: 'Invalid payload format. Expected an array of projects.' });
+    }
+    const count = await db.bulkInsertProjects(list);
+    try {
+      if (req.admin && db.insertAuditLog) {
+        await db.insertAuditLog(req.admin.username, 'IMPORT_BACKUP', null, { count: list.length });
+      }
+    } catch(e){}
+    res.json({ success: true, message: `Successfully imported and restored ${list.length} projects!`, count: list.length });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Import failed: ' + e.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
   try {
     const project = await db.getProjectById(req.params.id);
