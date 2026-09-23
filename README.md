@@ -1,6 +1,67 @@
-# Brainstorm Atlas — IT Team Handover & Technical Specification
+# 🌐 Brainstorm Atlas — IT Team Handover & Technical Specification
 
 > **Document Purpose**: This technical handover document is prepared for the IT & Infrastructure Engineering Team. It details the system architecture, technology stack, backend database design, required environment configurations, deployment setup, and CI/CD automated deployment workflow for hosting on private/on-premise cloud servers.
+
+---
+
+## ⚠️ STRICT MANDATE: UI/UX & Brand Design Preservation
+
+> **CRITICAL DIRECTIVE FOR ALL DEVELOPERS & IT ENGINEERS**:
+> The User Interface (UI), User Experience (UX), interactive physics, visual layout, and exact branding color scheme of Brainstorm Atlas are **100% FINALIZED, APPROVED, AND FROZEN**.
+> 
+> **NO MODIFICATIONS TO THE UI/UX ARE PERMITTED**:
+> 1. **DO NOT Redesign or Replace Layouts**: Under no circumstances should custom pages, responsive modals, or bento grids be replaced with generic frameworks (e.g., Bootstrap, generic Tailwind templates, or Material UI).
+> 2. **Strict Color Palette Preservation**: The following exact brand hexadecimal color codes must remain strictly preserved throughout all components:
+>    - **Dark Ink (`--ink`)**: `#151a1b` / `#0f172a` (Primary dark background and typography)
+>    - **Warm Paper (`--paper`)**: `#f5f2ea` / `#f8fafc` (Primary light canvas)
+>    - **Neon Lime (`--lime`)**: `#d9ff48` (Progressive loader glow and live accent highlights)
+>    - **Action Slate Grey**: `#64748b` & `#475569` (Slanted mobile BACK buttons, footer social pills, and drawing tags)
+>    - **US Royal Blue Accent (`--accent`)**: `#2563eb` (Primary interactive highlights, map hovers, and CTA badges)
+>    - **Canada Crimson Accent (`--accent-ca`)**: `#dc2626` (Canadian theme toggle, brochure headers, and close button hovers)
+>    - **Dark Mode Surfaces**: `#0a0d14` (Deep viewport), `#111827` (Card containers), `#1e293b` (Bento modules)
+> 3. **Preserve Responsive Interaction Physics**:
+>    - The mobile bottom floating dock (`.detail-floating-actions` with slanted 10-degree skewed buttons).
+>    - The desktop top-right circular frosted close button (`#detailClose`).
+>    - The D3 TopoJSON choropleth vector map transitions and state tooltip floating sheets.
+>    - The Apple Spotlight / Raycast fuzzy search window (`Ctrl/Cmd + K`).
+>    - The dark-ink 6-stage progressive loader curtain reveal.
+> 
+> *All backend maintenance, database switches (SQLite ↔ PostgreSQL), server deployments, and cloud storage configurations must operate seamlessly beneath this exact frontend UI/UX.*
+
+---
+
+## 📦 Git Repository & One-Click Download
+
+| Resource | Link / Command |
+| :--- | :--- |
+| **GitHub Repository** | [https://github.com/naturis25-dev/brainstorm-portal](https://github.com/naturis25-dev/brainstorm-portal) |
+| **Direct ZIP Download** | [Download main.zip](https://github.com/naturis25-dev/brainstorm-portal/archive/refs/heads/main.zip) |
+| **Clone Repository** | `git clone https://github.com/naturis25-dev/brainstorm-portal.git` |
+
+---
+
+## 🖥️ New PC Setup & How to Run
+
+### 1. Prerequisites to Download
+1. **Node.js LTS (v18.x or v20.x+)**: [https://nodejs.org/](https://nodejs.org/)
+2. **Git**: [https://git-scm.com/](https://git-scm.com/)
+3. **Modern Web Browser**: Google Chrome, Microsoft Edge, Firefox, or Safari
+
+### 2. Step-by-Step Launch Instructions
+```bash
+# Step 1: Clone the repository (or extract downloaded ZIP)
+git clone https://github.com/naturis25-dev/brainstorm-portal.git
+cd brainstorm-portal/backend
+
+# Step 2: Install required packages
+npm install
+
+# Step 3: Run the application server
+node server.js
+```
+
+### 3. Open in Browser
+Open your browser and navigate to: **`http://localhost:5050`**
 
 ---
 

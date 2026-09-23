@@ -5,7 +5,9 @@
 ## 📑 Table of Contents
 1. [Executive Summary & Purpose](#1-executive-summary--purpose)
    - [Git Repository & Download Links](#git-repository--download-links)
-   - [Quick Start Commands](#quick-start-commands)
+   - [🖥️ New PC Setup & Software Prerequisites](#️-new-pc-setup--software-prerequisites)
+   - [🚀 Step-by-Step Guide to Run on Any New Machine](#-step-by-step-guide-to-run-on-any-new-machine)
+   - [⚠️ STRICT MANDATE: UI/UX & Brand Design Preservation](#️-strict-mandate-uiux--brand-design-preservation)
 2. [Interactive Functions & Core Public Features](#2-interactive-functions--core-public-features)
    - [2.1 Interactive North America Geographic Map (D3 & TopoJSON)](#21-interactive-north-america-geographic-map-d3--topojson)
    - [2.2 Proportional Edge-to-Edge Filter System](#22-proportional-edge-to-edge-filter-system)
@@ -59,19 +61,100 @@
 | **HTTPS Clone Command** | `git clone https://github.com/naturis25-dev/brainstorm-portal.git` |
 | **SSH Clone Command** | `git clone git@github.com:naturis25-dev/brainstorm-portal.git` |
 
-### 🚀 Quick Start Commands
+---
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/naturis25-dev/brainstorm-portal.git
-cd brainstorm-portal/backend
+### 🖥️ New PC Setup & Software Prerequisites
 
-# 2. Install dependencies
-npm install
+To run the Brainstorm Atlas application on any new computer (Windows, macOS, or Linux), the following software prerequisites must be downloaded and installed:
 
-# 3. Start the application server (runs on http://localhost:5050)
-node server.js
-```
+| Software | Minimum Version | Download Link | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Node.js (LTS)** | `v18.x` or `v20.x+` | [https://nodejs.org/](https://nodejs.org/) | Runtime required to execute the backend Express server & APIs. |
+| **Git** | Latest | [https://git-scm.com/](https://git-scm.com/) | Version control tool required to clone the codebase. |
+| **Web Browser** | Latest | Chrome, Edge, Firefox, Safari | Modern browser with WebGL enabled for 3D model & map rendering. |
+| **VS Code / IDE** *(Optional)* | Latest | [https://code.visualstudio.com/](https://code.visualstudio.com/) | Recommended editor for viewing code and terminal commands. |
+
+---
+
+### 🚀 Step-by-Step Guide to Run on Any New Machine
+
+Follow these exact steps to set up and launch the site on a fresh PC:
+
+#### Method A: Using Git (Recommended)
+
+1. **Open your Terminal / PowerShell / Command Prompt**:
+   ```bash
+   # Navigate to the folder where you want to store the project (e.g. Desktop or Projects)
+   cd "C:\Projects"
+   ```
+
+2. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/naturis25-dev/brainstorm-portal.git
+   cd brainstorm-portal/backend
+   ```
+
+3. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+4. **Start the Application Server**:
+   ```bash
+   node server.js
+   ```
+
+5. **Open in Browser**:
+   Open your browser and navigate to:
+   ```
+   http://localhost:5050
+   ```
+   *(The server serves both the frontend interactive portal and all backend REST APIs simultaneously on port 5050).*
+
+---
+
+#### Method B: Using Direct ZIP Download (Without Git CLI)
+
+1. Download the ZIP file from: [https://github.com/naturis25-dev/brainstorm-portal/archive/refs/heads/main.zip](https://github.com/naturis25-dev/brainstorm-portal/archive/refs/heads/main.zip).
+2. Right-click and **Extract All** to a folder on your computer.
+3. Open the extracted `brainstorm-portal-main` folder.
+4. Open the `backend` folder in Terminal / Command Prompt:
+   - On Windows: Open the `backend` folder in File Explorer, type `cmd` or `powershell` in the address bar, and press **Enter**.
+5. Run the installation and start commands:
+   ```bash
+   npm install
+   node server.js
+   ```
+6. Open your web browser and go to `http://localhost:5050`.
+
+---
+
+### ⚠️ STRICT MANDATE: UI/UX & Brand Design Preservation
+
+> [!CAUTION]
+> **CRITICAL DIRECTIVE FOR ALL DEVELOPERS & IT ENGINEERS**:
+> The User Interface (UI), User Experience (UX), interactive physics, visual layout, and exact branding color scheme of Brainstorm Atlas are **100% FINALIZED, APPROVED, AND FROZEN**.
+> 
+> **NO MODIFICATIONS TO THE UI/UX ARE PERMITTED**:
+> 1. **DO NOT Redesign or Replace Layouts**: Under no circumstances should custom pages, responsive modals, or bento grids be replaced with generic frameworks (e.g., Bootstrap, generic Tailwind templates, or Material UI).
+> 2. **Strict Color Palette Preservation**: The following exact brand hexadecimal color codes must remain strictly preserved throughout all components:
+>    - **Dark Ink (`--ink`)**: `#151a1b` / `#0f172a` (Primary dark background and typography)
+>    - **Warm Paper (`--paper`)**: `#f5f2ea` / `#f8fafc` (Primary light canvas)
+>    - **Neon Lime (`--lime`)**: `#d9ff48` (Progressive loader glow and live accent highlights)
+>    - **Action Slate Grey**: `#64748b` & `#475569` (Slanted mobile BACK buttons, footer social pills, and drawing tags)
+>    - **US Royal Blue Accent (`--accent`)**: `#2563eb` (Primary interactive highlights, map hovers, and CTA badges)
+>    - **Canada Crimson Accent (`--accent-ca`)**: `#dc2626` (Canadian theme toggle, brochure headers, and close button hovers)
+>    - **Dark Mode Surfaces**: `#0a0d14` (Deep viewport), `#111827` (Card containers), `#1e293b` (Bento modules)
+> 3. **Preserve Responsive Interaction Physics**:
+>    - The mobile bottom floating dock (`.detail-floating-actions` with slanted 10-degree skewed buttons).
+>    - The desktop top-right circular frosted close button (`#detailClose`).
+>    - The D3 TopoJSON choropleth vector map transitions and state tooltip floating sheets.
+>    - The Apple Spotlight / Raycast fuzzy search window (`Ctrl/Cmd + K`).
+>    - The dark-ink 6-stage progressive loader curtain reveal.
+> 
+> *All backend maintenance, database switches (SQLite ↔ PostgreSQL), server deployments, and cloud storage configurations must operate seamlessly beneath this exact frontend UI/UX.*
+
+---
 
 ```mermaid
 graph TD
