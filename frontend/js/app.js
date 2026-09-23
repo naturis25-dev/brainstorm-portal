@@ -6630,12 +6630,16 @@ function openWebsiteViewer(url = 'https://www.brainstorminfotech.com', title = '
   if (badgeEl) badgeEl.textContent = hostname;
   if (externalLink) externalLink.href = cleanUrl;
 
+  const iframeTarget = (window.location.protocol.startsWith('http') && cleanUrl.includes('brainstorminfotech.com'))
+    ? '/api/website-embed'
+    : cleanUrl;
+
   if (loader) loader.classList.remove('hidden');
   if (_websiteLoaderTimer) clearTimeout(_websiteLoaderTimer);
 
   if (iframe) {
-    if (iframe.src !== cleanUrl) {
-      iframe.src = cleanUrl;
+    if (iframe.src !== iframeTarget && !iframe.src.endsWith(iframeTarget)) {
+      iframe.src = iframeTarget;
       iframe.onload = () => {
         setTimeout(() => {
           if (loader) loader.classList.add('hidden');

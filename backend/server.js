@@ -88,6 +88,55 @@ app.post('/api/drawings', requireAuth, (req, res) => {
   }
 });
 
+// Clean embedded website endpoint with injected ultra-slim scrollbar
+app.get('/api/website-embed', async (req, res) => {
+  try {
+    const targetUrl = 'https://www.brainstorminfotech.com/';
+    const response = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    if (!response.ok) {
+      return res.redirect(targetUrl);
+    }
+    let html = await response.text();
+    const slimScrollbarStyle = `
+      <base href="https://www.brainstorminfotech.com/">
+      <style id="atlas-ultra-slim-scrollbar">
+        ::-webkit-scrollbar {
+          width: 3.5px !important;
+          height: 3.5px !important;
+        }
+        ::-webkit-scrollbar-track {
+          background: transparent !important;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(37, 99, 235, 0.45) !important;
+          border-radius: 99px !important;
+          transition: background 0.2s ease !important;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: rgba(37, 99, 235, 0.9) !important;
+        }
+        * {
+          scrollbar-width: thin !important;
+          scrollbar-color: rgba(37, 99, 235, 0.45) transparent !important;
+        }
+      </style>
+    `;
+    if (html.includes('<head>')) {
+      html = html.replace('<head>', '<head>' + slimScrollbarStyle);
+    } else {
+      html = slimScrollbarStyle + html;
+    }
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    res.redirect('https://www.brainstorminfotech.com/');
+  }
+});
+
 // Serve Frontend static files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
