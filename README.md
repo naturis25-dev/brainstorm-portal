@@ -79,6 +79,27 @@ Open your browser and navigate to: **`http://localhost:5050`**
 | **Quick Search** | Centered floating modal with `Ctrl/Cmd + K` shortcut. | Fullscreen edge-to-edge touch search sheet with tap-to-clear. |
 | **Footer Social Bar** | Full branding row with large `42px` slate-gray rounded icon buttons. | Compact `26px` touch-friendly icon buttons in a horizontal strip. |
 
+### 🚫 Explicit Exclusions in Mobile Version (Deliberately Removed/Hidden)
+1. **No Secret Admin Access**: Mouse proximity trigger is disabled on touch screens.
+2. **No Top Close Button**: Hidden on mobile to avoid thumb strain and UI clutter; replaced by bottom slanted `BACK` button.
+3. **No 3D/PDF On-Screen Zoom Buttons**: Native pinch-to-zoom and pan gestures are used instead.
+4. **No Heavy Multi-Badge Scope Bloat**: Verbose tags are condensed with `.d-tab-short` tabs and compact scope pills.
+5. **No 540px Desktop Side Drawer**: Replaced by swipeable bottom-sheet modal cards.
+6. **No Hover Tooltips on Map**: Tap-to-inspect bottom cards replace mouse hovers.
+7. **No Multi-Column Bento Layout**: Collapses to a clean single-column vertical flow.
+
+---
+
+## 🎨 UI Color Switching Engine: USA vs. Canada Theme
+
+| Theme Element | 🇺🇸 USA Mode (`body:not(.theme-ca)`) | 🇨🇦 Canada Mode (`body.theme-ca`) |
+| :--- | :--- | :--- |
+| **Primary Accent Color** | `#2563eb` (Royal Blue) | `#dc2626` (Maple Leaf Crimson Red) |
+| **Soft Background** | `rgba(37, 99, 235, 0.08)` | `rgba(220, 38, 38, 0.08)` |
+| **Accent Glow** | `rgba(37, 99, 235, 0.35)` | `rgba(220, 38, 38, 0.35)` |
+| **Dark Mode Primary** | `#60a5fa` (Electric Ice Blue) | `#f87171` (Vibrant Coral Red) |
+| **D3 Map Projection** | `d3.geoAlbersUsa()` (50 US States) | `d3.geoAzimuthalEqualArea()` (Canada Provinces) |
+
 ---
 
 ## 1. Executive System Overview

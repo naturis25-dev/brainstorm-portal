@@ -20,11 +20,12 @@
    - [2.9 Mobile Responsive Experience & Floating Dock](#29-mobile-responsive-experience--floating-dock)
 3. [Mobile vs. Desktop Version: Features & Architecture Differences](#3-mobile-vs-desktop-version-features--architecture-differences)
    - [3.1 Comprehensive Desktop vs. Mobile Feature Comparison Matrix](#31-comprehensive-desktop-vs-mobile-feature-comparison-matrix)
-   - [3.2 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)](#32-navigation--dismissal-architecture-desktop-top-close-vs-mobile-slanted-back-dock)
-   - [3.3 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)](#33-smart-content-aware-collision-detection-side-arrow-auto-hiding)
-   - [3.4 Bento Grid Layout & Justified Mobile Typography](#34-bento-grid-layout--justified-mobile-typography)
-   - [3.5 iOS & Android Bottom Floating Glass Dock](#35-ios--android-bottom-floating-glass-dock)
-   - [3.6 Adaptive Responsive Breakpoints & Performance Throttling](#36-adaptive-responsive-breakpoints--performance-throttling)
+   - [3.2 Explicit Exclusions in Mobile Version (What is Deliberately Removed/Hidden)](#32-explicit-exclusions-in-mobile-version-what-is-deliberately-removedhidden)
+   - [3.3 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)](#33-navigation--dismissal-architecture-desktop-top-close-vs-mobile-slanted-back-dock)
+   - [3.4 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)](#34-smart-content-aware-collision-detection-side-arrow-auto-hiding)
+   - [3.5 Bento Grid Layout & Justified Mobile Typography](#35-bento-grid-layout--justified-mobile-typography)
+   - [3.6 iOS & Android Bottom Floating Glass Dock](#36-ios--android-bottom-floating-glass-dock)
+   - [3.7 Adaptive Responsive Breakpoints & Performance Throttling](#37-adaptive-responsive-breakpoints--performance-throttling)
 4. [Atlas Admin Dashboard & Management System](#4-atlas-admin-dashboard--management-system)
    - [4.1 Discreet Access Mechanisms](#41-discreet-access-mechanisms)
    - [4.2 Enterprise Authentication & Google SSO](#42-enterprise-authentication--google-sso)
@@ -35,15 +36,15 @@
    - [4.7 Sample Drawings Manager](#47-sample-drawings-manager)
    - [4.8 Secondary Admin Access Management](#48-secondary-admin-access-management)
    - [4.9 Security Audit Logging & Compliance](#49-security-audit-logging--compliance)
-5. [Technology Stack & Code Architecture](#5-technology-stack--code-architecture)
-   - [Why Vanilla JavaScript & D3.js for Frontend](#why-vanilla-javascript--d3js-for-frontend)
-   - [Why Node.js & Express for Backend](#why-nodejs--express-for-backend)
-   - [Dual-Engine Database Architecture (SQLite & PostgreSQL)](#dual-engine-database-architecture-sqlite--postgresql)
-   - [Cloud Storage Engine (AWS S3 & Cloudflare R2)](#cloud-storage-engine-aws-s3--cloudflare-r2)
-   - [Complete Environment Variables Reference (.env)](#complete-environment-variables-reference-env)
-6. [Enterprise Security Architecture](#6-enterprise-security-architecture)
-   - [Security Features Breakdown](#security-features-breakdown)
-   - [Defending Against Major Threat Vectors](#defending-against-major-threat-vectors)
+5. [Technology Stack & Code Architecture (A to Z)](#5-technology-stack--code-architecture-a-to-z)
+   - [5.1 Complete List of Codes, Libraries & Frameworks Used (A to Z)](#51-complete-list-of-codes-libraries--frameworks-used-a-to-z)
+   - [5.2 UI Color Switching Engine: USA vs. Canada Theme (A to Z)](#52-ui-color-switching-engine-usa-vs-canada-theme-a-to-z)
+   - [5.3 Dual-Engine Database Architecture (SQLite & PostgreSQL)](#53-dual-engine-database-architecture-sqlite--postgresql)
+   - [5.4 Cloud Storage Engine (AWS S3 & Cloudflare R2)](#54-cloud-storage-engine-aws-s3--cloudflare-r2)
+   - [5.5 Complete Environment Variables Reference (.env)](#55-complete-environment-variables-reference-env)
+6. [Enterprise Security Architecture (A to Z)](#6-enterprise-security-architecture-a-to-z)
+   - [6.1 Full Security Features Breakdown (A to Z)](#61-full-security-features-breakdown-a-to-z)
+   - [6.2 Defending Against Major Threat Vectors](#62-defending-against-major-threat-vectors)
 7. [Client Showcase & Pitching Guide](#7-client-showcase--pitching-guide)
    - [Step-by-Step Live Demo Walkthrough](#step-by-step-live-demo-walkthrough)
    - [Tailored Pitching Points for Stakeholders](#tailored-pitching-points-for-stakeholders)
@@ -280,7 +281,35 @@ graph LR
 
 ---
 
-### 3.2 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)
+### 3.2 Explicit Exclusions in Mobile Version (What is Deliberately Removed/Hidden)
+
+To deliver an uncluttered, high-performance smartphone experience, several heavy desktop-only features and desktop affordances are **deliberately disabled and excluded on mobile screens (`≤ 768px`)**:
+
+1. 🚫 **No Secret Admin Trigger / Access**:
+   - The hidden top-corner proximity admin shield requires mouse hover tracking (`pointer: fine`), which does not exist on capacitive touch screens.
+   - Admin access is hidden and disabled on mobile devices to prevent accidental triggers by clients and field personnel.
+2. 🚫 **No Desktop Top-Right Close Button (`#detailClose`)**:
+   - The top `44x44px` close button is hidden on mobile (`display: none !important;`) to avoid consuming precious upper screen real estate and thumb strain.
+   - Navigation is handled entirely by the bottom-right floating slanted `BACK` dock.
+3. 🚫 **No Zoom +/- Button Overlay in 3D & Drawings**:
+   - On-screen zoom buttons are suppressed on mobile (`display: none !important;`).
+   - Native two-finger pinch-to-zoom and pan gestures are enabled across all PDF drawings and 3D Tekla BIM models.
+4. 🚫 **No Heavy Scope Chip Bloat & Multi-Badge Crowding**:
+   - Large desktop multi-badge scope rows are replaced with streamlined, single-line tags.
+   - Section subnav tab headers automatically switch to abbreviated labels (`.d-tab-short`, e.g. "Similar", "Specs" instead of verbose desktop strings).
+5. 🚫 **No 540px Desktop Side Drawer Panel (`.panel`)**:
+   - The desktop slide-out right drawer is hidden.
+   - Tapping any state on the mobile map summons a native-feeling touch bottom-sheet card with momentum sliding.
+6. 🚫 **No Mouse Hover Balloon Tooltips on Vector Map**:
+   - Continuous pointer-hover tooltips are disabled to prevent viewport obstruction during mobile map panning.
+7. 🚫 **No Complex 3-to-4 Column Grid Overcrowding**:
+   - Multi-column bento grids and statistics cards collapse into high-density 1-column vertical reading cards.
+8. 🚫 **No Topbar Jump-and-Land Morph Button**:
+   - The desktop website morphing pill is replaced with standard compact mobile action icons.
+
+---
+
+### 3.3 Navigation & Dismissal Architecture (Desktop Top Close vs. Mobile Slanted Back Dock)
 
 * **Desktop Workstation Mode (`> 768px`)**:
   * Users expect top-corner dismissal conforming to desktop UI standards (macOS / Windows modal conventions).
@@ -296,7 +325,7 @@ graph LR
 
 ---
 
-### 3.3 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)
+### 3.4 Smart Content-Aware Collision Detection (Side Arrow Auto-Hiding)
 
 On mobile screens, fixed side navigation arrows (`prev` and `next`) can visually overlap reading paragraphs. Brainstorm Atlas incorporates an **Intersection / Bounding Collision Engine**:
 1. During scroll, the client monitors bounding coordinates of `.bento-overview-card` and overview descriptions relative to the viewport center (`window.innerHeight * 0.38` to `0.62`).
@@ -305,7 +334,7 @@ On mobile screens, fixed side navigation arrows (`prev` and `next`) can visually
 
 ---
 
-### 3.4 Bento Grid Layout & Justified Mobile Typography
+### 3.5 Bento Grid Layout & Justified Mobile Typography
 
 * **Mobile Typographic Polish**:
   * Description paragraphs on mobile activate hyphenation rules:
@@ -322,7 +351,7 @@ On mobile screens, fixed side navigation arrows (`prev` and `next`) can visually
 
 ---
 
-### 3.5 iOS & Android Bottom Floating Glass Dock
+### 3.6 iOS & Android Bottom Floating Glass Dock
 
 * **Persistent Glassmorphism Tab Bar**:
   * Fixed at bottom (`bottom: 20px; right: 16px;`) with `backdrop-filter: blur(20px)` and safe-area inset support (`env(safe-area-inset-bottom)`).
@@ -334,7 +363,7 @@ On mobile screens, fixed side navigation arrows (`prev` and `next`) can visually
 
 ---
 
-### 3.6 Adaptive Responsive Breakpoints & Performance Throttling
+### 3.7 Adaptive Responsive Breakpoints & Performance Throttling
 
 * **Breakpoints**:
   * **`< 560px` (Compact Mobile)**: Hero stats reflow into high-density 2x2 grid tiles; loader counter scales to `76px`; header actions collapse into simplified icons.
@@ -433,7 +462,9 @@ Clicking **"+ Add Project"** or **"Edit"** opens `#projectModal` equipped with:
 
 ---
 
-## 5. Technology Stack & Code Architecture
+---
+
+## 5. Technology Stack & Code Architecture (A to Z)
 
 ```
 brainstorm-portal/
@@ -461,23 +492,99 @@ brainstorm-portal/
     └── assets/              # Images, PDFs, 3D models, vendor libraries
 ```
 
-### Why Vanilla JavaScript & D3.js for Frontend
-1. **Zero Framework Overhead**: No React/Angular/Vue hydration lag; renders immediately with sub-50ms First Contentful Paint.
-2. **Deterministic D3 Vector Rendering**: Direct SVG path manipulation delivers smooth zooming and state boundary hover effects without virtual DOM diffing bottlenecks.
-3. **Long-Term Maintainability**: Plain HTML5/CSS3/JS runs natively in all modern browsers for decades with zero breaking package deprecations.
+---
 
-### Why Node.js & Express for Backend
-1. **Non-Blocking Asynchronous I/O**: Efficiently handles concurrent API requests and large multi-megabyte PDF and 3D model streams.
-2. **Universal JavaScript**: Unified data structures between frontend and backend.
+### 5.1 Complete List of Codes, Libraries & Frameworks Used (A to Z)
 
-### Dual-Engine Database Architecture (SQLite & PostgreSQL)
+| Category | Technology / Library | Version | Purpose & Technical Role |
+| :--- | :--- | :--- | :--- |
+| **3D Mesh Optimizer** | `@gltf-transform/core` & `extensions` | `v3.10+` | Node.js engine (`optimizer.mjs`) for server-side Draco compression of 3D `.glb` structural models. |
+| **3D WebGL Viewer** | `<model-viewer>` | `v3.4.0` | Google's WebGL custom element rendering interactive 3D Tekla BIM models with touch orbits, zoom, and lighting presets. |
+| **Authentication** | `google-auth-library` | `v9.11+` | Validates Google OAuth2 JWT ID Tokens on the backend server (`client.verifyIdToken()`). |
+| **Bandwidth Optimization**| `compression` | `v1.7.4` | High-performance Gzip / Deflate compression for all API JSON payloads and static assets. |
+| **Cloud Object Storage** | `@aws-sdk/client-s3` | `v3.600+` | AWS S3 and Cloudflare R2 client for streaming large media files, videos, and PDFs. |
+| **Cryptographic Security** | Node.js `crypto` (Native) | LTS | Generates 256-bit cryptographically secure session tokens (`randomBytes(32)`) and timing-safe password validations (`timingSafeEqual`). |
+| **Database (Embedded)** | `better-sqlite3` | `v11.1.2` | Ultra-fast synchronous C++ SQLite driver with WAL journal mode for local development. |
+| **Database (Enterprise)**| `pg` (node-postgres) | `v8.12.0` | Production PostgreSQL connection pooling client for cloud infrastructure (AWS RDS, Supabase, Neon). |
+| **Environment Handling** | `dotenv` | `v16.4.5` | Zero-dependency module that loads environment variables from `.env` files into `process.env`. |
+| **HTTP Logging** | `morgan` | `v1.10.0` | Developer HTTP request logger middleware for express server debugging. |
+| **Mapping Engine** | `D3.js` (`d3`) | `v7.8.5` | Vector map projection (`geoAlbersUsa`, `geoAzimuthalEqualArea`), zoom behaviors, and SVG path generation. |
+| **Media Upload Pipeline** | `multer` | `v1.4.5-lts` | Multipart form-data parser supporting chunked uploads up to 6GB with automated disk streaming. |
+| **MIME Identification** | `mime-types` | `v2.1.35` | Accurately identifies content types for cloud S3 object headers and PDF streaming. |
+| **Network Security** | `cors` | `v2.8.5` | Cross-Origin Resource Sharing middleware for whitelisting production origins. |
+| **Payload Security** | `body-parser` | `v1.20.2` | High-throughput JSON and URL-encoded body parser with strict memory limits to defend against DOS buffer attacks. |
+| **Rate Limiting** | `express-rate-limit` | `v7.3.1` | Anti-brute-force rate limiter restricting IP authentication attempts to 30 requests per 15 minutes. |
+| **Security Headers** | `helmet` | `v7.1.0` | Comprehensive HTTP security header hardening (`X-Frame-Options`, `X-Content-Type-Options: nosniff`). |
+| **Spatial Geo Data** | `TopoJSON` (`topojson-client`) | `v3.1.0` | Compact topological data format encoding US States and Canadian Provinces with shared boundary reduction. |
+| **Typography Fonts** | Google Web Fonts | CDN | `Inter` (geometric UI sans-serif), `Playfair Display` (editorial titles), `Caveat` & `Dancing Script` (accent cursive badges). |
+| **Web Server Framework**| `express` | `v4.19.2` | Fast, minimalist web framework serving all REST endpoints and static SPA frontend files. |
+
+---
+
+### 5.2 UI Color Switching Engine: USA vs. Canada Theme (A to Z)
+
+Brainstorm Atlas features an instant, state-driven Country Theme Engine that smoothly morphs all interactive accents, map projections, scope chips, and branding badges when switching between the **United States** and **Canada**:
+
+```mermaid
+graph TD
+    User([User Clicks Country Toggle]) --> SwitchHandler[window.switchCountry 'US' / 'CA']
+    SwitchHandler --> DOMState[Toggle body.theme-ca Class]
+    SwitchHandler --> Storage[Save brainstorm_country in sessionStorage]
+    SwitchHandler --> D3Map[Execute D3.js Geo Projection Transition]
+    DOMState --> CSSVars[CSS Custom Properties Recalculation]
+    CSSVars --> BlueMode[US Mode: Royal Blue #2563eb]
+    CSSVars --> RedMode[Canada Mode: Crimson Red #dc2626]
+```
+
+#### Complete Country Theme Palette Matrix
+
+| Theme Element / Component | 🇺🇸 USA Mode (`body:not(.theme-ca)`) | 🇨🇦 Canada Mode (`body.theme-ca`) |
+| :--- | :--- | :--- |
+| **Primary Accent Color** | `#2563eb` (Royal Blue) | `#dc2626` (Maple Leaf Crimson Red) |
+| **Soft Accent Background** | `rgba(37, 99, 235, 0.08)` | `rgba(220, 38, 38, 0.08)` |
+| **Accent Glow / Shadow** | `rgba(37, 99, 235, 0.35)` | `rgba(220, 38, 38, 0.35)` |
+| **Choropleth Map Shading** | Blue tonal gradient (`#eff6ff` to `#1d4ed8`) | Red tonal gradient (`#fef2f2` to `#b91c1c`) |
+| **Country Toggle Switch** | Blue highlight on US badge with `🇺🇸 US` flag | Red highlight on CA badge with `🇨🇦 CA` flag |
+| **Active Category Chips** | `#2563eb` filled background with white text | `#dc2626` filled background with white text |
+| **Brochure & CTA Banners** | Left border gradient in `#2563eb` | Left border gradient in `#dc2626` |
+| **Project Detail Badges** | Blue border and soft blue background | Red border and soft red background |
+| **Dark Mode Primary Accent** | `#60a5fa` (Electric Ice Blue) | `#f87171` (Vibrant Coral Red) |
+| **D3 Vector Map Projection** | `d3.geoAlbersUsa()` (50 US States) | `d3.geoAzimuthalEqualArea()` (10 Provinces + 3 Territories) |
+
+#### Color Switching Animation Physics
+All theme color switches utilize hardware-accelerated CSS transitions:
+```css
+:root {
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.08);
+  --accent-glow: rgba(37, 99, 235, 0.35);
+}
+
+body.theme-ca {
+  --accent: #dc2626;
+  --accent-soft: rgba(220, 38, 38, 0.08);
+  --accent-glow: rgba(220, 38, 38, 0.35);
+}
+
+/* Smooth 0.4s ease transition across all visual components */
+.cat-chip, .btn, .map-card, .detail-overlay, .cta-banner, .d-tab {
+  transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              color 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+```
+
+---
+
+### 5.3 Dual-Engine Database Architecture (SQLite & PostgreSQL)
 * **Local Mode**: Uses `better-sqlite3`—a zero-configuration, synchronous file database ideal for local development.
 * **Cloud Mode**: Seamlessly switches to `pg` (PostgreSQL) when `DB_CLIENT=pg` is set in production, connecting to AWS RDS, Supabase, Neon, or Railway with identical parameterized query APIs.
 
-### Cloud Storage Engine (AWS S3 & Cloudflare R2)
+### 5.4 Cloud Storage Engine (AWS S3 & Cloudflare R2)
 * Local uploads are stored in `/uploads`, but with `S3_BUCKET` configured, the backend automatically pipes uploads to **AWS S3 / Cloudflare R2** and serves assets over high-speed CDNs.
 
-### Complete Environment Variables Reference (.env)
+### 5.5 Complete Environment Variables Reference (.env)
 
 The application configuration is managed via standard environment variables loaded at startup via `dotenv`. Create a `.env` file inside the `/backend` directory:
 
@@ -530,7 +637,7 @@ ADMIN_EMAIL_DOMAIN=@brainstorminfotech.co.in
 
 ---
 
-## 6. Enterprise Security Architecture
+## 6. Enterprise Security Architecture (A to Z)
 
 ```mermaid
 flowchart LR
@@ -545,17 +652,45 @@ flowchart LR
     AuthGuard --> DB[(PostgreSQL / SQLite Parameterized DB)]
 ```
 
-### Security Features Breakdown
+### 6.1 Full Security Features Breakdown (A to Z)
 
-| Vector / Requirement | Implementation | Security Benefit |
-| :--- | :--- | :--- |
-| **Authentication** | Google OAuth2 ID Token verification (`client.verifyIdToken`) + domain whitelist (`@brainstorminfotech.co.in`) | Prevents unauthenticated access; only verified company emails can manage projects. |
-| **SQL Injection (SQLi)** | 100% Parameterized queries (`$1, $2, ...` in Postgres, `?` in SQLite) | Completely neutralizes SQL injection attacks. |
-| **Command Injection (RCE)** | `child_process.execFile` with argument arrays | Prevents arbitrary shell command execution. |
-| **Anti-Brute Force** | `express-rate-limit` (30 attempts / 15 min per IP on `/api/auth`) | Mitigates credential stuffing and DDoS attempts. |
-| **Timing Attacks** | `crypto.timingSafeEqual` constant-time password comparison | Defends against side-channel timing attacks. |
-| **Clickjacking & Sniffing** | `helmet` (`X-Frame-Options`, `X-Content-Type-Options: nosniff`) | Protects against UI redressing and MIME confusion attacks. |
-| **Denial-of-Service** | 50MB strict body parser limit | Protects backend memory from buffer overflow payloads. |
+1. **Anti-Brute Force Protection (`express-rate-limit`)**:
+   - Limits all `/api/auth` endpoints to **30 attempts per 15-minute rolling window per IP address**.
+   - Mitigates automated credential stuffing, brute-force password cracking, and dictionary attacks.
+
+2. **Command Injection (RCE) Defense**:
+   - File manipulation and 3D Draco mesh compression are executed strictly via `child_process.execFile` with explicit argument arrays.
+   - Shell string interpolations (`exec()`) are completely prohibited to eliminate arbitrary command execution vulnerabilities.
+
+3. **Constant-Time Password Comparison (`crypto.timingSafeEqual`)**:
+   - Secondary emergency administrative authentications use cryptographic constant-time buffer comparisons.
+   - Eliminates side-channel timing attack vectors where attackers deduce password characters based on response latency differences.
+
+4. **Cryptographic 256-Bit Ephemeral Tokens**:
+   - Authenticated sessions generate 256-bit cryptographically secure pseudorandom tokens via `crypto.randomBytes(32).toString('hex')`.
+   - Tokens expire automatically after 24 hours of inactivity.
+
+5. **Denial-of-Service (DOS) Buffer Protections**:
+   - Express body parser restricts generic JSON and URL-encoded payloads to 50MB.
+   - Prevents memory exhaustion attacks and server crash exploits caused by payload flooding.
+
+6. **Google OAuth2 & Corporate Domain Whitelist Lockdown**:
+   - Server-side JWT token verification via Google Auth Library (`client.verifyIdToken()`).
+   - Server cryptographically validates that the authenticated email payload strictly ends with `@brainstorminfotech.co.in`.
+   - Any external Gmail or non-company account is rejected with a `401 Unauthorized` response.
+
+7. **HTTP Security Header Hardening (`helmet`)**:
+   - `X-Frame-Options: SAMEORIGIN`: Defends against UI redressing and Clickjacking attacks.
+   - `X-Content-Type-Options: nosniff`: Prevents MIME-confusion attacks and malicious file execution.
+   - `Referrer-Policy: no-referrer-when-downgrade`: Protects sensitive referer URL parameters from leaking to external domains.
+
+8. **Immutable Security Audit Trail Logging**:
+   - The server maintains a persistent, structured audit log recording all administrative modifications (`CREATE_PROJECT`, `UPDATE_PROJECT`, `DELETE_PROJECT`, `LOGIN`).
+   - Captures **Admin Username/Email**, **Action Timestamp**, **Client IP Address**, and **Target Project ID** for full IT governance compliance.
+
+9. **SQL Injection (SQLi) Elimination**:
+   - 100% of all database queries use parameterized inputs (`$1, $2, ...` in PostgreSQL; `?` in SQLite).
+   - SQL queries are compiled before data binding, making SQL injection mathematically impossible.
 
 ---
 
