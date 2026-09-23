@@ -2361,8 +2361,9 @@ window.openDetail = function(id, updateHistory = true) {
 
     let similarHtml = '';
     if (similar.length > 0) {
-      similarHtml = similar.map((s, idx) => `
-        <div onclick="window.openDetail('${s.id}')" class="similar-card" data-idx="${idx}">
+      const doubleSimilar = [...similar, ...similar];
+      similarHtml = doubleSimilar.map(s => `
+        <div onclick="window.openDetail('${s.id}')" class="similar-card">
           <img loading="lazy" decoding="async" src="${(s.images && s.images[0]) ? (s.images[0].startsWith('http') ? s.images[0] : 'uploads/'+s.images[0]) : 'assets/logo.png'}" alt="${s.title}" onerror="this.src='assets/logo.png';">
           <div class="similar-card-body">
             <div class="similar-card-title">${s.title}</div>
@@ -2542,20 +2543,10 @@ window.openDetail = function(id, updateHistory = true) {
 
     // 5. SIMILAR PROJECTS
     const similarProjectsHtml = similarHtml ? `
-      <div class="detail-full-block similar-section-block" id="sec-similar-${p.id}">
-        <div class="similar-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <h3 class="dcard-title" style="margin:0;">Similar Projects</h3>
-            <span class="similar-count-badge">${similar.length} Projects</span>
-          </div>
-          <div class="similar-nav-controls">
-            <button class="similar-nav-btn prev" onclick="window.stepSimilarProjects('${p.id}', -1)" title="Previous Project" aria-label="Previous Similar Project">
-              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
-            <button class="similar-nav-btn next" onclick="window.stepSimilarProjects('${p.id}', 1)" title="Next Project" aria-label="Next Similar Project">
-              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
-          </div>
+      <div class="detail-full-block" id="sec-similar-${p.id}">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+          <h3 class="dcard-title">Similar Projects</h3>
+          <span style="font-size: 12px; color: var(--sub); font-weight: 500; opacity: 0.8;">Hover or swipe to pause</span>
         </div>
         <div class="similar-projects-viewport" id="similarViewport-${p.id}">
           <div class="similar-projects-track" id="similarTrack-${p.id}">${similarHtml}</div>
@@ -3074,6 +3065,11 @@ window.openDetail = function(id, updateHistory = true) {
 
     }
 
+    const simVp = document.getElementById(`similarViewport-${p.id}`);
+    if (simVp) {
+      window.initSimilarTouchInteraction(simVp);
+    }
+
   }, 60);
 
 };
@@ -3192,12 +3188,79 @@ window.stepCarouselSlide = function(projId, step) {
 
 };
 
-window.stepSimilarProjects = function(projId, step) {
-  const vp = document.getElementById(`similarViewport-${projId}`);
-  if (!vp) return;
-  const firstCard = vp.querySelector('.similar-card');
-  const cardWidth = firstCard ? (firstCard.offsetWidth + 16) : 240;
-  vp.scrollBy({ left: step * cardWidth, behavior: 'smooth' });
+window.initSimilarTouchInteraction = function(viewportEl) {
+  if (!viewportEl || viewportEl._touchInited) return;
+  viewportEl._touchInited = true;
+
+  const track = viewportEl.querySelector('.similar-projects-track');
+  if (!track) return;
+
+  let isTouching = false;
+  let startX = 0;
+  let currentTranslateX = 0;
+  let resumeTimer = null;
+
+  const getComputedTranslateX = () => {
+    try {
+      const style = window.getComputedStyle(track);
+      const transform = style.transform || style.webkitTransform;
+      if (!transform || transform === 'none') return 0;
+      const matrix = new DOMMatrixReadOnly(transform);
+      return matrix.m41;
+    } catch (err) {
+      return 0;
+    }
+  };
+
+  const onTouchStart = (e) => {
+    if (e.touches && e.touches.length !== 1) return;
+    isTouching = true;
+    if (resumeTimer) clearTimeout(resumeTimer);
+
+    currentTranslateX = getComputedTranslateX();
+    track.style.animation = 'none';
+    track.style.transform = `translateX(${currentTranslateX}px)`;
+    track.style.transition = 'none';
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    viewportEl.classList.add('is-interacting');
+  };
+
+  const onTouchMove = (e) => {
+    if (!isTouching) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const diffX = clientX - startX;
+    startX = clientX;
+    currentTranslateX += diffX;
+
+    const totalWidth = track.scrollWidth / 2;
+    if (totalWidth > 0) {
+      if (currentTranslateX > 0) currentTranslateX -= totalWidth;
+      if (currentTranslateX < -totalWidth) currentTranslateX += totalWidth;
+    }
+
+    track.style.transform = `translateX(${currentTranslateX}px)`;
+  };
+
+  const onTouchEnd = () => {
+    if (!isTouching) return;
+    isTouching = false;
+    viewportEl.classList.remove('is-interacting');
+
+    resumeTimer = setTimeout(() => {
+      track.style.animation = '';
+      track.style.transform = '';
+      track.style.transition = '';
+    }, 2500);
+  };
+
+  viewportEl.addEventListener('touchstart', onTouchStart, { passive: true });
+  viewportEl.addEventListener('touchmove', onTouchMove, { passive: true });
+  viewportEl.addEventListener('touchend', onTouchEnd, { passive: true });
+  viewportEl.addEventListener('touchcancel', onTouchEnd, { passive: true });
+
+  viewportEl.addEventListener('mousedown', onTouchStart);
+  window.addEventListener('mousemove', onTouchMove);
+  window.addEventListener('mouseup', onTouchEnd);
 };
 
 
