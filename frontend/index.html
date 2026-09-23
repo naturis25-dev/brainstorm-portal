@@ -13,6 +13,7 @@
   <!-- D3.js & TopoJSON &mdash; served locally, no CDN needed -->
   <script src="assets/vendor/d3.min.js"></script>
   <script src="assets/vendor/topojson.min.js"></script>
+  <script src="assets/vendor/pdf.min.js"></script>
   <script src="js/map-data.js"></script>
   
   <!-- Custom CSS -->
@@ -1333,7 +1334,8 @@
         </div>
       </div>
       <div class="brochure-modal-body">
-        <object id="brochureObject" data="" type="application/pdf" width="100%" height="100%">
+        <div id="brochurePdfContainer" class="pdf-canvas-viewer-container"></div>
+        <object id="brochureObject" data="" type="application/pdf" width="100%" height="100%" style="display:none;">
           <iframe id="brochureIframe" src="" title="Brainstorm Infotech Brochure Viewer"></iframe>
         </object>
       </div>
@@ -1357,7 +1359,8 @@
         </div>
       </div>
       <div class="brochure-modal-body" style="position: relative;">
-        <object id="drawingPdfObject" data="" type="application/pdf" width="100%" height="100%">
+        <div id="drawingPdfContainer" class="pdf-canvas-viewer-container"></div>
+        <object id="drawingPdfObject" data="" type="application/pdf" width="100%" height="100%" style="display:none;">
           <iframe id="drawingPdfIframe" src="" title="Drawing PDF Viewer"></iframe>
         </object>
 

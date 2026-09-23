@@ -6112,6 +6112,103 @@ function showDownloadToast() {
 
 
 
+// PDF.js worker setup & canvas-based PDF renderer for ultra-slim scrollbars
+if (window.pdfjsLib) {
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/vendor/pdf.worker.min.js';
+}
+
+function renderPdfToContainer(url, containerEl, fallbackObj, fallbackIframe) {
+  if (!containerEl) return;
+
+  containerEl._currentPdfLoadId = (containerEl._currentPdfLoadId || 0) + 1;
+  const thisLoadId = containerEl._currentPdfLoadId;
+  containerEl.scrollTop = 0;
+
+  if (fallbackObj) {
+    fallbackObj.style.display = 'none';
+    fallbackObj.data = '';
+  }
+  if (fallbackIframe) {
+    fallbackIframe.src = '';
+  }
+
+  containerEl.innerHTML = `
+    <div class="pdf-canvas-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:240px; gap:12px; color:var(--text-sub, #94a3b8); font-size:13px; font-weight:500;">
+      <div style="width:28px; height:28px; border:2.5px solid rgba(37,99,235,0.2); border-top-color:#2563eb; border-radius:50%; animation:spin 0.7s linear infinite;"></div>
+      <span>Loading document...</span>
+    </div>
+  `;
+
+  if (!window.pdfjsLib) {
+    containerEl.innerHTML = '';
+    if (fallbackObj) {
+      fallbackObj.style.display = 'block';
+      fallbackObj.data = url;
+    }
+    if (fallbackIframe) fallbackIframe.src = url;
+    return;
+  }
+
+  const loadingTask = window.pdfjsLib.getDocument(url);
+
+  loadingTask.promise.then(async (pdfDoc) => {
+    if (containerEl._currentPdfLoadId !== thisLoadId) return;
+    containerEl.innerHTML = '';
+
+    const numPages = pdfDoc.numPages;
+    const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+
+    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+      if (containerEl._currentPdfLoadId !== thisLoadId) return;
+      const page = await pdfDoc.getPage(pageNum);
+      if (containerEl._currentPdfLoadId !== thisLoadId) return;
+
+      const unscaledViewport = page.getViewport({ scale: 1.0 });
+      const availableWidth = containerEl.clientWidth > 100 
+        ? containerEl.clientWidth - 48 
+        : Math.min(window.innerWidth * 0.92, 1000) - 48;
+      const containerWidth = Math.max(availableWidth, 300);
+      let targetScale = containerWidth / unscaledViewport.width;
+      if (!targetScale || targetScale <= 0 || !isFinite(targetScale)) {
+        targetScale = 1.2;
+      }
+
+      const viewport = page.getViewport({ scale: targetScale });
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pdf-page-canvas';
+      const context = canvas.getContext('2d');
+
+      canvas.width = Math.floor(viewport.width * outputScale);
+      canvas.height = Math.floor(viewport.height * outputScale);
+      canvas.style.width = Math.floor(viewport.width) + 'px';
+      canvas.style.height = Math.floor(viewport.height) + 'px';
+
+      const transform = outputScale !== 1 
+        ? [outputScale, 0, 0, outputScale, 0, 0] 
+        : null;
+
+      const renderContext = {
+        canvasContext: context,
+        transform: transform,
+        viewport: viewport
+      };
+
+      containerEl.appendChild(canvas);
+      await page.render(renderContext).promise;
+    }
+  }).catch((err) => {
+    console.warn('PDF.js render error, using native viewer:', err);
+    if (containerEl._currentPdfLoadId !== thisLoadId) return;
+    containerEl.innerHTML = '';
+    if (fallbackObj) {
+      fallbackObj.style.display = 'block';
+      fallbackObj.data = url;
+    }
+    if (fallbackIframe) fallbackIframe.src = url;
+  });
+}
+
 function initBrochureHandlers() {
 
   if (window._brochureHandlersInitialized) return;
@@ -6131,6 +6228,8 @@ function initBrochureHandlers() {
   const iframe = document.getElementById('brochureIframe');
 
   const brochureObj = document.getElementById('brochureObject');
+
+  const brochureContainer = document.getElementById('brochurePdfContainer');
 
 
 
@@ -6180,13 +6279,11 @@ function initBrochureHandlers() {
 
       const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
 
-      if (brochureObj) brochureObj.data = pdfUrl;
-
-      if (iframe) iframe.src = pdfUrl;
-
       modal.classList.add('active');
 
       document.body.style.overflow = 'hidden';
+
+      renderPdfToContainer(pdfUrl, brochureContainer, brochureObj, iframe);
 
     });
 
@@ -6202,7 +6299,21 @@ function initBrochureHandlers() {
 
       modal.classList.remove('active');
 
-      if (brochureObj) brochureObj.data = '';
+      if (brochureContainer) {
+
+        brochureContainer._currentPdfLoadId = (brochureContainer._currentPdfLoadId || 0) + 1;
+
+        brochureContainer.innerHTML = '';
+
+      }
+
+      if (brochureObj) {
+
+        brochureObj.style.display = 'none';
+
+        brochureObj.data = '';
+
+      }
 
       if (iframe) iframe.src = '';
 
@@ -6380,15 +6491,13 @@ function initBrochureHandlers() {
 
     const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
 
-    if (brochureObj) brochureObj.data = pdfUrl;
-
-    if (iframe) iframe.src = pdfUrl;
-
     if (modal) {
 
       modal.classList.add('active');
 
       document.body.style.overflow = 'hidden';
+
+      renderPdfToContainer(pdfUrl, brochureContainer, brochureObj, iframe);
 
     } else {
 
@@ -6489,6 +6598,7 @@ function initDrawingPdfViewerModal() {
   const iframe = document.getElementById('drawingPdfIframe');
 
   const pdfObj = document.getElementById('drawingPdfObject');
+  const drawingContainer = document.getElementById('drawingPdfContainer');
   const titleEl = document.getElementById('drawingPdfModalTitle');
   const downloadBtn = document.getElementById('drawingPdfDownloadBtn');
   const prevBtn = document.getElementById('prevDrawingPdfBtn');
@@ -6520,8 +6630,7 @@ function initDrawingPdfViewerModal() {
       counterEl.textContent = `${currentPdfIndex + 1} / ${files.length}`;
     }
 
-    if (pdfObj) pdfObj.data = cleanUrl;
-    if (iframe) iframe.src = cleanUrl;
+    renderPdfToContainer(cleanUrl, drawingContainer, pdfObj, iframe);
   }
 
   window.openDrawingPdf = function(pdfUrl, title, catKey, index) {
@@ -6543,8 +6652,7 @@ function initDrawingPdfViewerModal() {
         downloadBtn.download = (title || 'Drawing').replace(/\s+/g, '_') + '.pdf';
       }
       if (counterEl) counterEl.textContent = '';
-      if (pdfObj) pdfObj.data = cleanUrl;
-      if (iframe) iframe.src = cleanUrl;
+      renderPdfToContainer(cleanUrl, drawingContainer, pdfObj, iframe);
     }
 
     modal.classList.add('active');
@@ -6566,7 +6674,14 @@ function initDrawingPdfViewerModal() {
   const closeDrawingModal = () => {
     if (modal) {
       modal.classList.remove('active');
-      if (pdfObj) pdfObj.data = '';
+      if (drawingContainer) {
+        drawingContainer._currentPdfLoadId = (drawingContainer._currentPdfLoadId || 0) + 1;
+        drawingContainer.innerHTML = '';
+      }
+      if (pdfObj) {
+        pdfObj.style.display = 'none';
+        pdfObj.data = '';
+      }
       if (iframe) iframe.src = '';
       document.body.style.overflow = '';
     }
