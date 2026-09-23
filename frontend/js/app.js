@@ -4173,14 +4173,31 @@ function setupModal() {
         })
       });
 
+      // Update in-memory state immediately
+      if (importedProjects.length > 0) {
+        window.PROJECTS = importedProjects.map(p => {
+          if (typeof p.images === 'string') {
+            try { p.images = JSON.parse(p.images); } catch(e) { p.images = []; }
+          }
+          if (!Array.isArray(p.images)) p.images = [];
+          return p;
+        });
+        PROJECTS = window.PROJECTS;
+      }
+
       if (window.showToast) window.showToast(`100% Complete! Restored ${importedProjects.length} projects & sample drawings in seconds.`, 'success');
       
-      // Reload projects & drawings from server & refresh admin table
-      if (typeof fetchProjects === 'function') {
-        await fetchProjects();
-      }
-      if (typeof renderAdminTable === 'function') {
+      // Immediate UI refresh
+      if (typeof renderAdmin === 'function') {
+        renderAdmin();
+      } else if (typeof renderAdminTable === 'function') {
         renderAdminTable(PROJECTS);
+      }
+      if (typeof renderGrid === 'function') {
+        renderGrid(PROJECTS);
+      }
+      if (typeof renderMapPins === 'function') {
+        renderMapPins(PROJECTS);
       }
       if (typeof fetchDrawingsData === 'function') {
         await fetchDrawingsData();
@@ -4191,21 +4208,28 @@ function setupModal() {
     }
   }
 
+  // Direct dynamic file picker trigger
+  window.triggerImportData = function() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json,.csv';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    fileInput.onchange = function(e) {
+      if (e.target.files && e.target.files[0]) {
+        handleImportBackup(e.target.files[0]);
+      }
+      setTimeout(() => {
+        if (fileInput.parentNode) fileInput.parentNode.removeChild(fileInput);
+      }, 1000);
+    };
+
+    fileInput.click();
+  };
+
   window.handleExportBackup = handleExportBackup;
   window.handleImportBackup = handleImportBackup;
-
-  document.getElementById('exportBackupBtn')?.addEventListener('click', handleExportBackup);
-  
-  const importFileInput = document.getElementById('importBackupFileInput');
-  document.getElementById('importBackupBtn')?.addEventListener('click', () => {
-    importFileInput?.click();
-  });
-  importFileInput?.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      handleImportBackup(e.target.files[0]);
-      e.target.value = '';
-    }
-  });
 
   document.getElementById('openAddModal')?.addEventListener('click', openAddModal);
 
