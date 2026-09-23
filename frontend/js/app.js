@@ -1583,43 +1583,33 @@ function setupNavigation() {
 
     // 1. One-by-one staggered entrance animation reveal
     cards.forEach((card, idx) => {
-      card.style.transitionDelay = `${idx * 0.12}s`;
+      card.style.transitionDelay = `${idx * 0.1}s`;
       setTimeout(() => {
         card.classList.add('card-revealed');
-      }, 50 + (idx * 120));
+      }, 50 + (idx * 100));
     });
 
     if (window.innerWidth > 768) return;
 
-    // 2. Focal scroll detection: Only ONE card is active at a time as user scrolls down
+    // 2. Smooth focal scroll detection: activate each card naturally without skipping
+    let ticking = false;
     const updateActiveCardOnScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
       const innerHeight = window.innerHeight;
-      const scrollY = window.scrollY || window.pageYOffset;
-      const isAtBottom = (innerHeight + scrollY) >= (scrollHeight - 60);
-      const isAtTop = scrollY <= 60;
+      const viewportFocalPoint = innerHeight * 0.44;
 
       let closestCard = null;
+      let minDistance = Infinity;
 
-      if (isAtTop) {
-        closestCard = cards[0];
-      } else if (isAtBottom) {
-        closestCard = cards[cards.length - 1];
-      } else {
-        let minDistance = Infinity;
-        const viewportCenter = innerHeight * 0.42;
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + (rect.height / 2);
+        const distance = Math.abs(cardCenter - viewportFocalPoint);
 
-        cards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          const cardCenter = rect.top + (rect.height / 2);
-          const distance = Math.abs(cardCenter - viewportCenter);
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestCard = card;
-          }
-        });
-      }
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCard = card;
+        }
+      });
 
       cards.forEach(card => {
         if (closestCard && card === closestCard) {
@@ -1628,13 +1618,21 @@ function setupNavigation() {
           card.classList.remove('is-in-view');
         }
       });
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateActiveCardOnScroll);
+        ticking = true;
+      }
     };
 
     if (window._folderScrollHandler) {
       window.removeEventListener('scroll', window._folderScrollHandler);
     }
-    window._folderScrollHandler = updateActiveCardOnScroll;
-    window.addEventListener('scroll', updateActiveCardOnScroll, { passive: true });
+    window._folderScrollHandler = onScroll;
+    window.addEventListener('scroll', onScroll, { passive: true });
     updateActiveCardOnScroll();
   }
 
