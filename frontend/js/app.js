@@ -1298,17 +1298,27 @@ function setupNavigation() {
   function renderDrawingsGallery(data) {
 
     cachedDrawingsData = data;
+    window.cachedDrawingsData = data;
 
-    renderFolders();
+    const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    const curFolder = sessionStorage.getItem('brainstorm_drawings_folder');
 
-    
+    if (rawHash.startsWith('drawings/') && rawHash.length > 9) {
+      const catKey = rawHash.split('/')[1];
+      if (catKey && cachedDrawingsData[catKey]) {
+        renderFolderContents(catKey, false);
+      } else {
+        renderFolders(false);
+      }
+    } else if (curFolder && cachedDrawingsData[curFolder]) {
+      renderFolderContents(curFolder, false);
+    } else {
+      renderFolders(false);
+    }
 
     // Set up back button
-
     document.getElementById('btnBackToFolders')?.addEventListener('click', () => {
-
       renderFolders();
-
     });
 
   }
@@ -4659,34 +4669,6 @@ function setupAdminControls() {
 
 
 
-// ============================================================
-
-// INIT
-
-// ============================================================
-
-function initApp() {
-
-  initCustomCursor();
-
-  initThemeToggle();
-
-  setupNavigation();
-
-  setupModal();
-
-  setupAdminControls();
-
-  setupDragAndDrop();
-
-  // Load data —
-
-  fetchAppInitialData();
-
-}
-
-
-
 function setupDragAndDrop() {
 
   ['images', 'video', 'model'].forEach(type => {
@@ -4752,18 +4734,6 @@ function setupDragAndDrop() {
 }
 
 
-
-// Run when DOM + all deferred scripts are ready
-
-if (document.readyState === 'loading') {
-
-  document.addEventListener('DOMContentLoaded', initApp);
-
-} else {
-
-  initApp();
-
-}
 
 // ==========================================
 
@@ -6356,10 +6326,14 @@ function restoreNavState(isHashChangeEvent = false) {
     const savedView = sessionStorage.getItem('brainstorm_current_view') || 'map';
     const savedFolder = sessionStorage.getItem('brainstorm_drawings_folder');
     const savedProject = sessionStorage.getItem('brainstorm_open_project');
+    const savedRegion = sessionStorage.getItem('brainstorm_open_region');
 
     if (savedProject) {
       hashView = 'project';
       hashSub = savedProject;
+    } else if (savedRegion && savedView === 'map') {
+      hashView = 'region';
+      hashSub = savedRegion;
     } else if (savedView === 'drawings' && savedFolder) {
       hashView = 'drawings';
       hashSub = savedFolder;
@@ -6368,16 +6342,36 @@ function restoreNavState(isHashChangeEvent = false) {
     }
   }
 
+  if (hashView === 'region' && hashSub) {
+    const regionName = decodeURIComponent(hashSub);
+    showView('map', false);
+    const openReg = () => {
+      if (window.MapModule && typeof window.MapModule.openPanel === 'function') {
+        const list = (window.PROJECTS || []).filter(p => p.state === regionName);
+        window.MapModule.openPanel(regionName, list, false);
+      }
+    };
+    if (window.PROJECTS && window.PROJECTS.length > 0 && window.MapModule) {
+      openReg();
+    } else {
+      setTimeout(openReg, 350);
+    }
+    return;
+  }
+
   if (hashView === 'project' && hashSub) {
     const savedView = sessionStorage.getItem('brainstorm_current_view') || 'map';
     showView(savedView, false);
     const projId = hashSub;
-    if (PROJECTS && PROJECTS.length > 0) {
-      window.openDetail(projId, false);
+    const openProj = () => {
+      if (window.openDetail && window.PROJECTS && window.PROJECTS.length > 0) {
+        window.openDetail(projId, false);
+      }
+    };
+    if (window.PROJECTS && window.PROJECTS.length > 0) {
+      openProj();
     } else {
-      setTimeout(() => {
-        if (window.openDetail) window.openDetail(projId, false);
-      }, 300);
+      setTimeout(openProj, 350);
     }
     return;
   }
@@ -6451,6 +6445,9 @@ function initApp() {
 
   window.goToMap = goToMap;
 
+  // Instantly apply view on page load
+  restoreNavState();
+
   initCustomCursor();
 
   initThemeToggle();
@@ -6458,6 +6455,10 @@ function initApp() {
   setupNavigation();
 
   setupModal();
+
+  setupAdminControls();
+
+  setupDragAndDrop();
 
   fetchAppInitialData();
 

@@ -267,9 +267,15 @@ function renderStateIllustration(name) {
   '</div>';
 }
 
-function openPanel(name, list) {
+function openPanel(name, list, updateHistory = true) {
   var body = document.getElementById('panelBody');
   if (!body) return;
+
+  if (updateHistory !== false) {
+    window.location.hash = 'region/' + encodeURIComponent(name);
+    sessionStorage.setItem('brainstorm_current_view', 'map');
+    sessionStorage.setItem('brainstorm_open_region', name);
+  }
 
   var tons = (list || []).reduce(function(sum, p) { return sum + (p.tons || 0); }, 0);
   var activeCategory = 'All';
