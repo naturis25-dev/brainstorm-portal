@@ -1056,14 +1056,29 @@ function setupNavigation() {
   if (detailOverlay) detailOverlay.addEventListener('scroll', (e) => checkScroll(e.target.scrollTop, true));
   window.addEventListener('scroll', () => checkScroll(window.scrollY, false));
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.scrollTo({ top: 0, behavior: 'smooth' });
+    document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelectorAll('.view.active').forEach(v => v.scrollTo({ top: 0, behavior: 'smooth' }));
+    document.getElementById('panel')?.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('panelBody')?.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('detailOverlay')?.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('detailScrollContent')?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Handle Desktop Button Click
   if (navWebsiteBtn) {
     navWebsiteBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (typeof window.openWebsiteViewer === 'function') {
-        window.openWebsiteViewer('https://www.brainstorminfotech.com');
+      if (navWebsiteBtn.classList.contains('is-scrolled')) {
+        scrollToTop();
       } else {
-        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        if (typeof window.openWebsiteViewer === 'function') {
+          window.openWebsiteViewer('https://www.brainstorminfotech.com');
+        } else {
+          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        }
       }
     });
   }
@@ -1080,10 +1095,14 @@ function setupNavigation() {
     const mBtn = e.target.closest('#mNavWebsiteBtn');
     if (mBtn) {
       e.preventDefault();
-      if (typeof window.openWebsiteViewer === 'function') {
-        window.openWebsiteViewer('https://www.brainstorminfotech.com');
+      if (mBtn.classList.contains('is-scrolled')) {
+        scrollToTop();
       } else {
-        window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        if (typeof window.openWebsiteViewer === 'function') {
+          window.openWebsiteViewer('https://www.brainstorminfotech.com');
+        } else {
+          window.open('https://www.brainstorminfotech.com', '_blank', 'noopener,noreferrer');
+        }
       }
     }
   });
@@ -1095,24 +1114,18 @@ function setupNavigation() {
 
 
   // Mobile Bottom Dock Button Listeners
-
   document.getElementById('mNavMapBtn')?.addEventListener('click', (e) => { e.preventDefault(); goToMap(); });
 
   document.getElementById('mNavDrawingsBtn')?.addEventListener('click', () => {
-
     showView('drawings');
-
     if (!drawingsLoaded) {
-
       loadDrawingsData();
-
     } else {
-
       setupDrawingsFilter();
-
     }
-
   });
+
+
 
 
 
@@ -2633,272 +2646,178 @@ window.openDetail = function(id, updateHistory = true) {
 
           
 
-          const mv = document.createElement('model-viewer');
-
-          mv.id = `viewer-${p.id}`;
-
-          mv.src = p.modelUrl;
-
-          mv.setAttribute('loading', 'eager');
-
-          mv.setAttribute('auto-rotate', '');
-
-          mv.setAttribute('camera-controls', '');
-
-          mv.setAttribute('exposure', '1.2');
-
-          mv.setAttribute('shadow-intensity', '1');
-
-          mv.setAttribute('alt', 'Interactive 3D Structural Model');
-
-            mv.setAttribute('min-camera-orbit', 'auto auto 0m');
-
-            mv.setAttribute('min-field-of-view', '1deg');
-
-            mv.setAttribute('max-field-of-view', '100deg');
-
-            mv.setAttribute('interaction-prompt', 'none');
-
-            mv.innerHTML = '<div slot="interaction-prompt" style="display:none;"></div>';
-
-          
-
-            
-
-              mv.style.position = 'absolute';
-
-              mv.style.inset = '0';
-
-              mv.style.width = '100%';
-
-              mv.style.height = '100%';
-
-              mv.style.zIndex = '1';
-
-
-
-              const controls = document.createElement('div');
-
-              controls.style.position = 'absolute';
-
-              controls.style.right = '16px';
-
-              controls.style.bottom = '16px';
-
-              controls.style.zIndex = '15';
-
-              controls.style.display = 'flex';
-
-              controls.style.gap = '8px';
-
-              controls.style.alignItems = 'flex-end';
-
-              controls.innerHTML = `
-
-                <!-- Desktop Instructions -->
-
-                <div class="viewer-instructions-desktop" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 12px; font-size:11px; line-height:1.4; backdrop-filter:blur(4px); pointer-events:none; text-align:left; white-space:nowrap;">
-
-                    <b>Controls:</b><br/>
-
-                    - Left Click + Drag: Orbit<br/>
-
-                    - Right Click + Drag: Pan<br/>
-
-                    - Scroll Wheel: Zoom
-
-                  </div>
-
-                <!-- Mobile Instructions -->
-
-                <div class="viewer-instructions-mobile" style="font-size:9px; color:#fff; background:rgba(0,0,0,0.6); padding:4px 6px; border-radius:6px; line-height:1.2; backdrop-filter:blur(4px); display:none; letter-spacing: -0.2px;">
-
-  <strong style="font-size:10px;">Touch Controls</strong><br/>
-
-  [1 Finger] Orbit<br/>
-
-  [2 Fingers] Pan/Zoom
-
-</div>
-
-                <div class="viewer-buttons" style="display:flex; flex-direction:column; gap:8px;">
-
-                  <button id="mv-rotate-${p.id}" title="Pause Auto Rotate" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
-
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> <span class="btn-text">Pause</span>
-
-                  </button>
-
-                  <div style="display:flex; gap:8px;">
-
-                    <button id="mv-zoom-in-${p.id}" title="Zoom In" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">+</button>
-
-                    <button id="mv-zoom-out-${p.id}" title="Zoom Out" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">-</button>
-
-                    <button id="mv-fullscreen-${p.id}" title="Full Screen" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
-
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg> <span class="btn-text">Fullscreen</span>
-
-                    </button>
-
-                  </div>
-
-                </div>
-
-              `;
-
-              container.appendChild(controls);
-
-
-
-              setTimeout(() => {
-
-                
-
-                const rotateBtn = document.getElementById(`mv-rotate-${p.id}`);
-
-                if (rotateBtn) {
-
-                  rotateBtn.addEventListener('click', (e) => {
-
-                    e.stopPropagation();
-
-                    if (mv.hasAttribute('auto-rotate')) {
-
-                      mv.removeAttribute('auto-rotate');
-
-                      rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Auto Rotate`;
-
-                    } else {
-
-                      mv.setAttribute('auto-rotate', '');
-
-                      rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause`;
-
-                    }
-
-                  });
-
-                }
-
-                const fsBtn = document.getElementById(`mv-fullscreen-${p.id}`);
-
-                if (fsBtn) {
-
-                  fsBtn.addEventListener('click', (e) => {
-
-                    e.stopPropagation();
-
-                    if (!document.fullscreenElement) {
-
-                      container.requestFullscreen().catch(err => {
-
-                        console.error('Fullscreen err:', err);
-
-                      });
-
-                    } else {
-
-                      document.exitFullscreen();
-
-                    }
-
-                  });
-
-                }
-
-                const zoomInBtn = document.getElementById(`mv-zoom-in-${p.id}`);
-
-                if (zoomInBtn) {
-
-                  zoomInBtn.addEventListener('click', (e) => {
-
-                    e.stopPropagation();
-
-                    const orbit = mv.getCameraOrbit();
-
-                    orbit.radius *= 0.8;
-
-                    mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
-
-                  });
-
-                }
-
-                const zoomOutBtn = document.getElementById(`mv-zoom-out-${p.id}`);
-
-                if (zoomOutBtn) {
-
-                  zoomOutBtn.addEventListener('click', (e) => {
-
-                    e.stopPropagation();
-
-                    const orbit = mv.getCameraOrbit();
-
-                    orbit.radius *= 1.25;
-
-                    mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius}m`;
-
-                  });
-
-                }
-
-              }, 100);mv.addEventListener('progress', (e) => {
-
-            const percent = Math.round(e.detail.totalProgress * 100);
-
-            if (fill) fill.style.width = percent + '%';
-
-            if (text) {
-
-              if (percent < 100) {
-
-                text.textContent = `Downloading 3D Data... ${percent}%`;
-
-              } else {
-
-                text.textContent = `Finalizing 3D Model...`;
-
-              }
-
+          const resolvedModelUrl = (function(url) {
+            if (!url) return '';
+            if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
+              return url;
             }
+            const apiBase = (typeof getApiBase === 'function') ? getApiBase() : '/api';
+            const hostBase = apiBase.replace(/\/api\/?$/, '');
+            return url.startsWith('/') ? (hostBase + url) : (hostBase + '/' + url);
+          })(p.modelUrl);
 
+          const mv = document.createElement('model-viewer');
+          mv.id = `viewer-${p.id}`;
+          mv.setAttribute('loading', 'eager');
+          mv.setAttribute('auto-rotate', '');
+          mv.setAttribute('camera-controls', '');
+          mv.setAttribute('bounds', 'tight');
+          mv.setAttribute('camera-target', 'auto auto auto');
+          mv.setAttribute('camera-orbit', '0deg 75deg auto');
+          mv.setAttribute('field-of-view', 'auto');
+          mv.setAttribute('exposure', '1.2');
+          mv.setAttribute('shadow-intensity', '1');
+          mv.setAttribute('alt', 'Interactive 3D Structural Model');
+          mv.setAttribute('interaction-prompt', 'none');
+          mv.setAttribute('draco-decoder-location', 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+          mv.innerHTML = '<div slot="interaction-prompt" style="display:none;"></div>';
+
+          mv.style.position = 'absolute';
+          mv.style.inset = '0';
+          mv.style.width = '100%';
+          mv.style.height = '100%';
+          mv.style.zIndex = '1';
+
+          mv.addEventListener('progress', (e) => {
+            const percent = Math.round((e.detail ? e.detail.totalProgress : 0) * 100);
+            if (fill) fill.style.width = percent + '%';
+            if (text) {
+              if (percent < 100) {
+                text.textContent = `Downloading 3D Data... ${percent}%`;
+              } else {
+                text.textContent = `Finalizing 3D Model...`;
+              }
+            }
           });
-
-
 
           mv.addEventListener('load', () => {
-
+            try {
+              if (typeof mv.resetTurntable === 'function') mv.resetTurntable();
+              if (typeof mv.jumpToGoal === 'function') mv.jumpToGoal();
+            } catch(e) {}
             if (bar) {
-
               bar.style.opacity = '0';
-
               setTimeout(() => bar.style.display = 'none', 300);
-
             }
-
           });
-
-
 
           mv.addEventListener('error', (e) => {
-
             console.error('Model-viewer error:', e);
-
             if (text) text.textContent = 'Error loading 3D model (File may be corrupt)';
-
             if (fill) fill.style.background = '#d32f2f';
-
           });
 
+          // Set src after registering event listeners
+          mv.src = resolvedModelUrl;
 
+          const controls = document.createElement('div');
+          controls.style.position = 'absolute';
+          controls.style.right = '16px';
+          controls.style.bottom = '16px';
+          controls.style.zIndex = '15';
+          controls.style.display = 'flex';
+          controls.style.gap = '8px';
+          controls.style.alignItems = 'flex-end';
+          controls.innerHTML = `
+            <!-- Desktop Instructions -->
+            <div class="viewer-instructions-desktop" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 12px; font-size:11px; line-height:1.4; backdrop-filter:blur(4px); pointer-events:none; text-align:left; white-space:nowrap;">
+              <b>Controls:</b><br/>
+              - Left Click + Drag: Orbit<br/>
+              - Right Click + Drag: Pan<br/>
+              - Scroll Wheel: Zoom
+            </div>
 
-          // Inject the model viewer, causing the heavy load
+            <!-- Mobile Instructions -->
+            <div class="viewer-instructions-mobile" style="font-size:9px; color:#fff; background:rgba(0,0,0,0.6); padding:4px 6px; border-radius:6px; line-height:1.2; backdrop-filter:blur(4px); display:none; letter-spacing: -0.2px;">
+              <strong style="font-size:10px;">Touch Controls</strong><br/>
+              [1 Finger] Orbit<br/>
+              [2 Fingers] Pan/Zoom
+            </div>
 
+            <div class="viewer-buttons" style="display:flex; flex-direction:column; gap:8px;">
+              <button id="mv-rotate-${p.id}" title="Pause Auto Rotate" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> <span class="btn-text">Pause</span>
+              </button>
+
+              <div style="display:flex; gap:8px;">
+                <button id="mv-zoom-in-${p.id}" title="Zoom In" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">+</button>
+                <button id="mv-zoom-out-${p.id}" title="Zoom Out" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; width:36px; height:36px; cursor:pointer; font-size:18px; font-weight:bold; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">-</button>
+                <button id="mv-fullscreen-${p.id}" title="Full Screen" style="background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:0 12px; height:36px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition: background 0.2s;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg> <span class="btn-text">Fullscreen</span>
+                </button>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(controls);
+
+          setTimeout(() => {
+            const rotateBtn = document.getElementById(`mv-rotate-${p.id}`);
+            if (rotateBtn) {
+              rotateBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (mv.hasAttribute('auto-rotate')) {
+                  mv.removeAttribute('auto-rotate');
+                  rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Auto Rotate`;
+                } else {
+                  mv.setAttribute('auto-rotate', '');
+                  rotateBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause`;
+                }
+              });
+            }
+
+            const fsBtn = document.getElementById(`mv-fullscreen-${p.id}`);
+            if (fsBtn) {
+              fsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!document.fullscreenElement) {
+                  container.requestFullscreen().catch(err => {
+                    console.error('Fullscreen err:', err);
+                  });
+                } else {
+                  document.exitFullscreen();
+                }
+              });
+            }
+
+            const zoomInBtn = document.getElementById(`mv-zoom-in-${p.id}`);
+            if (zoomInBtn) {
+              zoomInBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                try {
+                  if (typeof mv.zoom === 'function') {
+                    mv.zoom(1);
+                  } else {
+                    const orbit = mv.getCameraOrbit();
+                    if (orbit && orbit.radius) {
+                      mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius * 0.8}m`;
+                    }
+                  }
+                } catch(err) { console.error('Zoom err:', err); }
+              });
+            }
+
+            const zoomOutBtn = document.getElementById(`mv-zoom-out-${p.id}`);
+            if (zoomOutBtn) {
+              zoomOutBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                try {
+                  if (typeof mv.zoom === 'function') {
+                    mv.zoom(-1);
+                  } else {
+                    const orbit = mv.getCameraOrbit();
+                    if (orbit && orbit.radius) {
+                      mv.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${orbit.radius * 1.25}m`;
+                    }
+                  }
+                } catch(err) { console.error('Zoom err:', err); }
+              });
+            }
+          }, 100);
+
+          // Inject the model viewer
           container.appendChild(mv);
-
         });
-
       }
 
     }, 50);
@@ -6418,171 +6337,71 @@ function initBrochureHandlers() {
 
 
   // ============================================================
-
   // MOBILE BROCHURE DROPDOWN HANDLERS
-
   // ============================================================
-
   const mTriggerBtn = document.getElementById('mNavBrochureBtn');
-
   const mDropdownContainer = document.querySelector('.m-brochure-dropdown-container');
-
   const mViewOption = document.getElementById('mBrochureViewOption');
-
   const mDlOption = document.getElementById('mBrochureDlOption');
 
-
+  const handleMobileViewBrochure = (e) => {
+    e?.stopPropagation();
+    mDropdownContainer?.classList.remove('active');
+    const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      renderPdfToContainer(pdfUrl, brochureContainer, brochureObj, iframe);
+    } else {
+      window.open(pdfUrl, '_blank');
+    }
+  };
 
   if (mTriggerBtn && mDropdownContainer) {
-
     const handleMobileBrochureToggle = (e) => {
-
       e.preventDefault();
-
       e.stopPropagation();
-
       mDropdownContainer.classList.toggle('active');
-
     };
-
-
 
     mTriggerBtn.addEventListener('click', handleMobileBrochureToggle);
 
-    mTriggerBtn.addEventListener('touchend', (e) => {
-
-      e.preventDefault();
-
-      handleMobileBrochureToggle(e);
-
-    });
-
-
-
     document.addEventListener('click', (e) => {
-
       if (!mDropdownContainer.contains(e.target)) {
-
         mDropdownContainer.classList.remove('active');
-
       }
-
     });
-
-    document.addEventListener('touchend', (e) => {
-
-      if (!mDropdownContainer.contains(e.target)) {
-
-        mDropdownContainer.classList.remove('active');
-
-      }
-
-    });
-
   }
-
-
-
-  const handleMobileViewBrochure = (e) => {
-
-    e.stopPropagation();
-
-    mDropdownContainer?.classList.remove('active');
-
-    const pdfUrl = 'assets/docs/brochure.pdf?v=' + Date.now();
-
-    if (modal) {
-
-      modal.classList.add('active');
-
-      document.body.style.overflow = 'hidden';
-
-      renderPdfToContainer(pdfUrl, brochureContainer, brochureObj, iframe);
-
-    } else {
-
-      window.open(pdfUrl, '_blank');
-
-    }
-
-  };
-
-
 
   if (mViewOption) {
-
     mViewOption.addEventListener('click', handleMobileViewBrochure);
-
-    mViewOption.addEventListener('touchend', (e) => {
-
-      e.preventDefault();
-
-      handleMobileViewBrochure(e);
-
-    });
-
   }
 
-
-
   if (mDlOption) {
-
     const mLabelText = mDlOption.querySelector('.brochure-text');
-
     const handleMobileDownload = (e) => {
-
       e.stopPropagation();
-
       mDropdownContainer?.classList.remove('active');
 
-
-
       mDlOption.classList.remove('downloaded');
-
       mDlOption.classList.add('downloading');
-
       if (mLabelText) mLabelText.textContent = 'Downloading...';
 
-
-
       setTimeout(() => {
-
         triggerPdfDownload();
-
         mDlOption.classList.remove('downloading');
-
         mDlOption.classList.add('downloaded');
-
         if (mLabelText) mLabelText.textContent = 'Downloaded';
-
         showDownloadToast();
 
-
-
         setTimeout(() => {
-
           mDlOption.classList.remove('downloaded');
-
           if (mLabelText) mLabelText.textContent = 'Download Brochure';
-
         }, 4000);
-
       }, 800);
-
     };
 
-
-
     mDlOption.addEventListener('click', handleMobileDownload);
-
-    mDlOption.addEventListener('touchend', (e) => {
-
-      e.preventDefault();
-
-      handleMobileDownload(e);
-
-    });
-
   }
 
 }

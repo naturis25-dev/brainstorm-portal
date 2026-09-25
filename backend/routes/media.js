@@ -163,8 +163,12 @@ router.post('/', requireAuth, upload.fields([
       const targetPath = f.path;
       const processingPath = targetPath + '.processing';
       
-      fs.renameSync(targetPath, processingPath);
-      startOptimization(targetPath, f.filename);
+      try {
+        fs.copyFileSync(targetPath, processingPath);
+        startOptimization(targetPath, f.filename);
+      } catch (e) {
+        console.error('Failed to initiate model optimization:', e);
+      }
       response.model = getFinalUrl(f.filename);
     }
 

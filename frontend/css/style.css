@@ -3528,17 +3528,17 @@ body.dark-mode .tagline-static {
 }
 
 .tagline-word.word-1 {
-  color: #dc2626;
+  color: #9333ea;
   animation-delay: 0s;
 }
 
 .tagline-word.word-2 {
-  color: #2563eb;
+  color: #dc2626;
   animation-delay: 3s;
 }
 
 .tagline-word.word-3 {
-  color: #9333ea;
+  color: #2563eb;
   animation-delay: 6s;
 }
 

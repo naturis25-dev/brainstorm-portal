@@ -38,7 +38,19 @@ app.use('/api/auth', authLimiter);
 
 // Standard Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
-app.use('/uploads', express.static(uploadDir, { maxAge: '365d', immutable: true }));
+app.use('/uploads', cors(), express.static(uploadDir, { 
+  maxAge: '365d', 
+  immutable: true,
+  setHeaders: (res, filePath) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    if (filePath.endsWith('.glb')) {
+      res.setHeader('Content-Type', 'model/gltf-binary');
+    } else if (filePath.endsWith('.gltf')) {
+      res.setHeader('Content-Type', 'model/gltf+json');
+    }
+  }
+}));
 app.use('/api/media', bodyParser.json({ limit: '1000mb' }), mediaRouter);
 app.use(bodyParser.json({ limit: '50mb' })); // DOS protection
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
